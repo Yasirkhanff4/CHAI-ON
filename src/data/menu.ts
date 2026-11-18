@@ -37,3 +37,14 @@ export const strengthOptions: MenuOption<TeaStrength>[] = [
   { value: 'normal', label: 'Normal' },
   { value: 'strong', label: 'Strong' },
 ]
+
+export const defaultSugar: SugarLevel = 'normal'
+export const defaultStrength: TeaStrength = 'normal'
+
+export function sugarLabel(value: SugarLevel): string {
+  return sugarOptions.find((option) => option.value === value)?.label ?? value
+}
+
+export function strengthLabel(value: TeaStrength): string {
+  return strengthOptions.find((option) => option.value === value)?.label ?? value
+}

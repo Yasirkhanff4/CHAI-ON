@@ -1,5 +1,8 @@
-export type SugarLevel = 'none' | 'less' | 'normal' | 'extra'
-export type TeaStrength = 'light' | 'normal' | 'strong'
+export const SUGAR_LEVELS = ['none', 'less', 'normal', 'extra'] as const
+export type SugarLevel = (typeof SUGAR_LEVELS)[number]
+
+export const STRENGTH_LEVELS = ['light', 'normal', 'strong'] as const
+export type TeaStrength = (typeof STRENGTH_LEVELS)[number]
 
 export type OrderStatus =
   | 'NEW'
@@ -28,4 +31,24 @@ export interface Product {
 export interface MenuOption<T extends string> {
   value: T
   label: string
+}
+
+export interface CartItem {
+  /** Stable cart line id derived from product + customization */
+  id: string
+  productId: string
+  name: string
+  imageUrl: string
+  /** Verified unit price in PKR for this line */
+  unitPrice: number
+  quantity: number
+  sugar: SugarLevel
+  strength: TeaStrength
+}
+
+export interface CartTotals {
+  subtotal: number
+  deliveryCharge: number
+  total: number
+  itemCount: number
 }

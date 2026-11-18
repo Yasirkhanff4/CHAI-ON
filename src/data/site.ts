@@ -31,3 +31,18 @@ export const navLinks: NavLink[] = [
   { label: 'Track Order', to: '/track' },
   { label: 'Contact', to: '/contact' },
 ]
+
+/**
+ * Storefront pricing rules for Phase 2.
+ * These move into the Firestore `settings` document (managed from the admin
+ * panel) in a later phase.
+ */
+export const orderSettings = {
+  /** Flat delivery charge in PKR. 0 means free delivery within G-11 Markaz. */
+  deliveryCharge: 0,
+  /** Optional minimum order in PKR. 0 means there is no minimum. */
+  minimumOrder: 0,
+  /** Maximum cups a customer can add for one product/customization line. */
+  maxQuantityPerLine: 20,
+} as const
+

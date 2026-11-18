@@ -10,18 +10,21 @@ The product has exactly two panels: a **customer website** and a **secure admin 
 
 ## Current status
 
-**Phase 1 — complete.** Project setup, branding, navigation and a responsive homepage.
+**Phase 2 — complete.** Menu, tea customization and the cart are live.
 
 Live now:
 
 - Responsive brand shell (header, announcement bar, mobile drawer, footer)
 - Homepage: hero, trust strip, featured teas, office-delivery explainer, tea customization panel, contact cards, closing CTA
+- Menu page: Doodh Patti and Karak Chai with per-cup sugar (no/less/normal/extra) and strength (light/normal/strong) selection
+- Cart: quantity controls, line customization details, line prices, subtotal, delivery charge and total, remove/clear, cart badge in the header
+- Cart persists in `localStorage` (`chai-on:cart:v1`), is re-priced from the catalog on load, and silently drops unknown or unavailable products
 - Contact page with real address, hours, directions link and phone link
-- Account, tracking, menu, cart and admin routes reserved with honest "coming soon" screens
+- Checkout, confirmation, account, tracking and admin routes reserved with honest "coming soon" screens
 - 404 page, skip-to-content link, reduced-motion support, page titles
-- Production build, type-check and lint all passing
+- Production build, type-check and lint all passing; Lighthouse 100 accessibility / 100 best practices / 100 SEO on menu and cart
 
-Deliberately not built yet (later phases): menu/cart, checkout, Firebase, admin panel, tracking. All prices and product copy are launch defaults that will become admin-managed Firestore data.
+Deliberately not built yet (later phases): checkout, Firebase, admin panel, tracking. Cart prices are display values refreshed from the local catalog; they are not trusted for order creation — totals will be recalculated server-side in Phase 4. All prices and product copy are launch defaults that will become admin-managed Firestore data.
 
 ---
 
@@ -59,19 +62,23 @@ public/
 src/
   components/
     brand/Logo.tsx
+    cart/                  Cart line items, summary, toast
     contact/ContactCards.tsx
     home/                  Homepage sections (Hero, TrustStrip, ...)
     layout/                Header, Footer, SiteLayout, ScrollToTop
-    ui/                    Button, Container, SectionHeading, PageIntro
+    menu/                  Menu product card with sugar/strength controls
+    ui/                    Button, Container, SectionHeading, PageIntro, QuantityStepper
+  context/                 CartProvider + useCart
   data/
-    menu.ts                Featured products + sugar/strength options
-    site.ts                Business details + navigation
+    menu.ts                Products + sugar/strength options and labels
+    site.ts                Business details, navigation, order settings
   lib/
     buttonStyles.ts        Shared button styling for links and buttons
+    cart.ts                Cart line ids, totals, localStorage read/write
     format.ts              PKR formatter
     useDocumentTitle.ts
-  pages/                   Home, Contact, ComingSoon, NotFound
-  types/index.ts           Product, order status and customization types
+  pages/                   Home, Menu, Cart, Contact, ComingSoon, NotFound
+  types/index.ts           Product, cart, order status and customization types
   App.tsx                  Routes
   index.css                Tailwind theme and global styles
 ```
@@ -94,6 +101,8 @@ Product names, descriptions and prices live in **`src/data/menu.ts`**. The launc
 
 Adjust these values once the owner confirms the real prices. Both files will be superseded by Firestore `settings` / `products` in Phase 4–5.
 
+Cart pricing rules live in `orderSettings` in `src/data/site.ts`: flat delivery charge (currently free), optional minimum order, and the maximum cups per product/customization line. These move to the admin-managed Firestore `settings` document in a later phase.
+
 ---
 
 ## Photography
@@ -114,8 +123,8 @@ Photos are stored locally under `public/images/` so the site has no runtime depe
 | Phase | Scope | Status |
 | --- | --- | --- |
 | 1 | Setup, branding, navigation, responsive homepage | Done |
-| 2 | Menu, product cards, customization, cart | Next |
-| 3 | Checkout, guest ordering, confirmation | Pending |
+| 2 | Menu, product cards, customization, cart | Done |
+| 3 | Checkout, guest ordering, confirmation | Next |
 | 4 | Firebase setup, customer auth, secure order storage | Pending |
 | 5 | Admin login, dashboard, order management | Pending |
 | 6 | Order tracking, delivery management in admin | Pending |

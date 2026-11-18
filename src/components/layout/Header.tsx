@@ -3,11 +3,13 @@ import { MapPin, Menu as MenuIcon, Phone, ShoppingBag, X } from 'lucide-react'
 import { Link, NavLink } from 'react-router-dom'
 import { Logo } from '@/components/brand/Logo'
 import { Container } from '@/components/ui/Container'
+import { useCart } from '@/context/cartContext'
 import { buttonClasses } from '@/lib/buttonStyles'
 import { business, navLinks } from '@/data/site'
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const { totals } = useCart()
   const closeButtonRef = useRef<HTMLButtonElement>(null)
   const drawerRef = useRef<HTMLDivElement>(null)
 
@@ -103,10 +105,22 @@ export function Header() {
             </Link>
             <Link
               to="/cart"
-              aria-label="View cart"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-forest-900/12 bg-cream-50/60 text-forest-900 transition hover:border-forest-900/25 hover:bg-cream-50"
+              aria-label={
+                totals.itemCount > 0
+                  ? `View cart, ${totals.itemCount} ${totals.itemCount === 1 ? 'item' : 'items'}`
+                  : 'View cart'
+              }
+              className="relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-forest-900/12 bg-cream-50/60 text-forest-900 transition hover:border-forest-900/25 hover:bg-cream-50"
             >
               <ShoppingBag className="h-[18px] w-[18px]" aria-hidden="true" />
+              {totals.itemCount > 0 && (
+                <span
+                  aria-hidden="true"
+                  className="absolute -right-1.5 -top-1.5 grid h-5 min-w-5 place-items-center rounded-full bg-forest-800 px-1 text-[10px] font-semibold leading-none text-cream-50 ring-2 ring-cream-100"
+                >
+                  {totals.itemCount > 99 ? '99+' : totals.itemCount}
+                </span>
+              )}
             </Link>
             <button
               type="button"
