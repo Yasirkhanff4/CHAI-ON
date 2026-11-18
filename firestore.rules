@@ -28,6 +28,25 @@ service cloud.firestore {
       return request.resource.data.diff(resource.data).affectedKeys();
     }
 
+    /** Mirrors OrderStatus in src/types and functions/src/order.ts. */
+    function isOrderStatus(value) {
+      return value in [
+        'NEW',
+        'ACCEPTED',
+        'PREPARING',
+        'READY',
+        'OUT_FOR_DELIVERY',
+        'DELIVERED',
+        'DELIVERY_FAILED',
+        'REJECTED',
+        'CANCELLED'
+      ];
+    }
+
+    function isPaymentStatus(value) {
+      return value in ['UNPAID', 'PAID'];
+    }
+
     // ------------------------------------------------------------------ users
     // A customer may read and edit only their own profile, and may never set
     // their own role. Roles are assigned with custom claims by a SUPER_ADMIN.
@@ -52,11 +71,8 @@ service cloud.firestore {
         && request.resource.data.phone is string
         && request.resource.data.phone.size() <= 20;
 
-      // Only a super admin can change a stored role (claims are set by function).
-      allow update: if isSuperAdmin()
-        && changedKeys().hasOnly(['role', 'updatedAt'])
-        && request.resource.data.role in ['CUSTOMER', 'ADMIN', 'SUPER_ADMIN', 'DELIVERY_STAFF'];
-
+      // Roles live in custom claims (see the setUserRole Cloud Function), so
+      // there is deliberately no client path that can write the role field.
       allow delete: if isSuperAdmin();
     }
 
@@ -77,10 +93,12 @@ service cloud.firestore {
     }
 
     // --------------------------------------------------------------- settings
-    // Storefront settings are public (delivery charge, hours). Only staff write.
+    // Only the single store document is public (delivery charge, hours).
+    // Only staff write it, and it may never be deleted.
     match /settings/{settingId} {
-      allow read: if true;
-      allow write: if isAdmin()
+      allow read: if settingId == 'store';
+      allow create, update: if isAdmin()
+        && settingId == 'store'
         && request.resource.data.deliveryCharge is number
         && request.resource.data.deliveryCharge >= 0
         && request.resource.data.minimumOrder is number
@@ -100,7 +118,9 @@ service cloud.firestore {
       allow create, delete: if false;
 
       // Admins may move an order through the status flow, assign delivery
-      // staff and record a manual payment confirmation.
+      // staff and record a manual payment confirmation. Only known status
+      // values are accepted, so a stray write cannot park an order in a
+      // state the UI and tracking screens cannot render.
       allow update: if isAdmin()
         && changedKeys().hasOnly([
           'orderStatus',
@@ -110,7 +130,9 @@ service cloud.firestore {
           'deliveryNotes',
           'statusHistory',
           'updatedAt'
-        ]);
+        ])
+        && isOrderStatus(request.resource.data.orderStatus)
+        && isPaymentStatus(request.resource.data.paymentStatus);
 
       // Delivery staff may only touch their own assigned orders, and only
       // delivery statuses.

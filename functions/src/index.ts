@@ -104,6 +104,17 @@ function clientLog(error: unknown): Record<string, string> {
 }
 
 /**
+ * Trusted client IP, taken from the runtime socket rather than the
+ * caller-controlled X-Forwarded-For header. Returns null when the runtime
+ * cannot supply one, so callers can skip the IP limit instead of lumping
+ * every customer into one shared bucket.
+ */
+function trustedClientIp(request: { rawRequest?: { ip?: string } }): string | null {
+  const ip = request.rawRequest?.ip?.trim()
+  return ip ? ip : null
+}
+
+/**
  * Trusted order creation (guest or signed-in).
  * Prices, availability, delivery charge and totals all come from Firestore.
  */
@@ -134,9 +145,16 @@ export const createOrder = onCall(CALL_OPTIONS, async (request) => {
   const uid = request.auth?.uid ?? null
   const localPhone = normalizePhone(details.phone)
   const requestDocId = `${uid ?? 'guest'}_${requestKey}`
+  const ip = trustedClientIp(request)
 
   try {
     await enforceRateLimit(rateLimitKey('order', uid ?? localPhone), 12, 60 * 60 * 1000)
+    // Shared office connections can submit several legitimate orders, so this
+    // per-IP ceiling is looser than the per-phone one and only applies when a
+    // real IP is available.
+    if (ip) {
+      await enforceRateLimit(rateLimitKey('order_ip', ip), 60, 60 * 60 * 1000)
+    }
 
     const result = await db.runTransaction(async (tx) => {
       const requestRef = db.doc(`orderRequests/${requestDocId}`)
@@ -302,13 +320,12 @@ export const trackOrder = onCall(CALL_OPTIONS, async (request) => {
     throw new HttpsError('invalid-argument', 'Enter your order number and phone number.')
   }
 
-  const ip =
-    (request.rawRequest?.headers?.['x-forwarded-for'] as string | undefined)?.split(',')[0]?.trim() ??
-    request.rawRequest?.ip ??
-    'unknown'
+  const ip = trustedClientIp(request)
 
   try {
-    await enforceRateLimit(rateLimitKey('track_ip', ip), 30, 60 * 60 * 1000)
+    if (ip) {
+      await enforceRateLimit(rateLimitKey('track_ip', ip), 30, 60 * 60 * 1000)
+    }
     await enforceRateLimit(rateLimitKey('track_phone', phone), 40, 60 * 60 * 1000)
 
     const snapshot = await db.doc(`orders/${orderNumber}`).get()
