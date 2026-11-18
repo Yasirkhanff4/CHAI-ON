@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Staff-only area. Customer accounts remain crawlable for support pages.
+Disallow: /admin
