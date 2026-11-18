@@ -26,6 +26,10 @@ export interface Product {
   imagePosition?: string
   badge?: string
   isAvailable: boolean
+  /** Hidden from the public storefront when false. */
+  isActive?: boolean
+  /** Ordering weight in the menu; lower comes first. */
+  sortOrder?: number
 }
 
 export interface MenuOption<T extends string> {

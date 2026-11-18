@@ -63,7 +63,7 @@ export function CartPage() {
                   </h2>
                   <button
                     type="button"
-                    onClick={clearCart}
+                    onClick={() => clearCart()}
                     className="rounded-full px-2.5 py-1.5 text-[12px] font-medium text-forest-900/70 transition hover:bg-cream-200/70 hover:text-forest-900"
                   >
                     Clear cart

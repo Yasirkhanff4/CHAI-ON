@@ -1,0 +1,137 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------------------------------------------------------------- helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function role() {
+      return request.auth.token.get('role', 'CUSTOMER');
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (role() == 'ADMIN' || role() == 'SUPER_ADMIN');
+    }
+
+    function isSuperAdmin() {
+      return isSignedIn() && role() == 'SUPER_ADMIN';
+    }
+
+    function isDelivery() {
+      return isSignedIn() && role() == 'DELIVERY_STAFF';
+    }
+
+    function changedKeys() {
+      return request.resource.data.diff(resource.data).affectedKeys();
+    }
+
+    // ------------------------------------------------------------------ users
+    // A customer may read and edit only their own profile, and may never set
+    // their own role. Roles are assigned with custom claims by a SUPER_ADMIN.
+    match /users/{uid} {
+      allow read: if isSignedIn() && (request.auth.uid == uid || isAdmin());
+
+      allow create: if isSignedIn()
+        && request.auth.uid == uid
+        && request.resource.data.uid == uid
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.role == 'CUSTOMER'
+        && request.resource.data.name is string
+        && request.resource.data.name.size() >= 2
+        && request.resource.data.name.size() <= 60;
+
+      allow update: if isSignedIn()
+        && request.auth.uid == uid
+        && changedKeys().hasOnly(['name', 'phone', 'updatedAt'])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() >= 2
+        && request.resource.data.name.size() <= 60
+        && request.resource.data.phone is string
+        && request.resource.data.phone.size() <= 20;
+
+      // Only a super admin can change a stored role (claims are set by function).
+      allow update: if isSuperAdmin()
+        && changedKeys().hasOnly(['role', 'updatedAt'])
+        && request.resource.data.role in ['CUSTOMER', 'ADMIN', 'SUPER_ADMIN', 'DELIVERY_STAFF'];
+
+      allow delete: if isSuperAdmin();
+    }
+
+    // --------------------------------------------------------------- products
+    // Public visitors see active products only. Staff manage the catalog.
+    match /products/{productId} {
+      allow read: if isAdmin() || (resource != null && resource.data.isActive == true);
+      allow create, update: if isAdmin()
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 80
+        && request.resource.data.price is number
+        && request.resource.data.price >= 0
+        && request.resource.data.price <= 100000
+        && request.resource.data.isAvailable is bool
+        && request.resource.data.isActive is bool;
+      allow delete: if isSuperAdmin();
+    }
+
+    // --------------------------------------------------------------- settings
+    // Storefront settings are public (delivery charge, hours). Only staff write.
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin()
+        && request.resource.data.deliveryCharge is number
+        && request.resource.data.deliveryCharge >= 0
+        && request.resource.data.minimumOrder is number
+        && request.resource.data.minimumOrder >= 0;
+    }
+
+    // ----------------------------------------------------------------- orders
+    // Orders are created only by the trusted Cloud Function (Admin SDK), which
+    // bypasses these rules. No client may create or delete an order.
+    match /orders/{orderNumber} {
+      allow read: if isSignedIn() && (
+        resource.data.customerId == request.auth.uid
+        || isAdmin()
+        || (isDelivery() && resource.data.assignedTo == request.auth.uid)
+      );
+
+      allow create, delete: if false;
+
+      // Admins may move an order through the status flow, assign delivery
+      // staff and record a manual payment confirmation.
+      allow update: if isAdmin()
+        && changedKeys().hasOnly([
+          'orderStatus',
+          'paymentStatus',
+          'assignedTo',
+          'assignedToName',
+          'deliveryNotes',
+          'statusHistory',
+          'updatedAt'
+        ]);
+
+      // Delivery staff may only touch their own assigned orders, and only
+      // delivery statuses.
+      allow update: if isDelivery()
+        && resource.data.assignedTo == request.auth.uid
+        && changedKeys().hasOnly(['orderStatus', 'deliveryNotes', 'statusHistory', 'updatedAt'])
+        && request.resource.data.orderStatus in ['OUT_FOR_DELIVERY', 'DELIVERED', 'DELIVERY_FAILED'];
+    }
+
+    // Internal bookkeeping (idempotency keys, rate limits) is Admin SDK only.
+    match /orderRequests/{requestId} {
+      allow read, write: if false;
+    }
+
+    match /rateLimits/{key} {
+      allow read, write: if false;
+    }
+
+    // Deny everything not matched above.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

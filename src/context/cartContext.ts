@@ -18,7 +18,8 @@ export type CartContextValue = {
   ) => void
   updateQuantity: (lineId: string, quantity: number) => void
   removeItem: (lineId: string) => void
-  clearCart: () => void
+  /** `silent` drops the "Cart cleared" toast (used after a successful order). */
+  clearCart: (options?: { silent?: boolean }) => void
   dismissNotice: () => void
 }
 

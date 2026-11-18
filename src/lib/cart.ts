@@ -38,25 +38,28 @@ export function createCartLine(
   }
 }
 
-export function calculateCartTotals(items: CartItem[]): CartTotals {
+export function calculateCartTotals(
+  items: CartItem[],
+  deliveryCharge: number = orderSettings.deliveryCharge,
+): CartTotals {
   const subtotal = items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0)
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0)
-  const deliveryCharge = items.length > 0 ? orderSettings.deliveryCharge : 0
+  const flatDelivery = items.length > 0 ? Math.max(0, Math.trunc(deliveryCharge)) : 0
 
   return {
     subtotal,
-    deliveryCharge,
-    total: subtotal + deliveryCharge,
+    deliveryCharge: flatDelivery,
+    total: subtotal + flatDelivery,
     itemCount,
   }
 }
 
 /**
- * Reads the cart from localStorage and reconciles it with the current catalog:
+ * Reads the cart from localStorage and reconciles it with the catalog:
  * unknown/unavailable products are dropped and prices are refreshed from the
  * product data so a stale cart can never show an outdated price.
  */
-export function readStoredCart(): CartItem[] {
+export function readStoredCart(products: Product[] = featuredProducts): CartItem[] {
   if (typeof window === 'undefined') return []
 
   try {
@@ -66,7 +69,7 @@ export function readStoredCart(): CartItem[] {
     const parsed: unknown = JSON.parse(raw)
     if (!Array.isArray(parsed)) return []
 
-    const catalog = new Map(featuredProducts.map((product) => [product.id, product]))
+    const catalog = new Map(products.map((product) => [product.id, product]))
     const merged = new Map<string, CartItem>()
 
     for (const entry of parsed) {

@@ -4,9 +4,10 @@ import { TeaCard } from '@/components/home/TeaCard'
 import { buttonClasses } from '@/lib/buttonStyles'
 import { Container } from '@/components/ui/Container'
 import { SectionHeading } from '@/components/ui/SectionHeading'
-import { featuredProducts } from '@/data/menu'
+import { useCatalog } from '@/context/catalogContext'
 
 export function PopularTeas() {
+  const { products } = useCatalog()
   return (
     <section id="menu-preview" className="py-20 sm:py-24 lg:py-28">
       <Container>
@@ -26,7 +27,7 @@ export function PopularTeas() {
         </div>
 
         <div className="mt-10 grid gap-5 sm:mt-12 sm:grid-cols-2 sm:gap-6 lg:gap-8">
-          {featuredProducts.map((product) => (
+          {products.map((product) => (
             <TeaCard key={product.id} product={product} />
           ))}
         </div>

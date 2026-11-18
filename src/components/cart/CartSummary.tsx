@@ -1,14 +1,16 @@
 import { ArrowRight, ShieldCheck, ShoppingBag, Truck } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useCart } from '@/context/cartContext'
-import { business, orderSettings } from '@/data/site'
+import { useStoreSettings } from '@/context/settingsContext'
+import { business } from '@/data/site'
 import { formatPKR } from '@/lib/format'
 import { buttonClasses } from '@/lib/buttonStyles'
 
 export function CartSummary() {
   const { totals } = useCart()
-  const belowMinimum = totals.subtotal < orderSettings.minimumOrder
-  const shortfall = orderSettings.minimumOrder - totals.subtotal
+  const { settings } = useStoreSettings()
+  const belowMinimum = totals.subtotal < settings.minimumOrder
+  const shortfall = settings.minimumOrder - totals.subtotal
 
   return (
     <aside
@@ -51,7 +53,7 @@ export function CartSummary() {
         {belowMinimum && (
           <p className="mt-4 rounded-xl bg-gold-100 px-3.5 py-3 text-[12.5px] leading-relaxed text-forest-900/80">
             Add {formatPKR(shortfall)} more to reach the minimum order of{' '}
-            {formatPKR(orderSettings.minimumOrder)}.
+            {formatPKR(settings.minimumOrder)}.
           </p>
         )}
 

@@ -1,0 +1,23 @@
+{
+  "name": "chai-on-functions",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Trusted order creation, guest tracking and role provisioning for CHAI ON.",
+  "main": "lib/index.js",
+  "engines": {
+    "node": "20"
+  },
+  "scripts": {
+    "build": "tsc",
+    "serve": "npm run build && firebase emulators:start --only functions,firestore,auth",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.0.2",
+    "firebase-functions": "^6.3.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}

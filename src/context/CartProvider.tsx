@@ -2,6 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import { CartContext } from '@/context/cartContext'
 import type { CartNotice } from '@/context/cartContext'
+import { useCatalog } from '@/context/catalogContext'
+import { useStoreSettings } from '@/context/settingsContext'
+import { featuredProducts } from '@/data/menu'
 import { orderSettings } from '@/data/site'
 import {
   calculateCartTotals,
@@ -17,7 +20,9 @@ type CartProviderProps = {
 }
 
 export function CartProvider({ children }: CartProviderProps) {
-  const [items, setItems] = useState<CartItem[]>(() => readStoredCart())
+  const { products } = useCatalog()
+  const { settings } = useStoreSettings()
+  const [items, setItems] = useState<CartItem[]>(() => readStoredCart(featuredProducts))
   const [notice, setNotice] = useState<CartNotice | null>(null)
   const noticeCounter = useRef(0)
   const noticeTimer = useRef<number | null>(null)
@@ -31,6 +36,42 @@ export function CartProvider({ children }: CartProviderProps) {
     itemsRef.current = items
     writeStoredCart(items)
   }, [items])
+
+  // Keep a saved cart in step with admin-managed products and prices.
+  useEffect(() => {
+    setItems((current) => {
+      let changed = false
+
+      const next = current.flatMap((item) => {
+        const product = products.find((entry) => entry.id === item.productId)
+
+        if (!product || !product.isAvailable || product.isActive === false) {
+          changed = true
+          return []
+        }
+
+        if (
+          product.price !== item.unitPrice ||
+          product.name !== item.name ||
+          product.imageUrl !== item.imageUrl
+        ) {
+          changed = true
+          return [
+            {
+              ...item,
+              unitPrice: product.price,
+              name: product.name,
+              imageUrl: product.imageUrl,
+            },
+          ]
+        }
+
+        return [item]
+      })
+
+      return changed ? next : current
+    })
+  }, [products])
 
   useEffect(() => {
     return () => {
@@ -123,13 +164,19 @@ export function CartProvider({ children }: CartProviderProps) {
     [commitItems, showNotice],
   )
 
-  const clearCart = useCallback(() => {
-    if (itemsRef.current.length === 0) return
-    commitItems([])
-    showNotice('Cart cleared.')
-  }, [commitItems, showNotice])
+  const clearCart = useCallback(
+    (options?: { silent?: boolean }) => {
+      if (itemsRef.current.length === 0) return
+      commitItems([])
+      if (!options?.silent) showNotice('Cart cleared.')
+    },
+    [commitItems, showNotice],
+  )
 
-  const totals = useMemo(() => calculateCartTotals(items), [items])
+  const totals = useMemo(
+    () => calculateCartTotals(items, settings.deliveryCharge),
+    [items, settings.deliveryCharge],
+  )
 
   const value = useMemo(
     () => ({

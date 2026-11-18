@@ -1,9 +1,10 @@
-import { Banknote, Clock, Truck } from 'lucide-react'
+import { AlertCircle, Banknote, Clock, Truck } from 'lucide-react'
 import { MenuProductCard } from '@/components/menu/MenuProductCard'
 import { Container } from '@/components/ui/Container'
 import { PageIntro } from '@/components/ui/PageIntro'
-import { featuredProducts } from '@/data/menu'
-import { business, orderSettings } from '@/data/site'
+import { useCatalog } from '@/context/catalogContext'
+import { useStoreSettings } from '@/context/settingsContext'
+import { business } from '@/data/site'
 import { useDocumentTitle } from '@/lib/useDocumentTitle'
 
 const perks = [
@@ -26,6 +27,8 @@ const perks = [
 
 export function MenuPage() {
   useDocumentTitle('Menu — CHAI ON')
+  const { products, loading, error } = useCatalog()
+  const { settings } = useStoreSettings()
 
   return (
     <>
@@ -37,11 +40,33 @@ export function MenuPage() {
 
       <section aria-label="Tea menu" className="py-12 sm:py-16">
         <Container>
-          <div className="grid gap-6 md:grid-cols-2 lg:gap-8">
-            {featuredProducts.map((product) => (
-              <MenuProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          {error && (
+            <p
+              role="status"
+              className="mb-5 flex items-start gap-2 rounded-2xl border border-gold-400/50 bg-gold-100 px-4 py-3 text-[12.5px] leading-relaxed text-forest-900/80"
+            >
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-gold-700" aria-hidden="true" />
+              We could not refresh the live menu, so you are seeing our standard teas. Call us if a
+              price looks wrong.
+            </p>
+          )}
+
+          {loading ? (
+            <div className="grid gap-6 md:grid-cols-2 lg:gap-8" aria-hidden="true">
+              {[0, 1].map((key) => (
+                <div
+                  key={key}
+                  className="h-96 animate-pulse rounded-[28px] border border-cream-300/60 bg-cream-200/50"
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="grid gap-6 md:grid-cols-2 lg:gap-8">
+              {products.map((product) => (
+                <MenuProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          )}
 
           <ul className="mt-10 grid gap-3 sm:grid-cols-3">
             {perks.map((perk) => (
@@ -64,9 +89,9 @@ export function MenuPage() {
 
           <p className="mt-8 text-center text-[12px] leading-relaxed text-forest-900/70">
             Prices are in Pakistani Rupees.
-            {orderSettings.deliveryCharge === 0
+            {settings.deliveryCharge === 0
               ? ' Delivery is free within the delivery area.'
-              : ` Delivery is ${orderSettings.deliveryCharge} PKR.`}{' '}
+              : ` Delivery is Rs ${settings.deliveryCharge}.`}{' '}
             Call{' '}
             <a
               href={business.phoneHref}

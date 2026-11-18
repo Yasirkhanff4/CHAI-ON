@@ -12,6 +12,21 @@ dist
 dist-ssr
 *.local
 
+# Firebase
+database.rules.json
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+functions/lib
+.emulator-data
+
+# Local secrets — never commit
+.env
+.env.*
+!.env.example
+serviceAccount*.json
+*savedKey*.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

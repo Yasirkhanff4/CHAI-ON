@@ -2,11 +2,12 @@ import { ArrowRight, Check, Coffee, MapPin } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { buttonClasses } from '@/lib/buttonStyles'
 import { Container } from '@/components/ui/Container'
-import { featuredProducts } from '@/data/menu'
+import { useCatalog } from '@/context/catalogContext'
 import { formatPKR } from '@/lib/format'
 
 export function Hero() {
-  const houseFavourite = featuredProducts[1]
+  const { products } = useCatalog()
+  const houseFavourite = products.find((product) => product.id === 'karak-chai') ?? products[0]
 
   return (
     <section className="relative overflow-hidden">
