@@ -451,6 +451,11 @@ export async function trackOrderRequest(orderNumber: string): Promise<TrackedOrd
   }
 
   const auth = getFirebaseAuth()
+  // The session Firebase restores from persistence arrives asynchronously; read
+  // it only once the restore has settled, otherwise a guest's own order looks
+  // like it belongs to another device.
+  await auth.authStateReady()
+
   if (!auth.currentUser) {
     throw new OrderError('VALIDATION', NOT_ON_THIS_DEVICE)
   }

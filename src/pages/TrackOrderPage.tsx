@@ -13,11 +13,13 @@ import { buttonClasses } from '@/lib/buttonStyles'
 import { formatDateTime, formatPKR } from '@/lib/format'
 import { normalizeOrderNumber } from '@/lib/orders/orderNumber'
 import { trackOrderRequest } from '@/services/orders'
+import { useAuth } from '@/context/authContext'
 import { useDocumentTitle } from '@/lib/useDocumentTitle'
 import type { TrackedOrder } from '@/services/orders'
 
 export function TrackOrderPage() {
   useDocumentTitle('Track your order — CHAI ON')
+  const { status } = useAuth()
 
   const [orderNumber, setOrderNumber] = useState('')
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
@@ -98,8 +100,8 @@ export function TrackOrderPage() {
 
               <button
                 type="submit"
-                disabled={submitting}
-                aria-busy={submitting}
+                disabled={submitting || status === 'loading'}
+                aria-busy={submitting || status === 'loading'}
                 className={buttonClasses('primary', 'lg', 'mt-5 w-full')}
               >
                 {submitting ? 'Looking up…' : 'Track order'}

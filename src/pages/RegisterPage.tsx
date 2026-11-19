@@ -132,7 +132,7 @@ export function RegisterPage() {
 
         <button
           type="submit"
-          disabled={submitting || status === 'unconfigured'}
+          disabled={submitting || status === 'unconfigured' || status === 'loading'}
           aria-busy={submitting}
           className={buttonClasses('primary', 'lg', 'w-full')}
         >

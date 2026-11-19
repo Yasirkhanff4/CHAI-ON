@@ -122,6 +122,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (!isFirebaseConfigured) throw new BackendUnavailableError()
 
       const auth = getFirebaseAuth()
+      // Firebase restores a persisted (guest) session asynchronously. Waiting for
+      // that restore is what decides between linking the guest and creating a
+      // brand-new account — skipping it orphans the guest's orders.
+      await auth.authStateReady()
       const trimmedName = name.trim()
       const trimmedEmail = email.trim().toLowerCase()
       const currentUser = auth.currentUser
