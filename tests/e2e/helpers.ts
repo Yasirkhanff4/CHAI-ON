@@ -68,8 +68,6 @@ const STATE_PATH = 'test-results/e2e-state.json'
 export type RunState = {
   orderNumber?: string
   total?: number
-  email?: string
-  password?: string
 }
 
 export function readState(): RunState {
@@ -84,13 +82,4 @@ export function writeState(patch: RunState) {
   const next = { ...readState(), ...patch }
   mkdirSync(dirname(STATE_PATH), { recursive: true })
   writeFileSync(STATE_PATH, JSON.stringify(next, null, 2))
-}
-
-/** Distinct test account per run so the suite can be re-run safely. */
-export function newCredentials() {
-  const stamp = Date.now().toString(36)
-  return {
-    email: `chai.on.e2e.${stamp}@example.com`,
-    password: 'ChaiOnE2E!23',
-  }
 }

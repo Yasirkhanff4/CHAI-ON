@@ -131,9 +131,10 @@ GOOGLE_APPLICATION_CREDENTIALS=./serviceAccount.json \
 - `--email` accepts any real account email (nothing is hardcoded); use the owner's.
 - The script creates the account **without a password** and writes the role as a
   Firebase **custom claim** plus the `users/{uid}` document.
-- Tell the owner to open `/admin/login`, pick **Customer login → Forgot
-  password** (or `/forgot-password`), set a password, then sign in at
-  `/admin/login`.
+- Tell the owner to open `/admin/login`, choose **Forgot password?** (or
+  `/forgot-password`), set a password, then sign in at `/admin/login`.
+  Password reset is the only self-service auth screen; there are no customer
+  accounts.
 - Roles: `SUPER_ADMIN`, `ADMIN`, `DELIVERY_STAFF`, `CUSTOMER`.
 - Only this script (Admin SDK, run locally) can change a role. Nothing in the
   browser can grant admin access; there is no public admin signup.
@@ -167,28 +168,26 @@ Customer side:
 - [ ] Menu shows live Firestore products and prices.
 - [ ] Add to cart, change quantity, change sugar/strength.
 - [ ] Guest checkout succeeds with no account; order number appears.
-- [ ] Guest registers right after ordering → the order appears under My Orders
-      (same browser, so the anonymous session is still active).
 - [ ] "Order on WhatsApp" opens `wa.me/923291018591` with the cart items and
       total pre-filled.
 - [ ] Confirmation page shows items, address, COD and Track order.
 - [ ] Cart is empty afterwards.
 - [ ] Disconnect the network mid-checkout → clear error, cart preserved; retry
       creates only one order.
-- [ ] Registered customer: sign up, sign out, sign in, forgot password.
-- [ ] Account page lists the customer's own orders; profile edits save.
 - [ ] Track order with the order number works in the same browser/session; from
       another browser it shows "Order not found on this device. Contact us on
       WhatsApp." and the WhatsApp button opens the chat.
 - [ ] Confirmation page shows the order number and the Track button.
-- [ ] /account while signed out redirects to /login.
+- [ ] /login, /register and /account show the 404 page (customer accounts were
+      removed; checkout is guest-only).
+- [ ] The header, mobile menu and footer have no account/login links.
 - [ ] Settings change (e.g. delivery charge) appears on the site after refresh.
 - [ ] Ordering paused → checkout explains and the button is disabled.
 
 Admin side:
 
 - [ ] /admin redirects to /admin/login when signed out.
-- [ ] A customer account is refused admin access.
+- [ ] A non-staff account is refused admin access.
 - [ ] Dashboard shows real counts and today's sales.
 - [ ] Status flow: accept → preparing → ready → out for delivery → delivered.
 - [ ] Invalid transitions are not offered.
@@ -247,9 +246,10 @@ It runs entirely on the emulator (Java required) and does not touch production.
   WhatsApp. There is no phone-number lookup and no public order-by-number read.
 - Customers can read only their own orders (`customerId == uid`), and a missing
   order number reads as null so checkout can pick an unused number.
-- Profiles can only be created/read/updated by their owner with a **real
-  (non-anonymous) email token**; the role is always `CUSTOMER` and cannot be
-  changed by the user. Anonymous sessions can own orders but not profiles.
+- Profile documents (`users/{uid}`) are owner-only and need a **real
+  (non-anonymous) email token**. Customer accounts were removed, so the only
+  profiles are the staff accounts created by the provisioning script; anonymous
+  guest sessions can own orders but not profiles.
 - Admin and delivery roles live in Firebase custom claims, enforced by Firestore
   rules, not by the UI.
 - Delivery staff see only orders where `assignedTo == uid`, and can only set

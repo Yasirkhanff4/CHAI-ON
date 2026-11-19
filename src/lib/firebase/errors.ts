@@ -6,10 +6,6 @@ const AUTH_MESSAGES: Record<string, string> = {
   'auth/invalid-email': 'Enter a valid email address.',
   'auth/user-not-found': 'No account uses that email address.',
   'auth/wrong-password': 'That password is not correct.',
-  'auth/email-already-in-use': 'An account already uses that email. Try logging in instead.',
-  'auth/credential-already-in-use':
-    'An account already uses that email. Log in instead — your guest orders stay available with order tracking.',
-  'auth/provider-already-linked': 'This account already has a password. Try logging in instead.',
   'auth/admin-restricted-operation':
     'Guest sessions are disabled for this project. Enable Anonymous sign-in in Firebase Authentication.',
   'auth/weak-password': 'Choose a stronger password — at least 6 characters.',

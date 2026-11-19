@@ -135,12 +135,6 @@ export function AdminLoginPage() {
             </form>
 
             <p className="mt-5 border-t border-cream-300/70 pt-4 text-center text-[11.5px] text-forest-900/60">
-              <Link to="/login" className="font-medium text-forest-800 hover:text-forest-600">
-                Customer login
-              </Link>
-              <span className="mx-2" aria-hidden="true">
-                ·
-              </span>
               <Link to="/" className="font-medium text-forest-800 hover:text-forest-600">
                 Back to CHAI ON
               </Link>

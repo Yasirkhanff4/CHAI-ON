@@ -1,17 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 import {
-  EmailAuthProvider,
-  createUserWithEmailAndPassword,
-  linkWithCredential,
   onAuthStateChanged,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signOut,
-  updateProfile as updateAuthProfile,
 } from 'firebase/auth'
 import type { User } from 'firebase/auth'
-import { doc, getDoc, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
+import { doc, getDoc } from 'firebase/firestore'
 import { AuthContext, isAdminRole, isStaffRole } from '@/context/authContext'
 import type { AuthProfile, AuthStatus, Role } from '@/context/authContext'
 import { BackendUnavailableError, getDb, getFirebaseAuth, isFirebaseConfigured } from '@/lib/firebase/config'
@@ -29,8 +25,8 @@ type AuthProviderProps = {
  * document supplies the display name and phone number.
  *
  * A guest who checks out gets a short-lived anonymous session so the order has
- * an owner. Registering while that session is active links the email/password
- * credential to the same uid, so guest orders stay in the new account.
+ * an owner. There are no customer accounts: guests order as guests, track on the
+ * same device, and fall back to WhatsApp everywhere else.
  */
 export function AuthProvider({ children }: AuthProviderProps) {
   const [status, setStatus] = useState<AuthStatus>(isFirebaseConfigured ? 'loading' : 'unconfigured')
@@ -117,51 +113,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return unsubscribe
   }, [loadProfile])
 
-  const register = useCallback(
-    async ({ name, email, password }: { name: string; email: string; password: string }) => {
-      if (!isFirebaseConfigured) throw new BackendUnavailableError()
-
-      const auth = getFirebaseAuth()
-      // Firebase restores a persisted (guest) session asynchronously. Waiting for
-      // that restore is what decides between linking the guest and creating a
-      // brand-new account — skipping it orphans the guest's orders.
-      await auth.authStateReady()
-      const trimmedName = name.trim()
-      const trimmedEmail = email.trim().toLowerCase()
-      const currentUser = auth.currentUser
-
-      let user: User
-
-      if (currentUser?.isAnonymous) {
-        // Upgrade the guest session in place: same uid, same order history.
-        const credential = EmailAuthProvider.credential(trimmedEmail, password)
-        const linked = await linkWithCredential(currentUser, credential)
-        user = linked.user
-      } else {
-        const created = await createUserWithEmailAndPassword(auth, trimmedEmail, password)
-        user = created.user
-      }
-
-      await updateAuthProfile(user, { displayName: trimmedName })
-      await user.getIdToken(true)
-
-      // The default role is set here once; rules reject any other role value
-      // and no customer can escalate it later.
-      await setDoc(doc(getDb(), 'users', user.uid), {
-        uid: user.uid,
-        name: trimmedName,
-        email: user.email ?? trimmedEmail,
-        phone: '',
-        role: 'CUSTOMER',
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      })
-
-      await loadProfile(user)
-    },
-    [loadProfile],
-  )
-
   const login = useCallback(
     async (email: string, password: string): Promise<AuthProfile> => {
       if (!isFirebaseConfigured) throw new BackendUnavailableError()
@@ -188,47 +139,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
     await sendPasswordResetEmail(getFirebaseAuth(), email.trim())
   }, [])
 
-  const updateProfile = useCallback(
-    async ({ name, phone }: { name: string; phone: string }) => {
-      if (!isFirebaseConfigured || !profile || profile.isAnonymous) throw new BackendUnavailableError()
-
-      await updateDoc(doc(getDb(), 'users', profile.uid), {
-        name: name.trim(),
-        phone: phone.trim(),
-        updatedAt: serverTimestamp(),
-      })
-
-      const fbUser = getFirebaseAuth().currentUser
-      if (fbUser) await updateAuthProfile(fbUser, { displayName: name.trim() })
-
-      setProfile((current) => (current ? { ...current, name: name.trim(), phone: phone.trim() } : current))
-    },
-    [profile],
-  )
-
-  const refresh = useCallback(async () => {
-    if (!isFirebaseConfigured) return
-    await loadProfile(getFirebaseAuth().currentUser)
-  }, [loadProfile])
-
   const value = useMemo(
     () => ({
       status,
       profile,
       authError,
-      isSignedIn: Boolean(profile && !profile.isAnonymous),
       isAnonymous: Boolean(profile?.isAnonymous),
       isAdmin: isAdminRole(profile?.role),
       isSuperAdmin: profile?.role === 'SUPER_ADMIN',
       isDeliveryStaff: isStaffRole(profile?.role) && profile?.role === 'DELIVERY_STAFF',
-      register,
       login,
       logout,
       resetPassword,
-      updateProfile,
-      refresh,
     }),
-    [status, profile, authError, register, login, logout, resetPassword, updateProfile, refresh],
+    [status, profile, authError, login, logout, resetPassword],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

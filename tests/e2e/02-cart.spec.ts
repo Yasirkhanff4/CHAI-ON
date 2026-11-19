@@ -32,7 +32,14 @@ async function lineAmounts(page: Page): Promise<number[]> {
 }
 
 async function total(page: Page): Promise<number> {
-  return parsePKR(await summary(page).locator('p.font-display').textContent())
+  // Structure-based so class names can change without breaking the check: the
+  // amount is the sibling of the "Total" label inside the summary.
+  return parsePKR(
+    await summary(page)
+      .locator('p:text-is("Total")')
+      .locator('xpath=following-sibling::p[1]')
+      .textContent(),
+  )
 }
 
 test('cart: add two teas, change quantity and sugar, remove one, totals add up', async ({

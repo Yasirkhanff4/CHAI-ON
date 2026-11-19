@@ -3,7 +3,7 @@ import { expectNoBrokenImages, expectNoConsoleErrors, watchConsole } from './hel
 
 const PAGES = [
   { path: '/', heading: /Your Office/i },
-  { path: '/menu', heading: /Two teas/i },
+  { path: '/menu', heading: /Doodh patti and karak chai/i },
   { path: '/contact', heading: /Contact|Reach us|Find us/i },
   { path: '/track', heading: /Where is your chai/i },
 ]

@@ -1,25 +1,20 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { AdminLayout } from '@/components/admin/AdminLayout'
 import { RequireAdmin } from '@/components/admin/RouteGuards'
-import { RequireAuth } from '@/components/auth/RequireAuth'
 import { ScrollToTop } from '@/components/layout/ScrollToTop'
 import { SiteLayout } from '@/components/layout/SiteLayout'
 import { AuthProvider } from '@/context/AuthProvider'
 import { CartProvider } from '@/context/CartProvider'
 import { CatalogProvider } from '@/context/CatalogProvider'
 import { SettingsProvider } from '@/context/SettingsProvider'
-import { AccountPage } from '@/pages/AccountPage'
 import { CartPage } from '@/pages/CartPage'
 import { CheckoutPage } from '@/pages/CheckoutPage'
 import { ContactPage } from '@/pages/ContactPage'
 import { ForgotPasswordPage } from '@/pages/ForgotPasswordPage'
 import { HomePage } from '@/pages/HomePage'
-import { LoginPage } from '@/pages/LoginPage'
 import { MenuPage } from '@/pages/MenuPage'
-import { MyOrderDetailPage } from '@/pages/MyOrderDetailPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 import { OrderConfirmationPage } from '@/pages/OrderConfirmationPage'
-import { RegisterPage } from '@/pages/RegisterPage'
 import { TrackOrderPage } from '@/pages/TrackOrderPage'
 import { AdminDashboardPage } from '@/pages/admin/AdminDashboardPage'
 import { AdminDeliveryPage } from '@/pages/admin/AdminDeliveryPage'
@@ -51,27 +46,7 @@ export default function App() {
                   />
                   <Route path="track" element={<TrackOrderPage />} />
 
-                  <Route path="login" element={<LoginPage />} />
-                  <Route path="register" element={<RegisterPage />} />
                   <Route path="forgot-password" element={<ForgotPasswordPage />} />
-
-                  <Route
-                    path="account"
-                    element={
-                      <RequireAuth>
-                        <AccountPage />
-                      </RequireAuth>
-                    }
-                  />
-                  <Route path="my-orders" element={<Navigate to="/account" replace />} />
-                  <Route
-                    path="my-orders/:orderNumber"
-                    element={
-                      <RequireAuth>
-                        <MyOrderDetailPage />
-                      </RequireAuth>
-                    }
-                  />
 
                   <Route path="*" element={<NotFoundPage />} />
                 </Route>

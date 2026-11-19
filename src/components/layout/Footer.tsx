@@ -7,12 +7,6 @@ import { useCart } from '@/context/cartContext'
 import { business, navLinks } from '@/data/site'
 import { buildWhatsAppOrderUrl } from '@/lib/whatsapp'
 
-const accountLinks = [
-  { label: 'Log in', to: '/login' },
-  { label: 'Create an account', to: '/register' },
-  { label: 'My orders', to: '/my-orders' },
-]
-
 const currentYear = new Date().getFullYear()
 
 export function Footer() {
@@ -20,7 +14,7 @@ export function Footer() {
 
   return (
     <footer className="bg-forest-950 text-cream-200">
-      <Container className="grid gap-8 py-10 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1.2fr] lg:gap-10 lg:py-12">
+      <Container className="grid gap-8 py-10 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1.2fr] lg:gap-10 lg:py-12">
         <div>
           <Logo onDark />
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-cream-200/70">
@@ -33,22 +27,6 @@ export function Footer() {
           <h2 className="text-sm font-semibold text-cream-50">Explore</h2>
           <ul className="mt-3 space-y-2.5 text-sm">
             {navLinks.map((link) => (
-              <li key={link.to}>
-                <Link
-                  to={link.to}
-                  className="text-cream-200/75 transition hover:text-cream-50"
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div>
-          <h2 className="text-sm font-semibold text-cream-50">Your account</h2>
-          <ul className="mt-3 space-y-2.5 text-sm">
-            {accountLinks.map((link) => (
               <li key={link.to}>
                 <Link
                   to={link.to}

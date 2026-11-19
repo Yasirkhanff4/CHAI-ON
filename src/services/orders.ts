@@ -1,16 +1,10 @@
 import { signInAnonymously } from 'firebase/auth'
 import {
-  collection,
   doc,
   getDoc,
-  getDocs,
-  limit,
-  orderBy,
-  query,
   serverTimestamp,
   setDoc,
   Timestamp,
-  where,
 } from 'firebase/firestore'
 import {
   hasErrors,
@@ -24,7 +18,6 @@ import { OrderError } from '@/lib/orders/errors'
 import {
   findOrderByNumber,
   findOrderByRequestKey,
-  readOrders,
   saveOrder,
 } from '@/lib/orders/localOrderStore'
 import { mapOrder } from '@/lib/orders/mapOrder'
@@ -155,8 +148,8 @@ function placeOrderLocally(input: PlaceOrderInput, catalog: PlaceOrderCatalog): 
 
 /**
  * Guests get a real (anonymous) Firebase account so their orders have an
- * owner. Registering later links the email/password credential to that same
- * uid, which keeps every previous order in the account's history.
+ * owner. That is what lets the same device track the order later; WhatsApp is
+ * the fallback everywhere else.
  */
 async function startGuestSession() {
   const auth = getFirebaseAuth()
@@ -351,8 +344,8 @@ function readLastOrder(orderNumber: string): Order | null {
 
 /**
  * Order lookup for the confirmation screen. The order just placed is kept in
- * session; a signed-in customer (anonymous or not) can also re-read an order
- * they own, which Firestore rules restrict to that account.
+ * session; the anonymous guest session can also re-read the order it owns,
+ * which Firestore rules restrict to that account.
  */
 export async function getOrderForConfirmation(
   orderNumber: string,
@@ -377,23 +370,6 @@ export async function getOrderForConfirmation(
   } catch {
     return null
   }
-}
-
-/** A customer's own order history (latest 50 — well inside the free quota). */
-export async function fetchMyOrders(customerId: string): Promise<Order[]> {
-  if (!isFirebaseConfigured) {
-    return readOrders().filter((order) => order.customerId === customerId)
-  }
-
-  const ordersQuery = query(
-    collection(getDb(), 'orders'),
-    where('customerId', '==', customerId),
-    orderBy('createdAt', 'desc'),
-    limit(50),
-  )
-
-  const snapshot = await getDocs(ordersQuery)
-  return snapshot.docs.map((entry) => mapOrder(entry.id, entry.data() as Record<string, unknown>))
 }
 
 /** One order, for customer/admin/staff detail screens (rules decide access). */

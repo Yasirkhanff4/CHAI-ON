@@ -48,8 +48,8 @@ export function ForgotPasswordPage() {
       footer={
         <p>
           Remembered it?{' '}
-          <Link to="/login" className="font-semibold text-forest-800 hover:text-forest-600">
-            Back to log in
+          <Link to="/admin/login" className="font-semibold text-forest-800 hover:text-forest-600">
+            Back to admin login
           </Link>
         </p>
       }

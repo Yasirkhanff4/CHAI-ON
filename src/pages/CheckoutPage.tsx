@@ -6,7 +6,6 @@ import { CheckoutSummary } from '@/components/checkout/CheckoutSummary'
 import { Container } from '@/components/ui/Container'
 import { FormField } from '@/components/ui/FormField'
 import { PageIntro } from '@/components/ui/PageIntro'
-import { useAuth } from '@/context/authContext'
 import { useCatalog } from '@/context/catalogContext'
 import { useCart } from '@/context/cartContext'
 import { useStoreSettings } from '@/context/settingsContext'
@@ -80,41 +79,19 @@ function EmptyCheckout() {
 export function CheckoutPage() {
   useDocumentTitle('Checkout — CHAI ON')
   const { items } = useCart()
-  const { profile, isAnonymous } = useAuth()
 
   if (items.length === 0) return <EmptyCheckout />
 
-  // A guest gets an anonymous session while the order is written, so only a
-  // real account may prefill details or re-key this form.
-  const account = profile && !isAnonymous ? profile : null
-
-  return (
-    <CheckoutFlow
-      key={account?.uid ?? 'guest'}
-      initialName={account?.name ?? ''}
-      initialPhone={account?.phone ?? ''}
-      customerId={account?.uid ?? null}
-    />
-  )
+  return <CheckoutFlow />
 }
 
-type CheckoutFlowProps = {
-  initialName: string
-  initialPhone: string
-  customerId: string | null
-}
-
-function CheckoutFlow({ initialName, initialPhone, customerId }: CheckoutFlowProps) {
+function CheckoutFlow() {
   const navigate = useNavigate()
   const { items, totals, clearCart } = useCart()
   const { products } = useCatalog()
   const { settings } = useStoreSettings()
 
-  const [details, setDetails] = useState<CustomerDetails>({
-    ...emptyDetails,
-    fullName: initialName,
-    phone: initialPhone,
-  })
+  const [details, setDetails] = useState<CustomerDetails>({ ...emptyDetails })
   const [errors, setErrors] = useState<CustomerDetailsErrors>({})
   const [touched, setTouched] = useState<Partial<Record<CustomerDetailsField, boolean>>>({})
   const [formError, setFormError] = useState<string | null>(null)
@@ -193,7 +170,6 @@ function CheckoutFlow({ initialName, initialPhone, customerId }: CheckoutFlowPro
             strength: item.strength,
           })),
           requestKey: getCheckoutRequestKey(),
-          customerId,
         },
         { products, settings },
       )
@@ -231,29 +207,12 @@ function CheckoutFlow({ initialName, initialPhone, customerId }: CheckoutFlowPro
               noValidate
               className="order-1 rounded-xl border border-cream-300 bg-cream-50 px-4 py-5 sm:px-5 sm:py-6"
             >
-              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-cream-300 pb-3">
+              <div className="border-b border-cream-300 pb-3">
                 <h2 className="text-[20px] leading-tight text-forest-900">Delivery details</h2>
-                {customerId ? (
-                  <Link
-                    to="/account"
-                    className="inline-flex min-h-9 items-center px-1 text-[12.5px] font-medium text-forest-800 transition hover:text-forest-600"
-                  >
-                    Your account
-                  </Link>
-                ) : (
-                  <Link
-                    to="/login"
-                    className="inline-flex min-h-9 items-center px-1 text-[12.5px] font-medium text-forest-800 transition hover:text-forest-600"
-                  >
-                    Have an account?
-                  </Link>
-                )}
               </div>
 
               <p className="mt-3 text-[12.5px] leading-relaxed text-forest-900/65">
-                {customerId
-                  ? 'We saved your name and number from your account. Change anything that is different for this order.'
-                  : 'Checking out as a guest. No account needed.'}{' '}
+                Checking out as a guest. No account needed.{' '}
                 Fields marked{' '}
                 <span className="text-tea-600" aria-hidden="true">
                   *

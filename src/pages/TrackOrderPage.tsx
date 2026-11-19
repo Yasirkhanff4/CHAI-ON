@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { AlertCircle, Search } from 'lucide-react'
-import { Link } from 'react-router-dom'
 import { OrderTimeline } from '@/components/orders/OrderTimeline'
 import { StatusBadge } from '@/components/orders/StatusBadge'
 import { Container } from '@/components/ui/Container'
@@ -13,13 +12,11 @@ import { buttonClasses } from '@/lib/buttonStyles'
 import { formatDateTime, formatPKR } from '@/lib/format'
 import { normalizeOrderNumber } from '@/lib/orders/orderNumber'
 import { trackOrderRequest } from '@/services/orders'
-import { useAuth } from '@/context/authContext'
 import { useDocumentTitle } from '@/lib/useDocumentTitle'
 import type { TrackedOrder } from '@/services/orders'
 
 export function TrackOrderPage() {
   useDocumentTitle('Track your order — CHAI ON')
-  const { status } = useAuth()
 
   const [orderNumber, setOrderNumber] = useState('')
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
@@ -100,8 +97,8 @@ export function TrackOrderPage() {
 
               <button
                 type="submit"
-                disabled={submitting || status === 'loading'}
-                aria-busy={submitting || status === 'loading'}
+                disabled={submitting}
+                aria-busy={submitting}
                 className={buttonClasses('primary', 'lg', 'mt-4 w-full')}
               >
                 {submitting ? 'Looking up…' : 'Track order'}
@@ -109,11 +106,7 @@ export function TrackOrderPage() {
               </button>
 
               <p className="mt-3 text-center text-[12px] leading-relaxed text-forest-900/60">
-                Signed in?{' '}
-                <Link to="/account" className="font-semibold text-forest-800 hover:text-forest-600">
-                  Your account
-                </Link>{' '}
-                lists every order automatically. Ordered on another device?{' '}
+                Ordered on another device?{' '}
                 <a
                   href={business.whatsappUrl}
                   target="_blank"

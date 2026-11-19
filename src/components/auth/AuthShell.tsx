@@ -1,9 +1,7 @@
 import type { ReactNode } from 'react'
 import { AlertTriangle } from 'lucide-react'
-import { Link } from 'react-router-dom'
 import { Container } from '@/components/ui/Container'
 import { useAuth } from '@/context/authContext'
-import { buttonClasses } from '@/lib/buttonStyles'
 
 type AuthShellProps = {
   eyebrow: string
@@ -13,7 +11,7 @@ type AuthShellProps = {
   footer?: ReactNode
 }
 
-/** Shared layout for customer sign-in, registration and password reset. */
+/** Shared layout for the staff password-reset screen. */
 export function AuthShell({ eyebrow, title, description, children, footer }: AuthShellProps) {
   const { status } = useAuth()
 
@@ -30,9 +28,9 @@ export function AuthShell({ eyebrow, title, description, children, footer }: Aut
               <p className="flex items-start gap-2 text-[12.5px] leading-relaxed text-forest-900/85">
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-gold-700" aria-hidden="true" />
                 <span>
-                  Accounts are not configured for this build. Add the Firebase environment
+                  Sign-in is not configured for this build. Add the Firebase environment
                   variables (see <code className="font-mono text-[11.5px]">DEPLOYMENT.md</code>)
-                  to enable sign-in. Guest checkout keeps working without an account.
+                  to enable password reset.
                 </span>
               </p>
             </div>
@@ -45,10 +43,6 @@ export function AuthShell({ eyebrow, title, description, children, footer }: Aut
               {footer}
             </div>
           )}
-
-          <Link to="/menu" className={buttonClasses('secondary', 'sm', 'mt-4 w-full')}>
-            Order as a guest instead
-          </Link>
         </div>
       </Container>
     </section>

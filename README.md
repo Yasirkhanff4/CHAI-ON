@@ -10,14 +10,14 @@ The product has exactly **two panels**: the customer website and a **secure admi
 
 ## Status
 
-**Phases 1–7 implemented.** Storefront, cart, guest and registered checkout, Firebase
-accounts, admin panel, delivery management, guest tracking, security rules and
-deployment documentation are all in the repository and verified by the checks listed
-below.
+**Phases 1–7 implemented.** Storefront, cart, guest checkout, admin panel, delivery
+management, guest tracking, security rules and deployment documentation are all in the
+repository and verified by the checks listed below.
 
-The app is built for the **free Firebase Spark plan**: customer accounts, guest
-sessions, orders, guest tracking and the admin panel use Firebase Auth and Firestore
-directly. **No Cloud Function, Blaze upgrade, paid service or external backend is
+There are **no customer accounts**: checkout is guest-only and the only email/password
+sign-in is the staff panel. The app is built for the **free Firebase Spark plan**:
+anonymous guest sessions, orders, guest tracking and the admin panel use Firebase Auth
+and Firestore directly. **No Cloud Function, Blaze upgrade, paid service or external backend is
 required.** Prices are calculated from the live Firestore catalog in the browser and
 pinned by security rules (see [Security model](#security-model)).
 
@@ -42,16 +42,12 @@ values the app runs in **local mode** for design work only — see
   optional delivery instructions; loading, error, offline and paused-ordering states
 - Totals rebuilt from the live Firestore catalog before checkout; rules pin the
   owner, statuses, payment method and money on the order document
-- Guest checkout backed by a short-lived anonymous Firebase session, so a guest who
-  registers later keeps every order they placed
+- Guest checkout backed by a short-lived anonymous Firebase session, so the order has
+  an owner and stays trackable on the device that placed it
 - Duplicate-submission protection: the button locks while submitting and a per-attempt
   request key makes retries idempotent
 - Order confirmation with human-readable order number (`CO-YYMMDD-XXXX`), full summary,
   delivery details, COD and a Track Order button; the cart clears only after success
-- Customer accounts: email/password register, login, logout, forgot/reset password,
-  persistent session, editable name and phone, order history and order detail pages
-- Guest-to-account linking: registering in the same browser upgrades the guest session
-  in place (same uid), so past orders appear in My Orders
 - **Order on WhatsApp** button (header, mobile menu and cart) pre-filled with the cart
   items, customizations and total, opening `wa.me/923291018591`
 - Order tracking by order number on the device/browser that placed the order, with a
@@ -82,8 +78,8 @@ values the app runs in **local mode** for design work only — see
 - React 19 + TypeScript + Vite
 - Tailwind CSS v4 (design tokens in `src/index.css`)
 - React Router 7, Lucide icons
-- Firebase Auth (Email/Password + Anonymous) and Firestore — Spark plan, no Storage,
-  no Cloud Functions
+- Firebase Auth (Anonymous for guest checkout, Email/Password for staff) and
+  Firestore — Spark plan, no Storage, no Cloud Functions
 - Vercel (frontend)
 
 ---
@@ -122,7 +118,7 @@ All `VITE_*` variables are public. Service-account credentials live in
 ## Data model
 
 ```
-users/{uid}       uid, name, email, phone, role, createdAt, updatedAt
+users/{uid}       uid, name, email, phone, role, createdAt, updatedAt (staff only)
 products/{id}     name, description, imageUrl, imagePosition, badge, price,
                   isAvailable, isActive, sortOrder, createdAt, updatedAt
 orders/{orderNumber}
@@ -139,25 +135,25 @@ Order document ids are the order number, so a lookup never needs a query.
 
 ---
 
-## Accounts, guest checkout and linking
+## Guest checkout and tracking
 
-1. A visitor can always check out as a guest. At checkout the app creates a Firebase
-   **anonymous** session and writes the order with `customerId` = that uid.
-2. The anonymous session is invisible: the site still says "Log in" and the account
-   pages stay closed to it.
-3. If the guest registers (or logs in from the register page) in that browser, the
-   email/password credential is **linked** to the same anonymous uid, so the uid never
-   changes and My Orders immediately lists the guest orders.
-4. A guest who never registers can still follow an order with its order number **on
-   the same device/browser/session** (the anonymous session owns the order). From
-   another device the order cannot be read; WhatsApp is the fallback.
+1. Checkout is guest-only. There is no customer registration, login or account page
+   anywhere on the site. At checkout the app creates a Firebase **anonymous** session
+   and writes the order with `customerId` = that uid.
+2. The anonymous session is invisible to the customer: nothing has to be created,
+   verified or remembered, and no personal details are stored in the browser.
+3. A guest follows an order with its order number **on the same
+   device/browser/session** (the anonymous session owns the order). From another
+   device the order cannot be read; WhatsApp is the fallback.
 
 Tracking is deliberately owner-only, so the rules never expose an order by number
 alone. The confirmation page always shows the order number and a Track button.
 
-Enable both **Email/Password** and **Anonymous** providers in Firebase Authentication.
-No admin can ever be created from the customer site; roles come from custom claims set
-by the provisioning script — see [Admin setup](#admin-setup-spark-plan).
+Enable **Anonymous** (guest checkout) and **Email/Password** (staff sign-in) providers
+in Firebase Authentication. Anonymous sign-in is required: without it checkout cannot
+write an order. No admin can ever be created from the customer site; roles come from
+custom claims set by the provisioning script — see
+[Admin setup](#admin-setup-spark-plan).
 
 ---
 
@@ -222,8 +218,9 @@ Firestore rules enforce ownership and document shape:
   `COD`, with `total == subtotal + deliveryCharge` and a single `NEW` history entry;
 - customers can read only their own orders (and a missing order number reads as null,
   which lets checkout pick an unused number);
-- customers can edit only their own name/phone, only with a real (non-anonymous) email
-  token, and can never change their role;
+- a profile document can only be read or written by its own owner with a real
+  (non-anonymous) email token — only staff accounts exist — and the role can never be
+  changed from the browser;
 - admins may change status/payment/assignment; delivery staff only their assigned
   orders and only delivery statuses;
 - products are public only when active; settings are public read, admin write.
@@ -291,7 +288,7 @@ functions/
 src/
   components/
     admin/                 Admin shell, route guards, live new-order alerts
-    auth/                  Auth shell, RequireAuth
+    auth/                  Password-reset shell
     cart/ checkout/ contact/ home/ layout/ menu/ orders/ ui/
   context/                 Auth, Catalog, Settings, Cart providers
   data/                    menu.ts (launch catalog), site.ts, settings.ts (defaults)
@@ -344,7 +341,7 @@ attribution required (credited in the footer as a courtesy).
 | 1 | Setup, branding, navigation, responsive homepage | Done |
 | 2 | Menu, product cards, customization, cart | Done |
 | 3 | Checkout, guest ordering, confirmation | Done |
-| 4 | Firebase, customer auth, secure order storage | Done (code + emulator tests) |
+| 4 | Firebase, guest sessions, secure order storage | Done (code + emulator tests) |
 | 5 | Admin login, dashboard, order and product management | Done |
 | 6 | Order tracking, delivery management in admin | Done |
 | 7 | Testing, security rules, bug fixing, deployment preparation | Done (deploy is yours) |

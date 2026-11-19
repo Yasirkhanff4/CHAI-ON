@@ -20,18 +20,14 @@ export type AuthContextValue = {
   profile: AuthProfile | null
   /** Set when the session could not be read; the site keeps working. */
   authError: string | null
-  /** True only for a real account, never for a guest's anonymous session. */
-  isSignedIn: boolean
+  /** True for the short-lived anonymous session a guest gets at checkout. */
   isAnonymous: boolean
   isAdmin: boolean
   isSuperAdmin: boolean
   isDeliveryStaff: boolean
-  register: (input: { name: string; email: string; password: string }) => Promise<void>
   login: (email: string, password: string) => Promise<AuthProfile>
   logout: () => Promise<void>
   resetPassword: (email: string) => Promise<void>
-  updateProfile: (input: { name: string; phone: string }) => Promise<void>
-  refresh: () => Promise<void>
 }
 
 export const AuthContext = createContext<AuthContextValue | null>(null)

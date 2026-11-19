@@ -4,14 +4,12 @@ import { Link, NavLink } from 'react-router-dom'
 import { Logo } from '@/components/brand/Logo'
 import { Container } from '@/components/ui/Container'
 import { useCart } from '@/context/cartContext'
-import { useAuth } from '@/context/authContext'
 import { buttonClasses } from '@/lib/buttonStyles'
 import { business, navLinks } from '@/data/site'
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const { totals } = useCart()
-  const { isSignedIn } = useAuth()
   const closeButtonRef = useRef<HTMLButtonElement>(null)
   const drawerRef = useRef<HTMLDivElement>(null)
 
@@ -94,12 +92,6 @@ export function Header() {
 
           <div className="flex items-center gap-1.5 sm:gap-2">
             <Link
-              to={isSignedIn ? '/account' : '/login'}
-              className="hidden px-2 py-2 text-sm font-medium text-forest-900/75 transition hover:text-forest-900 sm:inline-flex"
-            >
-              {isSignedIn ? 'Account' : 'Log in'}
-            </Link>
-            <Link
               to="/cart"
               aria-label={
                 totals.itemCount > 0
@@ -180,13 +172,6 @@ export function Header() {
                   {link.label}
                 </NavLink>
               ))}
-              <NavLink
-                to={isSignedIn ? '/account' : '/login'}
-                onClick={() => setMenuOpen(false)}
-                className="flex min-h-12 items-center border-b border-cream-300 py-3 text-[17px] font-medium text-forest-900/65 transition hover:text-forest-900"
-              >
-                {isSignedIn ? 'Account' : 'Log in'}
-              </NavLink>
             </nav>
 
             <div className="mt-5 space-y-2.5">
