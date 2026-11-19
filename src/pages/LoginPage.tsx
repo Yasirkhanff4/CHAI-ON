@@ -11,7 +11,7 @@ import { useDocumentTitle } from '@/lib/useDocumentTitle'
 
 export function LoginPage() {
   useDocumentTitle('Log in — CHAI ON')
-  const { login, status, profile } = useAuth()
+  const { login, status, profile, isSignedIn } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
   const redirectTo = (location.state as { from?: string } | null)?.from ?? '/account'
@@ -21,7 +21,7 @@ export function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
-  if (profile) {
+  if (isSignedIn && profile) {
     return <Navigate to={redirectTo} replace />
   }
 

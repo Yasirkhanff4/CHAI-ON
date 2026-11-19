@@ -7,6 +7,11 @@ const AUTH_MESSAGES: Record<string, string> = {
   'auth/user-not-found': 'No account uses that email address.',
   'auth/wrong-password': 'That password is not correct.',
   'auth/email-already-in-use': 'An account already uses that email. Try logging in instead.',
+  'auth/credential-already-in-use':
+    'An account already uses that email. Log in instead — your guest orders stay available with order tracking.',
+  'auth/provider-already-linked': 'This account already has a password. Try logging in instead.',
+  'auth/admin-restricted-operation':
+    'Guest sessions are disabled for this project. Enable Anonymous sign-in in Firebase Authentication.',
   'auth/weak-password': 'Choose a stronger password — at least 6 characters.',
   'auth/missing-password': 'Enter your password.',
   'auth/too-many-requests': 'Too many attempts. Wait a few minutes and try again.',
@@ -15,6 +20,15 @@ const AUTH_MESSAGES: Record<string, string> = {
   'auth/user-disabled': 'This account has been disabled. Call us if you need help.',
   'auth/operation-not-allowed':
     'Email and password sign-in is not enabled for this Firebase project yet.',
+}
+
+const FIRESTORE_MESSAGES: Record<string, string> = {
+  'permission-denied':
+    'Your order could not be saved. Refresh the page and try again, or order on WhatsApp.',
+  'unavailable': 'Network problem. Check your connection and try again.',
+  'deadline-exceeded': 'The request took too long. Check your connection and retry.',
+  'failed-precondition': 'That action is not possible right now.',
+  'resource-exhausted': 'Too many requests. Please wait a moment and try again.',
 }
 
 const FUNCTION_MESSAGES: Record<string, string> = {
@@ -43,6 +57,7 @@ export function describeFirebaseError(error: unknown, fallback: string): string 
 
   const code = codeOf(error)
   if (AUTH_MESSAGES[code]) return AUTH_MESSAGES[code]
+  if (FIRESTORE_MESSAGES[code]) return FIRESTORE_MESSAGES[code]
   if (FUNCTION_MESSAGES[code]) return FUNCTION_MESSAGES[code]
 
   if (error instanceof Error && error.message) return error.message
@@ -78,7 +93,12 @@ export function toOrderError(error: unknown): OrderError {
     ? (details.unavailableProducts as string[])
     : []
 
-  if (code === 'functions/unavailable' || code === 'functions/deadline-exceeded') {
+  if (
+    code === 'functions/unavailable' ||
+    code === 'functions/deadline-exceeded' ||
+    code === 'unavailable' ||
+    code === 'deadline-exceeded'
+  ) {
     return new OrderError('NETWORK', message, { cause: error })
   }
 

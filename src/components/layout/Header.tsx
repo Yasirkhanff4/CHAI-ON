@@ -11,7 +11,7 @@ import { business, navLinks } from '@/data/site'
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const { totals } = useCart()
-  const { profile, isSignedIn } = useAuth()
+  const { isSignedIn } = useAuth()
   const closeButtonRef = useRef<HTMLButtonElement>(null)
   const drawerRef = useRef<HTMLDivElement>(null)
 
@@ -86,7 +86,7 @@ export function Header() {
                 end={link.to === '/'}
                 className={({ isActive }) =>
                   [
-                    'rounded-full px-4 py-2 text-sm font-medium transition',
+                    'rounded-full px-4 py-2.5 text-base font-medium transition',
                     isActive
                       ? 'bg-cream-200/90 text-forest-900'
                       : 'text-forest-900/70 hover:bg-cream-200/50 hover:text-forest-900',
@@ -98,12 +98,12 @@ export function Header() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 sm:gap-3">
             <Link
               to={isSignedIn ? '/account' : '/login'}
               className="hidden rounded-full px-3 py-2 text-sm font-medium text-forest-900/75 transition hover:text-forest-900 sm:inline-flex"
             >
-              {isSignedIn ? profile?.name.split(' ')[0] ?? 'Account' : 'Log in'}
+              {isSignedIn ? 'Account' : 'Log in'}
             </Link>
             <Link
               to="/cart"
@@ -112,9 +112,9 @@ export function Header() {
                   ? `View cart, ${totals.itemCount} ${totals.itemCount === 1 ? 'item' : 'items'}`
                   : 'View cart'
               }
-              className="relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-forest-900/12 bg-cream-50/60 text-forest-900 transition hover:border-forest-900/25 hover:bg-cream-50"
+              className="relative inline-flex h-12 w-12 items-center justify-center rounded-full border border-forest-900/12 bg-cream-50/60 text-forest-900 transition hover:border-forest-900/25 hover:bg-cream-50"
             >
-              <ShoppingBag className="h-[18px] w-[18px]" aria-hidden="true" />
+              <ShoppingBag className="h-6 w-6" aria-hidden="true" />
               {totals.itemCount > 0 && (
                 <span
                   aria-hidden="true"
@@ -199,7 +199,7 @@ export function Header() {
                 onClick={() => setMenuOpen(false)}
                 className={buttonClasses('secondary', 'lg', 'w-full')}
               >
-                {isSignedIn ? 'Your account' : 'Log in'}
+                {isSignedIn ? 'Account' : 'Log in'}
               </Link>
             </div>
 

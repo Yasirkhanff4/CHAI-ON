@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { Logo } from '@/components/brand/Logo'
+import { NewOrderAlerts } from '@/components/admin/NewOrderAlerts'
 import { RequireStaff } from '@/components/admin/RouteGuards'
 import { Container } from '@/components/ui/Container'
 import { useAuth } from '@/context/authContext'
@@ -49,6 +50,7 @@ export function AdminLayout() {
             </div>
 
             <div className="flex items-center gap-2 sm:gap-3">
+              {isAdmin && <NewOrderAlerts />}
               <span className="hidden text-right text-[11px] leading-tight text-cream-100/70 sm:block">
                 {profile?.name}
                 <br />

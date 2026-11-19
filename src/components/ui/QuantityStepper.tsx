@@ -19,7 +19,7 @@ export function QuantityStepper({
   size = 'md',
 }: QuantityStepperProps) {
   const isSmall = size === 'sm'
-  const buttonSize = isSmall ? 'h-9 w-9' : 'h-11 w-11'
+  const buttonSize = isSmall ? 'h-10 w-10' : 'h-11 w-11'
   const valueWidth = isSmall ? 'min-w-8 text-[13px]' : 'min-w-10 text-sm'
 
   return (
@@ -35,7 +35,7 @@ export function QuantityStepper({
         aria-label={`Decrease ${label}`}
         className={`inline-flex ${buttonSize} items-center justify-center rounded-full text-forest-900 transition hover:bg-cream-200 disabled:pointer-events-none disabled:opacity-35`}
       >
-        <Minus className={isSmall ? 'h-3.5 w-3.5' : 'h-4 w-4'} aria-hidden="true" />
+        <Minus className={isSmall ? 'h-4 w-4' : 'h-5 w-5'} aria-hidden="true" />
       </button>
       <span
         aria-live="polite"
@@ -50,7 +50,7 @@ export function QuantityStepper({
         aria-label={`Increase ${label}`}
         className={`inline-flex ${buttonSize} items-center justify-center rounded-full text-forest-900 transition hover:bg-cream-200 disabled:pointer-events-none disabled:opacity-35`}
       >
-        <Plus className={isSmall ? 'h-3.5 w-3.5' : 'h-4 w-4'} aria-hidden="true" />
+        <Plus className={isSmall ? 'h-4 w-4' : 'h-5 w-5'} aria-hidden="true" />
       </button>
     </div>
   )

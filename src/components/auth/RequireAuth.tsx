@@ -11,7 +11,7 @@ type RequireAuthProps = {
 
 /** Customer-only pages: account, order history, order details. */
 export function RequireAuth({ children }: RequireAuthProps) {
-  const { status, profile } = useAuth()
+  const { status, profile, isAnonymous } = useAuth()
   const location = useLocation()
 
   if (status === 'unconfigured') {
@@ -51,7 +51,7 @@ export function RequireAuth({ children }: RequireAuthProps) {
     )
   }
 
-  if (!profile) {
+  if (!profile || isAnonymous) {
     return <Navigate to="/login" replace state={{ from: location.pathname }} />
   }
 

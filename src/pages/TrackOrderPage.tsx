@@ -8,6 +8,7 @@ import { Container } from '@/components/ui/Container'
 import { FormField } from '@/components/ui/FormField'
 import { PageIntro } from '@/components/ui/PageIntro'
 import { strengthLabel, sugarLabel } from '@/data/menu'
+import { business } from '@/data/site'
 import { buttonClasses } from '@/lib/buttonStyles'
 import { formatDateTime, formatPKR } from '@/lib/format'
 import { normalizeOrderNumber } from '@/lib/orders/orderNumber'
@@ -19,7 +20,6 @@ export function TrackOrderPage() {
   useDocumentTitle('Track your order — CHAI ON')
 
   const [orderNumber, setOrderNumber] = useState('')
-  const [phone, setPhone] = useState('')
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [error, setError] = useState<string | null>(null)
   const [result, setResult] = useState<TrackedOrder | null>(null)
@@ -33,7 +33,6 @@ export function TrackOrderPage() {
     if (!normalizeOrderNumber(orderNumber)) {
       errors.orderNumber = 'Enter your order number, for example CO-261118-7K4Q.'
     }
-    if (!phone.trim()) errors.phone = 'Enter the phone number you ordered with.'
 
     setFieldErrors(errors)
     if (Object.keys(errors).length > 0) return
@@ -43,13 +42,13 @@ export function TrackOrderPage() {
     setResult(null)
 
     try {
-      const tracked = await trackOrderRequest(orderNumber, phone)
+      const tracked = await trackOrderRequest(orderNumber)
       setResult(tracked)
     } catch (trackError) {
       setError(
         trackError instanceof Error
           ? trackError.message
-          : 'No order matches that order number and phone number.',
+          : 'Order not found on this device. Contact us on WhatsApp.',
       )
     } finally {
       setSubmitting(false)
@@ -61,7 +60,7 @@ export function TrackOrderPage() {
       <PageIntro
         eyebrow="Track order"
         title="Where is your chai?"
-        description="Enter your order number and the mobile number you ordered with. We only show the status of that one order."
+        description="Enter your order number. Tracking works on the device or browser you ordered from — if you ordered elsewhere, message us on WhatsApp."
       />
 
       <section className="py-10 sm:py-14">
@@ -84,34 +83,18 @@ export function TrackOrderPage() {
                 </div>
               )}
 
-              <div className="grid gap-4 sm:grid-cols-2">
-                <FormField
-                  id="orderNumber"
-                  label="Order number"
-                  value={orderNumber}
-                  onChange={setOrderNumber}
-                  error={fieldErrors.orderNumber}
-                  required
-                  placeholder="CO-261118-7K4Q"
-                  autoComplete="off"
-                  maxLength={20}
-                  disabled={submitting}
-                />
-                <FormField
-                  id="trackPhone"
-                  label="Mobile number"
-                  type="tel"
-                  inputMode="tel"
-                  value={phone}
-                  onChange={setPhone}
-                  error={fieldErrors.phone}
-                  required
-                  placeholder="0300 1234567"
-                  autoComplete="tel"
-                  maxLength={20}
-                  disabled={submitting}
-                />
-              </div>
+              <FormField
+                id="orderNumber"
+                label="Order number"
+                value={orderNumber}
+                onChange={setOrderNumber}
+                error={fieldErrors.orderNumber}
+                required
+                placeholder="CO-261118-7K4Q"
+                autoComplete="off"
+                maxLength={20}
+                disabled={submitting}
+              />
 
               <button
                 type="submit"
@@ -128,7 +111,16 @@ export function TrackOrderPage() {
                 <Link to="/account" className="font-semibold text-forest-800 hover:text-forest-600">
                   Your account
                 </Link>{' '}
-                lists every order automatically.
+                lists every order automatically. Ordered on another device?{' '}
+                <a
+                  href={business.whatsappUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-semibold text-forest-800 hover:text-forest-600"
+                >
+                  WhatsApp us
+                </a>{' '}
+                your order number.
               </p>
             </form>
 

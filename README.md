@@ -11,19 +11,20 @@ The product has exactly **two panels**: the customer website and a **secure admi
 ## Status
 
 **Phases 1–7 implemented.** Storefront, cart, guest and registered checkout, Firebase
-accounts, trusted order creation, admin panel, delivery management, guest tracking,
-security rules and deployment documentation are all in the repository and verified by
-the checks listed below.
+accounts, admin panel, delivery management, guest tracking, security rules and
+deployment documentation are all in the repository and verified by the checks listed
+below.
 
-Two things have **not** been done, because they need your accounts:
+The app is built for the **free Firebase Spark plan**: customer accounts, guest
+sessions, orders, guest tracking and the admin panel use Firebase Auth and Firestore
+directly. **No Cloud Function, Blaze upgrade, paid service or external backend is
+required.** Prices are calculated from the live Firestore catalog in the browser and
+pinned by security rules (see [Security model](#security-model)).
 
-1. **No Firebase project is bound yet.** Without `VITE_FIREBASE_*` values the app runs
-   in **local mode**: the storefront, cart and checkout work against a local adapter,
-   while accounts, admin and tracking show a clear "not configured" notice. Order
-   storage in local mode is not production storage — see
-   [Where orders live without Firebase](#where-orders-live-without-firebase).
-2. **Nothing is deployed.** Functions, security rules, indexes and the Vercel site must
-   be deployed by you. Follow [DEPLOYMENT.md](DEPLOYMENT.md).
+The updated `firestore.rules` still has to be deployed by you, and the Vercel site is
+not published. Follow [DEPLOYMENT.md](DEPLOYMENT.md). Without `VITE_FIREBASE_*`
+values the app runs in **local mode** for design work only — see
+[Where orders live without Firebase](#where-orders-live-without-firebase).
 
 ---
 
@@ -39,15 +40,22 @@ Two things have **not** been done, because they need your accounts:
 - **Guest checkout** — no account, ever required
 - Checkout with full name, Pakistani mobile validation, building, floor, office/shop and
   optional delivery instructions; loading, error, offline and paused-ordering states
-- Trusted totals: prices, availability, delivery charge, minimum order and opening hours
-  are re-checked server-side by the `createOrder` Cloud Function
+- Totals rebuilt from the live Firestore catalog before checkout; rules pin the
+  owner, statuses, payment method and money on the order document
+- Guest checkout backed by a short-lived anonymous Firebase session, so a guest who
+  registers later keeps every order they placed
 - Duplicate-submission protection: the button locks while submitting and a per-attempt
   request key makes retries idempotent
 - Order confirmation with human-readable order number (`CO-YYMMDD-XXXX`), full summary,
   delivery details, COD and a Track Order button; the cart clears only after success
-- Customer accounts: register, login, logout, forgot/reset password, persistent session,
-  editable name and phone, order history and order detail pages
-- Guest order tracking by order number + phone, with a real timeline and rate limiting
+- Customer accounts: email/password register, login, logout, forgot/reset password,
+  persistent session, editable name and phone, order history and order detail pages
+- Guest-to-account linking: registering in the same browser upgrades the guest session
+  in place (same uid), so past orders appear in My Orders
+- **Order on WhatsApp** button (header, mobile menu and cart) pre-filled with the cart
+  items, customizations and total, opening `wa.me/923291018591`
+- Order tracking by order number on the device/browser that placed the order, with a
+  real timeline and a WhatsApp fallback for other devices
 
 ### Admin panel (`/admin`)
 
@@ -60,7 +68,7 @@ Two things have **not** been done, because they need your accounts:
   out for delivery, delivered, cancel, delivery failed)
 - Manual COD confirmation (`Confirm cash received` → `PAID`)
 - Products: add, edit price/description/badge/order, availability, public visibility and
-  photo upload to Firebase Storage
+  a photo path or URL (e.g. `/images/doodh-patti.jpg`) — no Firebase Storage needed
 - Settings: business name, contact phone, delivery charge, minimum order, opening and
   closing time, and an online-ordering pause switch — reflected on the site immediately
 - Delivery: ready orders, assign/reassign delivery staff, monitor progress
@@ -74,7 +82,8 @@ Two things have **not** been done, because they need your accounts:
 - React 19 + TypeScript + Vite
 - Tailwind CSS v4 (design tokens in `src/index.css`)
 - React Router 7, Lucide icons
-- Firebase Auth, Firestore, Storage, Cloud Functions (Node 20, `asia-south1`)
+- Firebase Auth (Email/Password + Anonymous) and Firestore — Spark plan, no Storage,
+  no Cloud Functions
 - Vercel (frontend)
 
 ---
@@ -92,8 +101,7 @@ npm run preview    # preview the production build
 Node 20.19+ is required (Vite 8).
 
 Add a `.env` (see `.env.example`) to enable Firebase. `DEPLOYMENT.md` walks through the
-whole setup: project, Auth, Firestore, Storage, functions, rules, admin provisioning and
-Vercel.
+whole setup: project, Auth, Firestore, rules, admin provisioning and Vercel.
 
 ### Environment variables
 
@@ -102,7 +110,6 @@ Vercel.
 | `VITE_FIREBASE_API_KEY` | Web API key (public) |
 | `VITE_FIREBASE_AUTH_DOMAIN` | Auth domain |
 | `VITE_FIREBASE_PROJECT_ID` | Project id |
-| `VITE_FIREBASE_STORAGE_BUCKET` | Storage bucket |
 | `VITE_FIREBASE_MESSAGING_SENDER_ID` | Sender id |
 | `VITE_FIREBASE_APP_ID` | Web app id |
 | `VITE_FIREBASE_USE_EMULATORS` | `true` to use the local emulator suite |
@@ -126,24 +133,106 @@ orders/{orderNumber}
                   deliveryNotes, statusHistory[], createdAt, updatedAt
 settings/store    businessName, contactPhone, deliveryCharge, minimumOrder,
                   openingTime, closingTime, isOrderingOpen, updatedAt
-orderRequests/*   idempotency keys (Admin SDK only)
-rateLimits/*      tracking/order attempt windows (Admin SDK only)
 ```
 
 Order document ids are the order number, so a lookup never needs a query.
 
 ---
 
-## Cloud Functions
+## Accounts, guest checkout and linking
 
-| Function | Purpose |
-| --- | --- |
-| `createOrder` | Validates details, products, availability, quantity, customization and settings; recomputes all totals; generates the order number; writes the order idempotently. Guest or signed-in. |
-| `trackOrder` | Order number + phone lookup with rate limiting; returns only tracking-safe fields. |
-| `setUserRole` | Super-admin-only role provisioning (custom claims + `users/{uid}`). |
+1. A visitor can always check out as a guest. At checkout the app creates a Firebase
+   **anonymous** session and writes the order with `customerId` = that uid.
+2. The anonymous session is invisible: the site still says "Log in" and the account
+   pages stay closed to it.
+3. If the guest registers (or logs in from the register page) in that browser, the
+   email/password credential is **linked** to the same anonymous uid, so the uid never
+   changes and My Orders immediately lists the guest orders.
+4. A guest who never registers can still follow an order with its order number **on
+   the same device/browser/session** (the anonymous session owns the order). From
+   another device the order cannot be read; WhatsApp is the fallback.
 
-Region: `asia-south1`. Change `REGION` in `functions/src/index.ts` and
-`FUNCTIONS_REGION` in `src/lib/firebase/config.ts` together if you deploy elsewhere.
+Tracking is deliberately owner-only, so the rules never expose an order by number
+alone. The confirmation page always shows the order number and a Track button.
+
+Enable both **Email/Password** and **Anonymous** providers in Firebase Authentication.
+No admin can ever be created from the customer site; roles come from custom claims set
+by the provisioning script — see [Admin setup](#admin-setup-spark-plan).
+
+---
+
+## WhatsApp ordering
+
+`src/data/site.ts` holds the number and base link:
+
+```ts
+whatsappNumber: '923291018591'
+whatsappUrl: 'https://wa.me/923291018591'
+```
+
+`buildWhatsAppOrderUrl` (`src/lib/whatsapp.ts`) turns the current cart into a message
+such as:
+
+```
+Assalam-o-Alaikum CHAI ON! I would like to order:
+
+• 2 × Doodh Patti (Less sugar, Strong) — Rs 300
+• 1 × Karak Chai (Normal sugar, Normal strength) — Rs 180
+
+Subtotal: Rs 480
+Delivery: Free
+Total: Rs 480
+
+My delivery details (building, floor, office):
+```
+
+Nothing is sent until the customer presses send inside WhatsApp. The button appears in
+the desktop header (wide screens), the mobile menu and the cart summary.
+
+---
+
+## Admin setup (Spark plan)
+
+There is no public admin registration. The first account is provisioned with the
+Firebase Admin SDK from your own computer (no Cloud Functions, no Blaze):
+
+```bash
+# 1. Firebase Console → Project settings → Service accounts → Generate new private key
+# 2. Save the JSON outside this repository, then from the project root:
+GOOGLE_APPLICATION_CREDENTIALS=./serviceAccount.json \
+  node functions/scripts/provision-admin.mjs --email you@example.com --role SUPER_ADMIN --name "Owner"
+```
+
+The script creates the account without a password, sets the `SUPER_ADMIN` **custom
+claim** and mirrors the role in `users/{uid}`. Open `/admin/login`, use **Forgot
+password?**, set a password, then sign in. `--email` accepts any real account email; nothing is
+hardcoded. Delete the service-account JSON afterwards.
+
+Roles: `SUPER_ADMIN`, `ADMIN`, `DELIVERY_STAFF`, `CUSTOMER`. A customer can never
+assign themselves a role: the `users` rule allows only `name`, `phone` and `updatedAt`
+updates, and every admin route reads the claim from the ID token.
+
+---
+
+## Security model
+
+Firestore rules enforce ownership and document shape:
+
+- an order must be created by the signed-in uid it belongs to, as `NEW`, `UNPAID`,
+  `COD`, with `total == subtotal + deliveryCharge` and a single `NEW` history entry;
+- customers can read only their own orders (and a missing order number reads as null,
+  which lets checkout pick an unused number);
+- customers can edit only their own name/phone, only with a real (non-anonymous) email
+  token, and can never change their role;
+- admins may change status/payment/assignment; delivery staff only their assigned
+  orders and only delivery statuses;
+- products are public only when active; settings are public read, admin write.
+
+Because Spark has no server code, the browser builds the cart totals from Firestore
+products rather than from the cart payload. A determined visitor could still hand-craft
+an order document with a lower unit price; staff see every total before accepting and
+the shop only loses tea, never money. If you later move to Blaze, the `functions/`
+`createOrder` function re-prices everything server-side and is kept for that path.
 
 ---
 
@@ -152,37 +241,32 @@ Region: `asia-south1`. Change `REGION` in `functions/src/index.ts` and
 ```bash
 npm run build            # tsc -b + vite build
 npm run lint             # oxlint (0 errors; 4 advisory set-state-in-effect warnings)
-npm run functions:build  # Cloud Functions TypeScript
-npm run test:rules       # 37 Firestore security-rule assertions (emulator)
-npm run test:orders      # 20 trusted order-function assertions (emulator)
+npm run test:rules       # 62 Firestore security-rule assertions (emulator)
+npm run functions:build  # optional legacy Cloud Functions build (not used on Spark)
 ```
 
-`test:rules` and `test:orders` start the Firebase Emulator Suite with
-`--project demo-chaion` and never touch production. Java 21 is installed locally and was
-used for these runs.
+`test:rules` starts the Firebase Emulator Suite with `--project demo-chaion` and never
+touches production. Java 21 is installed locally and was used for these runs. The old
+`test:orders` npm script was removed with the Functions path; `tests/order.functions.test.mjs`
+is kept for reference only.
 
-What the order tests prove: prices come from Firestore (a tampered `unitPrice` is
-ignored), unavailable/unknown products are refused, zero and >20 quantities are refused,
-invalid phones and customizations are refused, retries return the same order and create
-nothing new, the configured delivery charge and minimum order apply, paused ordering is
-refused, and failed attempts leave no order behind.
-
-What the rules tests prove: guests cannot read or list orders; customers read only their
-own order and profile; nobody can create or delete an order client-side; customers cannot
-alter totals, payment status, order status, prices or their own role; admins can manage
-orders/products/settings; delivery staff see only assigned orders and only set delivery
-statuses; `orderRequests` and `rateLimits` are client-invisible.
+What the rules tests prove: customers can create only their own order, only as a new,
+unpaid COD order with a consistent total; anonymous guests can own an order but cannot
+create a profile; customers read only their own order and profile; nobody can delete an
+order or alter totals, payment status, order status, prices or their own role; a missing
+order number reads as null; admins manage orders/products/settings; delivery staff see
+only assigned orders and only set delivery statuses.
 
 ---
 
 ## What still needs you
 
-- **Firebase binding** and deploying rules/indexes/functions (`DEPLOYMENT.md` §2–4)
+- **Firebase binding** and deploying rules/indexes only (`DEPLOYMENT.md` §2–4)
 - **First super admin** via `functions/scripts/provision-admin.mjs` (§5)
 - **Vercel deployment** and adding the domain to Firebase Auth's authorized domains (§6)
-- **Real business data**: the phone number is still the placeholder
-  `+92 300 000 0000` in `src/data/site.ts`; prices, delivery charge, minimum order and
-  hours are launch defaults until changed in the admin panel
+- **Real business data**: the phone number in `src/data/site.ts` is now
+  `+92 329 1018591` — make sure Settings → contact phone matches it; prices, delivery
+  charge, minimum order and hours are launch defaults until changed in the admin panel
 - A pass through the launch checklist on the live domain
 
 ---
@@ -190,11 +274,10 @@ statuses; `orderRequests` and `rateLimits` are client-invisible.
 ## Where orders live without Firebase
 
 `src/services/orders.ts` is the only entry point the UI uses. With Firebase configured it
-calls the `createOrder` / `trackOrder` functions. Without it, it falls back to
-`src/lib/orders/localOrderStore.ts` (this browser's `localStorage`), which exists so the
-storefront and checkout stay testable. That fallback is **not** secure order storage and
-must not be treated as production. Prices are always recalculated from the catalog, never
-taken from the browser payload, in both modes.
+writes the order to Firestore under the signed-in (or anonymous) session. Without it, it falls back to `src/lib/orders/localOrderStore.ts` (this browser's
+`localStorage`), which exists so the storefront and checkout stay testable. That fallback
+is **not** secure order storage and must not be treated as production. Prices are always
+recalculated from the catalog, never taken from the cart payload, in both modes.
 
 ---
 
@@ -202,12 +285,12 @@ taken from the browser payload, in both modes.
 
 ```
 functions/
-  src/index.ts             createOrder, trackOrder, setUserRole
-  src/order.ts             shared trusted pricing, validation, hours, rate keys
+  src/index.ts             legacy createOrder, trackOrder, setUserRole (not used on Spark)
+  src/order.ts             legacy shared trusted pricing, validation, hours
   scripts/provision-admin.mjs
 src/
   components/
-    admin/                 Admin shell, route guards
+    admin/                 Admin shell, route guards, live new-order alerts
     auth/                  Auth shell, RequireAuth
     cart/ checkout/ contact/ home/ layout/ menu/ orders/ ui/
   context/                 Auth, Catalog, Settings, Cart providers
@@ -223,8 +306,8 @@ src/
   types/                   Product/cart/order types
 tests/
   firestore.rules.test.mjs
-  order.functions.test.mjs
-firestore.rules  storage.rules  firestore.indexes.json  firebase.json
+  order.functions.test.mjs   (legacy, not in npm scripts)
+firestore.rules  firestore.indexes.json  firebase.json
 DEPLOYMENT.md
 ```
 

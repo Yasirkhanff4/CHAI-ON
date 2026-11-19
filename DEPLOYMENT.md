@@ -2,9 +2,9 @@
 
 Everything needed to take the app from this repository to a live site, in order.
 
-**Nothing in this file has been executed on your behalf.** No Firebase project,
-Cloud Function, security rule or Vercel deployment has been created or
-published — that requires your accounts.
+**Nothing in this file has been executed on your behalf.** The updated security
+rules and the Vercel site still have to be deployed from your accounts. The app
+runs on the free **Spark** plan and needs no Cloud Functions.
 
 ---
 
@@ -12,38 +12,41 @@ published — that requires your accounts.
 
 | Thing | Why |
 | --- | --- |
-| Firebase project | Auth, Firestore, Storage |
-| **Blaze (pay-as-you-go)** plan on that project | Cloud Functions (required for trusted order creation and guest tracking) |
+| Firebase project on the **Spark (free)** plan | Auth, Firestore |
 | Vercel account | Hosts the React frontend |
 | Node 20+ locally | Build, deploy and provisioning scripts |
 
 ### Firebase plan and cost
 
-- **Blaze is required.** Cloud Functions cannot be deployed on the free Spark
-  plan, and guest order tracking/creation must run server-side.
-- Realistic cost for a small tea shop is **close to zero**: Cloud Functions has
-  a free monthly allowance of 2 million invocations and 400,000 GB-seconds;
-  Firestore gives 50,000 reads / 20,000 writes per day free; Auth email sign-in
-  is free.
-- On Blaze you pay for usage beyond those limits plus small Cloud Build/Artifact
-  Registry charges for deploying functions (typically a few cents per deploy).
-- Set a **budget alert** in Google Cloud → Billing before launch.
-- The admin panel, dashboard and product management use Firestore directly and
-  cost nothing extra at this scale.
+- **Spark is enough.** Orders and guest tracking are written to Firestore by the
+  signed-in (or anonymous) customer; security rules pin ownership, statuses and
+  money. Nothing calls a Cloud Function.
+- Free limits at this scale: Firestore 50,000 reads / 20,000 writes / 20,000
+  deletes per day, 1 GiB storage; Auth email/password and anonymous sign-in are
+  free.
+- **Firebase Storage is not used.** Product photos are a path in `public/images/`
+  or any public image URL, entered in the admin product editor.
+- Do **not** upgrade to Blaze for this app. If you later want server-side price
+  verification, `functions/` already contains `createOrder` / `trackOrder`, but
+  those are optional and were not deployed for the Spark build.
+- Set a **budget alert** in Google Cloud → Billing even on Spark.
 
 ---
 
 ## 2. Create the Firebase project
 
 1. <https://console.firebase.google.com> → **Add project** (e.g. `chai-on`).
-2. Upgrade the project to **Blaze** (bottom-left plan card).
-3. **Build → Authentication → Get started → Email/Password → Enable.**
-   Leave every other provider off.
+   Stay on **Spark** (free).
+2. **Build → Authentication → Get started → Email/Password → Enable.**
+3. Still in Authentication → **Sign-in method → Anonymous → Enable.** Guest
+   checkout uses a short-lived anonymous session; without it, checkout cannot
+   write an order.
 4. **Build → Firestore Database → Create database → Production mode →**
    choose the region closest to Islamabad (e.g. `asia-south1`).
-5. **Build → Storage → Get started** (same region), for product photos.
-6. **Project settings → Your apps → Web (`</>`)** → register the app →
+5. **Project settings → Your apps → Web (`</>`)** → register the app →
    copy the `firebaseConfig` values.
+
+You do **not** need to enable Storage or upgrade to Blaze.
 
 ---
 
@@ -64,7 +67,6 @@ Create `.env` in the project root (never commit it — it is gitignored):
 VITE_FIREBASE_API_KEY=...
 VITE_FIREBASE_AUTH_DOMAIN=chai-on.firebaseapp.com
 VITE_FIREBASE_PROJECT_ID=chai-on
-VITE_FIREBASE_STORAGE_BUCKET=chai-on.appspot.com
 VITE_FIREBASE_MESSAGING_SENDER_ID=...
 VITE_FIREBASE_APP_ID=...
 VITE_FIREBASE_USE_EMULATORS=false
@@ -79,20 +81,19 @@ instead of production (development only).
 
 ---
 
-## 4. Deploy the backend
+## 4. Deploy the security rules
 
 ```bash
-npm --prefix functions install        # Cloud Functions dependencies
-npm --prefix functions run build      # compile TypeScript to functions/lib
-
-npx firebase deploy --only firestore:rules,firestore:indexes,storage
-npx firebase deploy --only functions
+npx firebase deploy --only firestore:rules,firestore:indexes
 ```
 
-The functions deploy to region **asia-south1** (`createOrder`, `trackOrder`,
-`setUserRole`). If you prefer another region, change `REGION` in
-`functions/src/index.ts` **and** `FUNCTIONS_REGION` in
-`src/lib/firebase/config.ts`, then redeploy.
+That is the whole backend. **Do not deploy functions or Storage** — the Spark
+build never calls them, and deploying functions requires Blaze.
+
+The rules are what make customer orders safe: they check that an order belongs
+to the signed-in uid, starts as `NEW`/`UNPAID`/`COD`, and that
+`total == subtotal + deliveryCharge`. Deploy them **before** testing checkout,
+otherwise every order write is denied.
 
 ### First data
 
@@ -110,8 +111,7 @@ The functions deploy to region **asia-south1** (`createOrder`, `trackOrder`,
 }
 ```
 
-   The customer site falls back to sensible defaults until this exists, and the
-   order function uses the same defaults if the document is missing.
+   The customer site falls back to sensible defaults until this exists.
 
 2. Create the two teas: sign in to the admin panel after step 5, open
    **Products**, and press **Add launch teas** (or add them by hand). Until
@@ -125,18 +125,21 @@ The functions deploy to region **asia-south1** (`createOrder`, `trackOrder`,
 # Firebase Console → Project settings → Service accounts → Generate new private key
 # Save the JSON outside this repository.
 GOOGLE_APPLICATION_CREDENTIALS=./serviceAccount.json \
-  node functions/scripts/provision-admin.mjs --email owner@chaion.pk --role SUPER_ADMIN --name "Owner"
+  node functions/scripts/provision-admin.mjs --email you@example.com --role SUPER_ADMIN --name "Owner"
 ```
 
+- `--email` accepts any real account email (nothing is hardcoded); use the owner's.
 - The script creates the account **without a password** and writes the role as a
   Firebase **custom claim** plus the `users/{uid}` document.
 - Tell the owner to open `/admin/login`, pick **Customer login → Forgot
   password** (or `/forgot-password`), set a password, then sign in at
   `/admin/login`.
 - Roles: `SUPER_ADMIN`, `ADMIN`, `DELIVERY_STAFF`, `CUSTOMER`.
-- Only `setUserRole` (called by a super admin) or this script can change a role.
-  Nothing in the browser can grant admin access.
+- Only this script (Admin SDK, run locally) can change a role. Nothing in the
+  browser can grant admin access; there is no public admin signup.
 - After a role change the user must sign in again to receive the new claim.
+- `functions/package.json` provides `firebase-admin` for the script; it does not
+  mean any Cloud Function has to be deployed.
 
 Delete the service-account JSON when you are done.
 
@@ -164,14 +167,20 @@ Customer side:
 - [ ] Menu shows live Firestore products and prices.
 - [ ] Add to cart, change quantity, change sugar/strength.
 - [ ] Guest checkout succeeds with no account; order number appears.
+- [ ] Guest registers right after ordering → the order appears under My Orders
+      (same browser, so the anonymous session is still active).
+- [ ] "Order on WhatsApp" opens `wa.me/923291018591` with the cart items and
+      total pre-filled.
 - [ ] Confirmation page shows items, address, COD and Track order.
 - [ ] Cart is empty afterwards.
 - [ ] Disconnect the network mid-checkout → clear error, cart preserved; retry
       creates only one order.
 - [ ] Registered customer: sign up, sign out, sign in, forgot password.
 - [ ] Account page lists the customer's own orders; profile edits save.
-- [ ] Track order with order number + phone works; wrong phone shows
-      "No order matches…".
+- [ ] Track order with the order number works in the same browser/session; from
+      another browser it shows "Order not found on this device. Contact us on
+      WhatsApp." and the WhatsApp button opens the chat.
+- [ ] Confirmation page shows the order number and the Track button.
 - [ ] /account while signed out redirects to /login.
 - [ ] Settings change (e.g. delivery charge) appears on the site after refresh.
 - [ ] Ordering paused → checkout explains and the button is disabled.
@@ -184,7 +193,11 @@ Admin side:
 - [ ] Status flow: accept → preparing → ready → out for delivery → delivered.
 - [ ] Invalid transitions are not offered.
 - [ ] Reject/cancel works; COD "Confirm cash received" sets PAID.
-- [ ] Products: add, edit price, upload photo, hide product, mark unavailable.
+- [ ] Products: add, edit price, set an image path/URL, hide product, mark
+      unavailable.
+- [ ] New order arrives while the admin tab is open: count badge appears, the
+      "Enable sound" button turns on the beep, and the tab title shows
+      "(n) New Orders".
 - [ ] Settings: save and see the change on the customer site.
 - [ ] Delivery: assign a staff member, staff sees only their assigned orders,
       staff cannot open products/settings.
@@ -196,19 +209,19 @@ Admin side:
 ## 8. Local emulator workflow
 
 ```bash
-npm run functions:build
-npx firebase emulators:start --project demo-chaion   # firestore, auth, functions, storage, UI
+npx firebase emulators:start --project demo-chaion   # firestore, auth, UI
 VITE_FIREBASE_USE_EMULATORS=true npm run dev
 ```
 
 Automated checks:
 
 ```bash
-npm run test:rules     # 37 Firestore security-rule assertions
-npm run test:orders    # 20 trusted order-function assertions
+npm run test:rules     # 62 Firestore security-rule assertions
 ```
 
-Both run entirely on the emulator (Java required) and do not touch production.
+It runs entirely on the emulator (Java required) and does not touch production.
+`npm run test:orders` was removed with the Functions path; the legacy
+`tests/order.functions.test.mjs` file is kept for reference only.
 
 > The emulator suite uses `--project demo-chaion`, and every emulator port is
 > configured in `firebase.json`.
@@ -217,38 +230,48 @@ Both run entirely on the emulator (Java required) and do not touch production.
 
 ## 9. Security summary
 
-- Orders are written **only** by the `createOrder` Cloud Function (Admin SDK).
-  Firestore rules deny all client order creation and deletion.
-- Prices, availability, delivery charge, minimum order and opening hours are
-  read from Firestore inside that function. The browser never sends a price.
-- Retries reuse a request key (`orderRequests/{uid|guest}_{key}`) so a network
-  failure cannot duplicate an order.
-- Guest tracking is a callable function that checks order number **and** phone,
-  rate-limits by IP and phone, and returns only tracking fields.
-- Customers can read only their own orders (`customerId == uid`) and edit only
-  their `name`, `phone` and `updatedAt`.
+- Orders are written by the signed-in customer (guests use an anonymous session),
+  never by an unauthenticated visitor, and never for another uid. The rules also
+  require `NEW`/`UNPAID`/`COD`, one `NEW` history entry, and
+  `total == subtotal + deliveryCharge`.
+- Nothing can be deleted from the client; totals, payment status and order status
+  cannot be changed by customers.
+- Cart totals are rebuilt from Firestore products in the browser. Spark has no
+  server code, so this is the one thing rules cannot prove per line — staff review
+  every order before accepting it.
+- Idempotency is handled per checkout attempt in `sessionStorage`; the order number
+  also acts as the document id, so retries reuse the same order.
+- Tracking is owner-only: the order is read directly and must have
+  `customerId == uid`, so it works on the same device/session that placed it.
+  From another device the app says "Order not found on this device" and offers
+  WhatsApp. There is no phone-number lookup and no public order-by-number read.
+- Customers can read only their own orders (`customerId == uid`), and a missing
+  order number reads as null so checkout can pick an unused number.
+- Profiles can only be created/read/updated by their owner with a **real
+  (non-anonymous) email token**; the role is always `CUSTOMER` and cannot be
+  changed by the user. Anonymous sessions can own orders but not profiles.
 - Admin and delivery roles live in Firebase custom claims, enforced by Firestore
-  and Storage rules, not by the UI.
+  rules, not by the UI.
 - Delivery staff see only orders where `assignedTo == uid`, and can only set
   `OUT_FOR_DELIVERY`, `DELIVERED` or `DELIVERY_FAILED`.
-- `orderRequests` and `rateLimits` are invisible to every client.
-- Storage: public read of product photos, staff-only writes, images under 5 MB.
-- Order tracking never exposes other customers' data; guest lookup returns status,
-  items and totals only.
+- Products and settings are public read, admin write. There is no Storage bucket
+  and no Storage rule to deploy.
+- The admin panel reads at most 50 orders per feed and watches up to 20 NEW orders
+  for the live badge/beep, keeping reads inside the Spark quota.
 
 ---
 
 ## 10. Launch checklist
 
-- [ ] Real phone number in `src/data/site.ts` and in Firestore settings
-      (the placeholder `+92 300 000 0000` is not a real number).
+- [x] Real phone number set in `src/data/site.ts` (`+92 329 1018591`) — confirm
+      Settings → contact phone matches it.
 - [ ] Real prices confirmed with the owner and set in Products.
 - [ ] Delivery charge and minimum order configured in Settings.
 - [ ] Opening/closing times match the shop.
 - [ ] Firebase Auth authorized domains include the production domain.
-- [ ] Rules, indexes and functions deployed from this repository.
+- [ ] Rules and indexes deployed from this repository (no functions).
+- [ ] Email/Password **and** Anonymous providers enabled.
 - [ ] Super admin provisioned; service-account key deleted.
 - [ ] Budget alert configured in Google Cloud.
-- [ ] `npm run build`, `npm run lint`, `npm run test:rules`,
-      `npm run test:orders` all pass.
+- [ ] `npm run build`, `npm run lint`, `npm run test:rules` all pass.
 - [ ] The section 7 checklist completed on the live domain.

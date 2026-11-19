@@ -1,13 +1,25 @@
-import { collection, doc, getDoc, getDocs, limit, orderBy, query, where } from 'firebase/firestore'
-import { httpsCallable } from 'firebase/functions'
+import { signInAnonymously } from 'firebase/auth'
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  serverTimestamp,
+  setDoc,
+  Timestamp,
+  where,
+} from 'firebase/firestore'
 import {
   hasErrors,
   normalizeCustomerDetails,
   validateCustomerDetails,
   validateSubmissionItems,
 } from '@/lib/checkoutValidation'
-import { BackendUnavailableError, getDb, getFirebaseFunctions, isFirebaseConfigured } from '@/lib/firebase/config'
-import { describeFirebaseError, toOrderError } from '@/lib/firebase/errors'
+import { getDb, getFirebaseAuth, isFirebaseConfigured } from '@/lib/firebase/config'
+import { toOrderError } from '@/lib/firebase/errors'
 import { OrderError } from '@/lib/orders/errors'
 import {
   findOrderByNumber,
@@ -17,13 +29,28 @@ import {
 } from '@/lib/orders/localOrderStore'
 import { mapOrder } from '@/lib/orders/mapOrder'
 import { generateOrderNumber } from '@/lib/orders/orderNumber'
+import { isOrderingOpen } from '@/lib/openingHours'
 import { priceOrder } from '@/lib/orders/pricing'
-import { normalizePakistaniPhone, toE164 } from '@/lib/phone'
+import { toE164 } from '@/lib/phone'
 import type { StoreSettings } from '@/data/settings'
 import type { Product, SugarLevel, TeaStrength } from '@/types'
 import type { CustomerDetails, Order, OrderSubmissionItem } from '@/types/order'
 
 const LAST_ORDER_KEY = 'chai-on:last-order:v1'
+const REQUESTS_KEY = 'chai-on:firestore-requests:v1'
+const NOT_ON_THIS_DEVICE =
+  'Order not found on this device. Contact us on WhatsApp.'
+
+function timestampToIso(value: unknown): string {
+  if (value instanceof Timestamp) return value.toDate().toISOString()
+  if (value instanceof Date) return value.toISOString()
+  if (typeof value === 'string') return value
+  if (value && typeof value === 'object' && 'seconds' in value) {
+    const seconds = Number((value as { seconds?: unknown }).seconds)
+    if (Number.isFinite(seconds)) return new Date(seconds * 1000).toISOString()
+  }
+  return new Date().toISOString()
+}
 
 export type PlaceOrderInput = {
   details: CustomerDetails
@@ -40,10 +67,11 @@ export type PlaceOrderCatalog = {
 /**
  * Places an order.
  *
- * With Firebase configured, the trusted Cloud Function validates the products,
- * prices, settings and totals, and returns the created order. Without Firebase
- * the app falls back to the local adapter so development and the initial
- * preview still work — that path is not production order storage.
+ * With Firebase configured, the signed-in customer (or a short-lived anonymous
+ * session created for a guest) writes the order document directly. The
+ * Firestore rules pin the owner, statuses, payment method and money; order
+ * creation needs no Cloud Functions, so the project stays on the free Spark
+ * plan. Without Firebase the app falls back to the local adapter.
  */
 export async function placeOrder(
   input: PlaceOrderInput,
@@ -66,24 +94,7 @@ export async function placeOrder(
   }
 
   if (isFirebaseConfigured) {
-    const callable = httpsCallable<Record<string, unknown>, Record<string, unknown>>(
-      getFirebaseFunctions(),
-      'createOrder',
-    )
-
-    try {
-      const response = await callable({
-        details: input.details,
-        items: input.items,
-        requestKey,
-      })
-      const data = response.data
-      const order = mapOrder(String(data.orderNumber ?? ''), data)
-      rememberLastOrder(order)
-      return order
-    } catch (error) {
-      throw toOrderError(error)
-    }
+    return placeOrderInFirestore(input, catalog)
   }
 
   const order = placeOrderLocally(input, catalog)
@@ -91,7 +102,7 @@ export async function placeOrder(
   return order
 }
 
-/** Local development path — mirrors the trusted function's checks. */
+/** Local development path — mirrors the checkout checks without Firebase. */
 function placeOrderLocally(input: PlaceOrderInput, catalog: PlaceOrderCatalog): Order {
   const itemError = validateSubmissionItems(input.items)
   if (itemError) throw new OrderError('VALIDATION', itemError)
@@ -142,6 +153,182 @@ function placeOrderLocally(input: PlaceOrderInput, catalog: PlaceOrderCatalog): 
   return order
 }
 
+/**
+ * Guests get a real (anonymous) Firebase account so their orders have an
+ * owner. Registering later links the email/password credential to that same
+ * uid, which keeps every previous order in the account's history.
+ */
+async function startGuestSession() {
+  const auth = getFirebaseAuth()
+  if (auth.currentUser) return auth.currentUser
+
+  try {
+    const credentials = await signInAnonymously(auth)
+    return credentials.user
+  } catch (error) {
+    throw new OrderError(
+      'UNKNOWN',
+      'We could not start your order session. Refresh the page and try again, or order on WhatsApp.',
+      { cause: error },
+    )
+  }
+}
+
+async function placeOrderInFirestore(
+  input: PlaceOrderInput,
+  catalog: PlaceOrderCatalog,
+): Promise<Order> {
+  const details = normalizeCustomerDetails(input.details)
+  const fieldErrors = validateCustomerDetails(details)
+  if (hasErrors(fieldErrors)) {
+    throw new OrderError('VALIDATION', 'Check the highlighted delivery details.', { fieldErrors })
+  }
+
+  const itemError = validateSubmissionItems(input.items)
+  if (itemError) throw new OrderError('VALIDATION', itemError)
+
+  if (!isOrderingOpen(catalog.settings)) {
+    throw new OrderError(
+      'UNKNOWN',
+      'CHAI ON is not taking online orders right now. Please call us or message us on WhatsApp.',
+    )
+  }
+
+  const pricing = priceOrder(input.items, catalog.products, catalog.settings)
+
+  const previousNumber = readStoredRequest(input.requestKey)
+  if (previousNumber) {
+    const previous = await fetchOrderByNumber(previousNumber).catch(() => null)
+    if (previous) {
+      rememberLastOrder(previous)
+      return previous
+    }
+  }
+
+  const user = await startGuestSession()
+  const db = getDb()
+  const createdAt = new Date()
+  const createdAtIso = createdAt.toISOString()
+  const initialHistory = [{ status: 'NEW' as const, at: Timestamp.fromDate(createdAt), by: 'customer' }]
+
+  let orderNumber = generateOrderNumber(createdAt)
+  let lastError: unknown = null
+
+  // The document id is the customer-facing order number. If someone already
+  // owns that id, the create is rejected; pick a new suffix and try again.
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    const existing = await getDoc(doc(db, 'orders', orderNumber)).catch(() => null)
+    if (existing?.exists()) {
+      orderNumber = generateOrderNumber(createdAt)
+      continue
+    }
+
+    const order: Order = {
+      orderId: orderNumber,
+      orderNumber,
+      customerId: user.uid,
+      customerName: details.fullName,
+      phone: toE164(details.phone),
+      building: details.building,
+      floor: details.floor,
+      officeOrShop: details.officeOrShop,
+      deliveryInstructions: details.deliveryInstructions || null,
+      items: pricing.items,
+      itemCount: pricing.itemCount,
+      subtotal: pricing.subtotal,
+      deliveryCharge: pricing.deliveryCharge,
+      total: pricing.total,
+      paymentMethod: 'COD',
+      paymentStatus: 'UNPAID',
+      orderStatus: 'NEW',
+      assignedTo: null,
+      assignedToName: null,
+      statusHistory: [{ status: 'NEW', at: createdAtIso, by: 'customer' }],
+      createdAt: createdAtIso,
+      updatedAt: createdAtIso,
+    }
+
+    try {
+      await setDoc(doc(db, 'orders', orderNumber), {
+        orderId: order.orderId,
+        orderNumber,
+        customerId: order.customerId,
+        customerName: order.customerName,
+        phone: order.phone,
+        building: order.building,
+        floor: order.floor,
+        officeOrShop: order.officeOrShop,
+        deliveryInstructions: order.deliveryInstructions,
+        items: order.items,
+        itemCount: order.itemCount,
+        subtotal: order.subtotal,
+        deliveryCharge: order.deliveryCharge,
+        total: order.total,
+        paymentMethod: order.paymentMethod,
+        paymentStatus: order.paymentStatus,
+        orderStatus: order.orderStatus,
+        assignedTo: null,
+        assignedToName: null,
+        statusHistory: initialHistory,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      })
+    } catch (error) {
+      lastError = error
+      // A racing checkout may have written this number first; retry. Any other
+      // rejection (validation, session) is final.
+      if (isPermissionDenied(error)) {
+        orderNumber = generateOrderNumber(createdAt)
+        continue
+      }
+      throw toOrderError(error)
+    }
+
+    rememberRequest(input.requestKey, orderNumber)
+    rememberLastOrder(order)
+    return order
+  }
+
+  throw lastError
+    ? toOrderError(lastError)
+    : new OrderError('UNKNOWN', 'Could not reserve an order number. Please try again.')
+}
+
+function isPermissionDenied(error: unknown): boolean {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'code' in error &&
+    (error as { code?: unknown }).code === 'permission-denied'
+  )
+}
+
+function readStoredRequests(): Record<string, string> {
+  try {
+    const raw = window.sessionStorage.getItem(REQUESTS_KEY)
+    if (!raw) return {}
+    const parsed = JSON.parse(raw) as unknown
+    return parsed && typeof parsed === 'object' ? (parsed as Record<string, string>) : {}
+  } catch {
+    return {}
+  }
+}
+
+function readStoredRequest(requestKey: string): string | null {
+  return readStoredRequests()[requestKey] ?? null
+}
+
+function rememberRequest(requestKey: string, orderNumber: string): void {
+  try {
+    window.sessionStorage.setItem(
+      REQUESTS_KEY,
+      JSON.stringify({ ...readStoredRequests(), [requestKey]: orderNumber }),
+    )
+  } catch {
+    // Session storage may be unavailable; a retry then creates a new order.
+  }
+}
+
 function rememberLastOrder(order: Order): void {
   try {
     window.sessionStorage.setItem(LAST_ORDER_KEY, JSON.stringify(order))
@@ -163,13 +350,13 @@ function readLastOrder(orderNumber: string): Order | null {
 }
 
 /**
- * Order lookup for the confirmation screen. Guests see the order they just
- * placed (kept in session); signed-in customers read their own order from
- * Firestore, which Firestore rules restrict to that customer.
+ * Order lookup for the confirmation screen. The order just placed is kept in
+ * session; a signed-in customer (anonymous or not) can also re-read an order
+ * they own, which Firestore rules restrict to that account.
  */
 export async function getOrderForConfirmation(
   orderNumber: string,
-  customerId: string | null,
+  _customerId: string | null,
 ): Promise<Order | null> {
   const normalized = orderNumber.trim().toUpperCase()
   if (!normalized) return null
@@ -181,7 +368,7 @@ export async function getOrderForConfirmation(
     return findOrderByNumber(normalized)
   }
 
-  if (!customerId) return null
+  if (!getFirebaseAuth().currentUser) return null
 
   try {
     const snapshot = await getDoc(doc(getDb(), 'orders', normalized))
@@ -192,7 +379,7 @@ export async function getOrderForConfirmation(
   }
 }
 
-/** A customer's own order history. */
+/** A customer's own order history (latest 50 — well inside the free quota). */
 export async function fetchMyOrders(customerId: string): Promise<Order[]> {
   if (!isFirebaseConfigured) {
     return readOrders().filter((order) => order.customerId === customerId)
@@ -245,78 +432,74 @@ export type TrackedOrder = {
 }
 
 /**
- * Guest tracking: order number + matching phone.
- *
- * With Firebase this runs in the trusted trackOrder function, which rate
- * limits attempts and returns only tracking-safe fields. The local fallback
- * only searches orders placed in this browser.
+ * Tracking without Cloud Functions: the order document itself is the source of
+ * truth. Only the account that placed the order can read it, so tracking works
+ * on the same device/session — WhatsApp is the fallback when the order belongs
+ * to another device or browser profile.
  */
-export async function trackOrderRequest(
-  orderNumber: string,
-  phone: string,
-): Promise<TrackedOrder> {
+export async function trackOrderRequest(orderNumber: string): Promise<TrackedOrder> {
   const normalized = orderNumber.trim().toUpperCase()
-  const localPhone = normalizePakistaniPhone(phone)
 
-  if (!normalized || !localPhone) {
-    throw new OrderError('VALIDATION', 'Enter your order number and the phone number you ordered with.')
+  if (!normalized) {
+    throw new OrderError('VALIDATION', 'Enter your order number.')
   }
 
-  if (isFirebaseConfigured) {
-    const callable = httpsCallable<Record<string, unknown>, Record<string, unknown>>(
-      getFirebaseFunctions(),
-      'trackOrder',
-    )
+  if (!isFirebaseConfigured) {
+    const order = findOrderByNumber(normalized)
+    if (!order) throw new OrderError('VALIDATION', NOT_ON_THIS_DEVICE)
+    return toTrackedOrder(order)
+  }
 
-    try {
-      const response = await callable({ orderNumber: normalized, phone: localPhone })
-      const data = response.data
-      return {
-        orderNumber: String(data.orderNumber ?? normalized),
-        customerName: String(data.customerName ?? ''),
-        orderStatus: String(data.orderStatus ?? 'NEW') as Order['orderStatus'],
-        paymentMethod: 'COD',
-        paymentStatus: data.paymentStatus === 'PAID' ? 'PAID' : 'UNPAID',
-        itemCount: Number(data.itemCount ?? 0),
-        total: Number(data.total ?? 0),
-        deliveryCharge: Number(data.deliveryCharge ?? 0),
-        items: Array.isArray(data.items)
-          ? (data.items as Record<string, unknown>[]).map((item) => ({
-              name: String(item.name ?? 'Tea'),
-              quantity: Number(item.quantity ?? 1),
-              sugar: String(item.sugar ?? 'normal') as SugarLevel,
-              strength: String(item.strength ?? 'normal') as TeaStrength,
-              lineTotal: Number(item.lineTotal ?? 0),
-            }))
-          : [],
-        statusHistory: Array.isArray(data.statusHistory)
-          ? (data.statusHistory as Record<string, unknown>[]).map((event) => ({
-              status: String(event.status ?? 'NEW') as Order['orderStatus'],
-              at: String(event.at ?? ''),
-            }))
-          : [],
-        createdAt: String(data.createdAt ?? ''),
-        updatedAt: String(data.updatedAt ?? ''),
-      }
-    } catch (error) {
-      throw new OrderError(
-        'VALIDATION',
-        error instanceof BackendUnavailableError
-          ? error.message
-          : describeFirebaseError(
-              error,
-              'No order matches that order number and phone number.',
-            ),
-        { cause: error },
-      )
+  const auth = getFirebaseAuth()
+  if (!auth.currentUser) {
+    throw new OrderError('VALIDATION', NOT_ON_THIS_DEVICE)
+  }
+
+  try {
+    const snapshot = await getDoc(doc(getDb(), 'orders', normalized))
+    if (!snapshot.exists()) {
+      throw new OrderError('VALIDATION', NOT_ON_THIS_DEVICE)
     }
-  }
 
-  const order = findOrderByNumber(normalized)
-  if (!order || normalizePakistaniPhone(order.phone) !== localPhone) {
-    throw new OrderError('VALIDATION', 'No order matches that order number and phone number.')
-  }
+    const data = snapshot.data() as Record<string, unknown>
+    if (String(data.customerId ?? '') !== auth.currentUser.uid) {
+      throw new OrderError('VALIDATION', NOT_ON_THIS_DEVICE)
+    }
 
+    return {
+      orderNumber: String(data.orderNumber ?? normalized),
+      customerName: String(data.customerName ?? '').split(' ')[0] ?? '',
+      orderStatus: String(data.orderStatus ?? 'NEW') as Order['orderStatus'],
+      paymentMethod: 'COD',
+      paymentStatus: data.paymentStatus === 'PAID' ? 'PAID' : 'UNPAID',
+      itemCount: Number(data.itemCount ?? 0),
+      total: Number(data.total ?? 0),
+      deliveryCharge: Number(data.deliveryCharge ?? 0),
+      items: Array.isArray(data.items)
+        ? (data.items as Record<string, unknown>[]).map((item) => ({
+            name: String(item.name ?? 'Tea'),
+            quantity: Number(item.quantity ?? 1),
+            sugar: String(item.sugar ?? 'normal') as SugarLevel,
+            strength: String(item.strength ?? 'normal') as TeaStrength,
+            lineTotal: Number(item.lineTotal ?? 0),
+          }))
+        : [],
+      statusHistory: Array.isArray(data.statusHistory)
+        ? (data.statusHistory as Record<string, unknown>[]).map((event) => ({
+            status: String(event.status ?? 'NEW') as Order['orderStatus'],
+            at: timestampToIso(event.at),
+          }))
+        : [],
+      createdAt: timestampToIso(data.createdAt),
+      updatedAt: timestampToIso(data.updatedAt ?? data.createdAt),
+    }
+  } catch (error) {
+    if (error instanceof OrderError) throw error
+    throw new OrderError('VALIDATION', NOT_ON_THIS_DEVICE)
+  }
+}
+
+function toTrackedOrder(order: Order): TrackedOrder {
   return {
     orderNumber: order.orderNumber,
     customerName: order.customerName.split(' ')[0] ?? '',

@@ -1,10 +1,21 @@
 import { useEffect, useState } from 'react'
-import { AlertCircle, ArrowLeft, Banknote, CheckCircle2, MapPin, Phone, Truck, User } from 'lucide-react'
+import {
+  AlertCircle,
+  AlertTriangle,
+  ArrowLeft,
+  Banknote,
+  CheckCircle2,
+  MapPin,
+  Phone,
+  Truck,
+  User,
+} from 'lucide-react'
 import { Link, useParams } from 'react-router-dom'
 import { OrderTimeline } from '@/components/orders/OrderTimeline'
 import { StatusBadge } from '@/components/orders/StatusBadge'
 import { Container } from '@/components/ui/Container'
 import { useAuth } from '@/context/authContext'
+import { useCatalog } from '@/context/catalogContext'
 import { strengthLabel, sugarLabel } from '@/data/menu'
 import { buttonClasses } from '@/lib/buttonStyles'
 import { describeFirebaseError } from '@/lib/firebase/errors'
@@ -32,6 +43,7 @@ const ACTION_LABELS: Partial<Record<OrderStatus, string>> = {
 export function AdminOrderDetailPage() {
   const { orderNumber = '' } = useParams<{ orderNumber: string }>()
   const { profile, isAdmin } = useAuth()
+  const { products } = useCatalog()
 
   const [order, setOrder] = useState<Order | null>(null)
   const [loading, setLoading] = useState(true)
@@ -99,12 +111,7 @@ export function AdminOrderDetailPage() {
     setActionError(null)
 
     try {
-      await updateOrderStatus(
-        order.orderNumber,
-        order.orderStatus,
-        next,
-        profile.name || profile.uid,
-      )
+      await updateOrderStatus(order.orderNumber, order.orderStatus, next, profile.name || profile.uid)
       await loadOrder()
     } catch (statusError) {
       setActionError(describeFirebaseError(statusError, 'The status could not be updated.'))
@@ -180,6 +187,15 @@ export function AdminOrderDetailPage() {
     (status) => isAdmin || DELIVERY_STAFF_STATUSES.includes(status),
   )
 
+  // Prices can change after an order is placed. Re-add the items at today's
+  // catalog prices (falling back to the price that was charged) and warn when
+  // the stored total no longer matches — never block the owner.
+  const currentTotal = order.items.reduce((sum, line) => {
+    const product = products.find((entry) => entry.id === line.productId)
+    return sum + (product ? product.price : line.unitPrice) * line.quantity
+  }, order.deliveryCharge)
+  const totalMismatch = products.length > 0 && currentTotal !== order.total
+
   return (
     <Container>
       <Link
@@ -199,7 +215,13 @@ export function AdminOrderDetailPage() {
             Placed {formatDateTime(order.createdAt)} · updated {formatDateTime(order.updatedAt)}
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {totalMismatch && (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-red-500/30 bg-red-50 px-2.5 py-1 text-[10.5px] font-semibold text-red-800">
+              <AlertTriangle className="h-3.5 w-3.5" aria-hidden="true" />
+              Total mismatch, check before delivery
+            </span>
+          )}
           <StatusBadge status={order.orderStatus} />
           <span className="rounded-full border border-cream-300 bg-cream-50 px-2.5 py-1 text-[10.5px] font-semibold uppercase tracking-[0.1em] text-forest-900/60">
             {order.paymentStatus === 'PAID' ? 'Paid' : 'COD unpaid'}

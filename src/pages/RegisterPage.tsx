@@ -11,7 +11,7 @@ import { useDocumentTitle } from '@/lib/useDocumentTitle'
 
 export function RegisterPage() {
   useDocumentTitle('Create account — CHAI ON')
-  const { register, status } = useAuth()
+  const { register, status, isAnonymous } = useAuth()
   const navigate = useNavigate()
 
   const [name, setName] = useState('')
@@ -66,6 +66,13 @@ export function RegisterPage() {
       }
     >
       <form onSubmit={handleSubmit} noValidate className="space-y-4">
+        {isAnonymous && (
+          <p className="rounded-xl border border-forest-200 bg-forest-50 px-3.5 py-3 text-[12px] leading-relaxed text-forest-800">
+            You are currently ordering as a guest. Creating an account now keeps every order you
+            placed as a guest in your history.
+          </p>
+        )}
+
         {formError && (
           <div role="alert" className="rounded-2xl border border-red-500/30 bg-red-50 px-4 py-3">
             <p className="flex items-start gap-2 text-[12.5px] font-medium leading-relaxed text-red-800">

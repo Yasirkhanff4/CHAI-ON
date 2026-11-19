@@ -26,6 +26,7 @@ functions/lib
 !.env.example
 serviceAccount*.json
 *savedKey*.json
+*firebase-adminsdk*.json
 
 # Editor directories and files
 .vscode/*

@@ -25,7 +25,7 @@ export function CartPage() {
         }
       />
 
-      <section aria-label="Cart contents" className="py-10 sm:py-14">
+      <section aria-label="Cart contents" className="pb-28 pt-10 sm:py-14">
         <Container>
           {items.length === 0 ? (
             <div className="mx-auto max-w-lg rounded-[32px] border border-cream-300/80 bg-cream-50 px-6 py-12 text-center shadow-card sm:px-10">

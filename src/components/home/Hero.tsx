@@ -92,8 +92,8 @@ export function Hero() {
             </div>
 
             <div className="absolute -bottom-5 left-3 right-3 flex items-center gap-3.5 rounded-2xl border border-cream-300/80 bg-cream-50/95 p-4 shadow-card backdrop-blur sm:-left-7 sm:right-auto sm:w-[262px]">
-              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-forest-800 text-cream-50">
-                <Coffee className="h-[18px] w-[18px]" aria-hidden="true" />
+              <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-forest-800 text-cream-50">
+                <Coffee className="h-7 w-7" aria-hidden="true" />
               </span>
               <div className="min-w-0">
                 <p className="text-[9px] font-semibold uppercase tracking-[0.2em] text-tea-500">

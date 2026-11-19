@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 import {
+  EmailAuthProvider,
   createUserWithEmailAndPassword,
+  linkWithCredential,
   onAuthStateChanged,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
@@ -25,6 +27,10 @@ type AuthProviderProps = {
  * The role always comes from the Firebase ID token's custom claim — never from
  * localStorage or a field the account holder can edit. The Firestore `users`
  * document supplies the display name and phone number.
+ *
+ * A guest who checks out gets a short-lived anonymous session so the order has
+ * an owner. Registering while that session is active links the email/password
+ * credential to the same uid, so guest orders stay in the new account.
  */
 export function AuthProvider({ children }: AuthProviderProps) {
   const [status, setStatus] = useState<AuthStatus>(isFirebaseConfigured ? 'loading' : 'unconfigured')
@@ -39,6 +45,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
 
     try {
+      if (fbUser.isAnonymous) {
+        const guest: AuthProfile = {
+          uid: fbUser.uid,
+          email: '',
+          name: 'Guest',
+          phone: '',
+          role: 'CUSTOMER',
+          isAnonymous: true,
+        }
+        setProfile(guest)
+        setAuthError(null)
+        return guest
+      }
+
       const token = await fbUser.getIdTokenResult()
       const claim = token.claims.role
       const role: Role =
@@ -66,6 +86,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         name: name || (fbUser.email ?? '').split('@')[0],
         phone,
         role,
+        isAnonymous: false,
       }
 
       setProfile(nextProfile)
@@ -101,24 +122,38 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (!isFirebaseConfigured) throw new BackendUnavailableError()
 
       const auth = getFirebaseAuth()
-      const credentials = await createUserWithEmailAndPassword(auth, email.trim(), password)
       const trimmedName = name.trim()
+      const trimmedEmail = email.trim().toLowerCase()
+      const currentUser = auth.currentUser
 
-      await updateAuthProfile(credentials.user, { displayName: trimmedName })
+      let user: User
+
+      if (currentUser?.isAnonymous) {
+        // Upgrade the guest session in place: same uid, same order history.
+        const credential = EmailAuthProvider.credential(trimmedEmail, password)
+        const linked = await linkWithCredential(currentUser, credential)
+        user = linked.user
+      } else {
+        const created = await createUserWithEmailAndPassword(auth, trimmedEmail, password)
+        user = created.user
+      }
+
+      await updateAuthProfile(user, { displayName: trimmedName })
+      await user.getIdToken(true)
 
       // The default role is set here once; rules reject any other role value
       // and no customer can escalate it later.
-      await setDoc(doc(getDb(), 'users', credentials.user.uid), {
-        uid: credentials.user.uid,
+      await setDoc(doc(getDb(), 'users', user.uid), {
+        uid: user.uid,
         name: trimmedName,
-        email: credentials.user.email ?? email.trim().toLowerCase(),
+        email: user.email ?? trimmedEmail,
         phone: '',
         role: 'CUSTOMER',
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       })
 
-      await loadProfile(credentials.user)
+      await loadProfile(user)
     },
     [loadProfile],
   )
@@ -151,7 +186,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const updateProfile = useCallback(
     async ({ name, phone }: { name: string; phone: string }) => {
-      if (!isFirebaseConfigured || !profile) throw new BackendUnavailableError()
+      if (!isFirebaseConfigured || !profile || profile.isAnonymous) throw new BackendUnavailableError()
 
       await updateDoc(doc(getDb(), 'users', profile.uid), {
         name: name.trim(),
@@ -177,7 +212,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       status,
       profile,
       authError,
-      isSignedIn: Boolean(profile),
+      isSignedIn: Boolean(profile && !profile.isAnonymous),
+      isAnonymous: Boolean(profile?.isAnonymous),
       isAdmin: isAdminRole(profile?.role),
       isSuperAdmin: profile?.role === 'SUPER_ADMIN',
       isDeliveryStaff: isStaffRole(profile?.role) && profile?.role === 'DELIVERY_STAFF',

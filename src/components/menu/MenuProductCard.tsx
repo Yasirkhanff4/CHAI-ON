@@ -129,7 +129,7 @@ export function MenuProductCard({ product }: MenuProductCardProps) {
               disabled={!product.isAvailable}
               className={buttonClasses('primary', 'md', 'min-w-0 flex-1')}
             >
-              <Plus className="h-4 w-4" aria-hidden="true" />
+              <Plus className="h-5 w-5" aria-hidden="true" />
               <span className="truncate">
                 {product.isAvailable ? `Add · ${formatPKR(lineTotal)}` : 'Unavailable'}
               </span>

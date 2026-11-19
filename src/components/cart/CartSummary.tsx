@@ -1,5 +1,6 @@
 import { ArrowRight, ShieldCheck, ShoppingBag, Truck } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { WhatsAppOrderButton } from '@/components/whatsapp/WhatsAppOrderButton'
 import { useCart } from '@/context/cartContext'
 import { useStoreSettings } from '@/context/settingsContext'
 import { business } from '@/data/site'
@@ -79,6 +80,13 @@ export function CartSummary() {
           Add more tea
           <ArrowRight className="h-4 w-4" aria-hidden="true" />
         </Link>
+
+        <div className="mt-4 border-t border-cream-300/80 pt-4">
+          <WhatsAppOrderButton size="md" className="w-full" iconClassName="h-5 w-5 shrink-0" />
+          <p className="mt-2 text-center text-[11.5px] leading-relaxed text-forest-900/60">
+            Send this cart to us on WhatsApp and we will confirm the rest in chat.
+          </p>
+        </div>
 
         <div className="mt-5 space-y-2.5 border-t border-cream-300/80 pt-5 text-[12px] leading-relaxed text-forest-900/70">
           <p className="flex items-start gap-2">

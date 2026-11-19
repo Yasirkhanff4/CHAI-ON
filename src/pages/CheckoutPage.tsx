@@ -80,18 +80,20 @@ function EmptyCheckout() {
 export function CheckoutPage() {
   useDocumentTitle('Checkout — CHAI ON')
   const { items } = useCart()
-  const { profile } = useAuth()
+  const { profile, isAnonymous } = useAuth()
 
   if (items.length === 0) return <EmptyCheckout />
 
-  // Re-keying keeps the form state correct when the session resolves after the
-  // first render, and prefills saved details for signed-in customers.
+  // A guest gets an anonymous session while the order is written, so only a
+  // real account may prefill details or re-key this form.
+  const account = profile && !isAnonymous ? profile : null
+
   return (
     <CheckoutFlow
-      key={profile?.uid ?? 'guest'}
-      initialName={profile?.name ?? ''}
-      initialPhone={profile?.phone ?? ''}
-      customerId={profile?.uid ?? null}
+      key={account?.uid ?? 'guest'}
+      initialName={account?.name ?? ''}
+      initialPhone={account?.phone ?? ''}
+      customerId={account?.uid ?? null}
     />
   )
 }
@@ -220,7 +222,7 @@ function CheckoutFlow({ initialName, initialPhone, customerId }: CheckoutFlowPro
         description="Tell us where to bring your chai. Pay in cash when it arrives — no account, no card, no online payment."
       />
 
-      <section aria-label="Checkout" className="py-10 sm:py-14">
+      <section aria-label="Checkout" className="pb-28 pt-10 sm:py-14">
         <Container>
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_400px] lg:items-start lg:gap-10">
             <form

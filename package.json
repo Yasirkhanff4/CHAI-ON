@@ -10,8 +10,7 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "test:rules": "firebase emulators:exec --only firestore --project demo-chaion \"node tests/firestore.rules.test.mjs\"",
-    "functions:build": "npm --prefix functions run build",
-    "test:orders": "firebase emulators:exec --only firestore,auth,functions --project demo-chaion \"node tests/order.functions.test.mjs\""
+    "functions:build": "npm --prefix functions run build"
   },
   "dependencies": {
     "firebase": "^13.4.0",

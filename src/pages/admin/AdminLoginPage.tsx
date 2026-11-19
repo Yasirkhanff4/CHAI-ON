@@ -115,6 +115,15 @@ export function AdminLoginPage() {
                 disabled={submitting || status === 'unconfigured'}
               />
 
+              <div className="flex justify-end">
+                <Link
+                  to="/forgot-password"
+                  className="text-[12.5px] font-medium text-forest-800 hover:text-forest-600"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+
               <button
                 type="submit"
                 disabled={submitting || status === 'unconfigured'}

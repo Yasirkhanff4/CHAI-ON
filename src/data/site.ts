@@ -6,18 +6,19 @@
 export const business = {
   name: 'CHAI ON',
   tagline: 'Your Office. Your Chai.',
-  /**
-   * TODO(launch): replace with the real CHAI ON phone number.
-   * The placeholder keeps every `tel:` link functional during development.
-   */
-  phoneDisplay: '+92 300 000 0000',
-  phoneHref: 'tel:+923000000000',
+  /** Primary CHAI ON contact number, used for every `tel:` link. */
+  phoneDisplay: '+92 329 1018591',
+  phoneHref: 'tel:+923291018591',
   addressLine1: '3rd Floor, Al Ghaffar Mall',
   addressLine2: 'G-11 Markaz, Islamabad',
   hours: '9:00 AM – 11:00 PM',
   mapsUrl:
     'https://www.google.com/maps/search/?api=1&query=Al+Ghaffar+Mall+G-11+Markaz+Islamabad',
   deliveryArea: 'G-11 Markaz and the buildings around Al Ghaffar Mall',
+  /** WhatsApp ordering. International format, digits only. */
+  whatsappNumber: '923291018591',
+  whatsappDisplay: '+92 329 1018591',
+  whatsappUrl: 'https://wa.me/923291018591',
 } as const
 
 export type NavLink = {

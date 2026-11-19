@@ -12,7 +12,7 @@ export function ContactCards() {
     <div className="grid gap-4 sm:grid-cols-3 sm:gap-5">
       <div className={cardClass}>
         <span className={iconClass}>
-          <MapPin className="h-[18px] w-[18px]" aria-hidden="true" />
+          <MapPin className="h-5 w-5" aria-hidden="true" />
         </span>
         <h3 className="mt-5 text-[11px] font-semibold uppercase tracking-[0.2em] text-tea-500">
           Visit the kitchen
@@ -35,7 +35,7 @@ export function ContactCards() {
 
       <div className={cardClass}>
         <span className={iconClass}>
-          <Phone className="h-[18px] w-[18px]" aria-hidden="true" />
+          <Phone className="h-5 w-5" aria-hidden="true" />
         </span>
         <h3 className="mt-5 text-[11px] font-semibold uppercase tracking-[0.2em] text-tea-500">
           Call us
@@ -53,7 +53,7 @@ export function ContactCards() {
 
       <div className={cardClass}>
         <span className={iconClass}>
-          <Clock className="h-[18px] w-[18px]" aria-hidden="true" />
+          <Clock className="h-5 w-5" aria-hidden="true" />
         </span>
         <h3 className="mt-5 text-[11px] font-semibold uppercase tracking-[0.2em] text-tea-500">
           Opening hours

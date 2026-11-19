@@ -16,19 +16,24 @@ service cloud.firestore {
       return isSignedIn() && (role() == 'ADMIN' || role() == 'SUPER_ADMIN');
     }
 
-    function isSuperAdmin() {
-      return isSignedIn() && role() == 'SUPER_ADMIN';
-    }
-
     function isDelivery() {
       return isSignedIn() && role() == 'DELIVERY_STAFF';
+    }
+
+    function isStaff() {
+      return isAdmin() || isDelivery();
+    }
+
+    /** Anonymous sessions never have an email; only real accounts have one. */
+    function hasAccountEmail() {
+      return request.auth.token.get('email', null) != null;
     }
 
     function changedKeys() {
       return request.resource.data.diff(resource.data).affectedKeys();
     }
 
-    /** Mirrors OrderStatus in src/types and functions/src/order.ts. */
+    /** Mirrors OrderStatus in src/types. */
     function isOrderStatus(value) {
       return value in [
         'NEW',
@@ -47,16 +52,112 @@ service cloud.firestore {
       return value in ['UNPAID', 'PAID'];
     }
 
+    /** Exact document shape a new customer order may have. */
+    function orderCreateKeys() {
+      return [
+        'orderId',
+        'orderNumber',
+        'customerId',
+        'customerName',
+        'phone',
+        'building',
+        'floor',
+        'officeOrShop',
+        'deliveryInstructions',
+        'items',
+        'itemCount',
+        'subtotal',
+        'deliveryCharge',
+        'total',
+        'paymentMethod',
+        'paymentStatus',
+        'orderStatus',
+        'assignedTo',
+        'assignedToName',
+        'statusHistory',
+        'createdAt',
+        'updatedAt'
+      ];
+    }
+
+    /**
+     * A checkout order is written by the signed-in customer (guests get a
+     * short-lived anonymous session first). Identity, statuses and money are
+     * pinned here so the document cannot be forged into a paid or delivered
+     * order, or charged to another account.
+     */
+    function isNewOrder(orderNumber) {
+      let data = request.resource.data;
+      return data.keys().hasOnly(orderCreateKeys())
+        && data.orderId == orderNumber
+        && data.orderNumber == orderNumber
+        && data.customerId == request.auth.uid
+        && data.customerName is string
+        && data.customerName.size() >= 2
+        && data.customerName.size() <= 60
+        && data.phone is string
+        && data.phone.size() >= 10
+        && data.phone.size() <= 16
+        && data.building is string
+        && data.building.size() >= 2
+        && data.building.size() <= 80
+        && data.floor is string
+        && data.floor.size() >= 1
+        && data.floor.size() <= 20
+        && data.officeOrShop is string
+        && data.officeOrShop.size() >= 1
+        && data.officeOrShop.size() <= 30
+        && (!('deliveryInstructions' in data.keys())
+          || data.deliveryInstructions == null
+          || (data.deliveryInstructions is string && data.deliveryInstructions.size() <= 300))
+        && data.items is list
+        && data.items.size() >= 1
+        && data.items.size() <= 20
+        && data.items[0].name is string
+        && data.items[0].name.size() > 0
+        && data.items[0].name.size() <= 80
+        && data.items[0].quantity is int
+        && data.items[0].quantity >= 1
+        && data.items[0].quantity <= 20
+        && data.items[0].unitPrice is number
+        && data.items[0].unitPrice >= 0
+        && data.items[0].lineTotal is number
+        && data.items[0].lineTotal >= 0
+        && data.itemCount is int
+        && data.itemCount >= 1
+        && data.itemCount <= 400
+        && data.subtotal is int
+        && data.subtotal >= 0
+        && data.subtotal <= 1000000
+        && data.deliveryCharge is int
+        && data.deliveryCharge >= 0
+        && data.deliveryCharge <= 10000
+        && data.total is int
+        && data.total > 0
+        && data.total == data.subtotal + data.deliveryCharge
+        && data.paymentMethod == 'COD'
+        && data.paymentStatus == 'UNPAID'
+        && data.orderStatus == 'NEW'
+        && data.assignedTo == null
+        && data.assignedToName == null
+        && data.statusHistory is list
+        && data.statusHistory.size() == 1
+        && data.statusHistory[0].status == 'NEW'
+        && data.createdAt == request.time
+        && data.updatedAt == request.time;
+    }
+
     // ------------------------------------------------------------------ users
-    // A customer may read and edit only their own profile, and may never set
-    // their own role. Roles are assigned with custom claims by a SUPER_ADMIN.
+    // Only the account holder can create, read and edit their own profile, and
+    // only after the anonymous guest session has been linked to a real email.
+    // The role is always CUSTOMER here; staff roles live in custom claims.
     match /users/{uid} {
-      allow read: if isSignedIn() && (request.auth.uid == uid || isAdmin());
+      allow read: if isSignedIn() && ((request.auth.uid == uid && hasAccountEmail()) || isAdmin());
 
       allow create: if isSignedIn()
         && request.auth.uid == uid
+        && hasAccountEmail()
         && request.resource.data.uid == uid
-        && request.resource.data.email == request.auth.token.email
         && request.resource.data.role == 'CUSTOMER'
         && request.resource.data.name is string
         && request.resource.data.name.size() >= 2
@@ -64,6 +165,7 @@ service cloud.firestore {
 
       allow update: if isSignedIn()
         && request.auth.uid == uid
+        && hasAccountEmail()
         && changedKeys().hasOnly(['name', 'phone', 'updatedAt'])
         && request.resource.data.name is string
         && request.resource.data.name.size() >= 2
@@ -71,13 +173,11 @@ service cloud.firestore {
         && request.resource.data.phone is string
         && request.resource.data.phone.size() <= 20;
 
-      // Roles live in custom claims (see the setUserRole Cloud Function), so
-      // there is deliberately no client path that can write the role field.
-      allow delete: if isSuperAdmin();
+      allow delete: if false;
     }
 
     // --------------------------------------------------------------- products
-    // Public visitors see active products only. Staff manage the catalog.
+    // Active products are public; hidden ones and all writes are staff-only.
     match /products/{productId} {
       allow read: if isAdmin() || (resource != null && resource.data.isActive == true);
       allow create, update: if isAdmin()
@@ -89,12 +189,11 @@ service cloud.firestore {
         && request.resource.data.price <= 100000
         && request.resource.data.isAvailable is bool
         && request.resource.data.isActive is bool;
-      allow delete: if isSuperAdmin();
+      allow delete: if isAdmin();
     }
 
     // --------------------------------------------------------------- settings
     // Only the single store document is public (delivery charge, hours).
-    // Only staff write it, and it may never be deleted.
     match /settings/{settingId} {
       allow read: if settingId == 'store';
       allow create, update: if isAdmin()
@@ -106,16 +205,27 @@ service cloud.firestore {
     }
 
     // ----------------------------------------------------------------- orders
-    // Orders are created only by the trusted Cloud Function (Admin SDK), which
-    // bypasses these rules. No client may create or delete an order.
+    // Orders are created by the signed-in customer who placed them (guests get
+    // an anonymous Firebase session at checkout, which can later be linked to
+    // an email/password account without changing the uid). A missing document
+    // is readable as null so the client can pick an unused order number; no
+    // order data is exposed by that.
     match /orders/{orderNumber} {
-      allow read: if isSignedIn() && (
+      allow get: if resource == null || (isSignedIn() && (
         resource.data.customerId == request.auth.uid
         || isAdmin()
         || (isDelivery() && resource.data.assignedTo == request.auth.uid)
+      ));
+
+      allow list: if isSignedIn() && (
+        isAdmin()
+        || (isDelivery() && resource.data.assignedTo == request.auth.uid)
+        || resource.data.customerId == request.auth.uid
       );
 
-      allow create, delete: if false;
+      allow create: if isSignedIn() && isNewOrder(orderNumber);
+
+      allow delete: if false;
 
       // Admins may move an order through the status flow, assign delivery
       // staff and record a manual payment confirmation. Only known status
@@ -140,15 +250,6 @@ service cloud.firestore {
         && resource.data.assignedTo == request.auth.uid
         && changedKeys().hasOnly(['orderStatus', 'deliveryNotes', 'statusHistory', 'updatedAt'])
         && request.resource.data.orderStatus in ['OUT_FOR_DELIVERY', 'DELIVERED', 'DELIVERY_FAILED'];
-    }
-
-    // Internal bookkeeping (idempotency keys, rate limits) is Admin SDK only.
-    match /orderRequests/{requestId} {
-      allow read, write: if false;
-    }
-
-    match /rateLimits/{key} {
-      allow read, write: if false;
     }
 
     // Deny everything not matched above.

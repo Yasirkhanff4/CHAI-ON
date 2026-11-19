@@ -9,6 +9,8 @@ export type AuthProfile = {
   name: string
   phone: string
   role: Role
+  /** True for the short-lived session a guest gets at checkout. */
+  isAnonymous: boolean
 }
 
 export type AuthStatus = 'loading' | 'ready' | 'unconfigured'
@@ -18,7 +20,9 @@ export type AuthContextValue = {
   profile: AuthProfile | null
   /** Set when the session could not be read; the site keeps working. */
   authError: string | null
+  /** True only for a real account, never for a guest's anonymous session. */
   isSignedIn: boolean
+  isAnonymous: boolean
   isAdmin: boolean
   isSuperAdmin: boolean
   isDeliveryStaff: boolean

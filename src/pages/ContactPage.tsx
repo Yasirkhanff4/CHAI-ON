@@ -1,6 +1,7 @@
 import { ArrowRight, Phone } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { ContactCards } from '@/components/contact/ContactCards'
+import WhatsAppIcon from '@/components/whatsapp/WhatsAppIcon'
 import { buttonClasses } from '@/lib/buttonStyles'
 import { Container } from '@/components/ui/Container'
 import { PageIntro } from '@/components/ui/PageIntro'
@@ -58,6 +59,15 @@ export function ContactPage() {
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
             </div>
+            <a
+              href={business.whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 inline-flex min-h-10 items-center gap-2 py-2 text-[13px] font-semibold text-forest-800 underline-offset-4 hover:text-forest-600 hover:underline"
+            >
+              <WhatsAppIcon className="h-5 w-5" />
+              Or message us on WhatsApp · {business.whatsappDisplay}
+            </a>
           </div>
 
           <div className="rounded-[28px] border border-cream-300/80 bg-cream-100 p-7 sm:p-9">

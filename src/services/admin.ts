@@ -13,8 +13,7 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore'
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
-import { getDb, getFirebaseStorage } from '@/lib/firebase/config'
+import { getDb } from '@/lib/firebase/config'
 import { canTransition } from '@/lib/orderFlow'
 import { mapOrder } from '@/lib/orders/mapOrder'
 import type { StoreSettings } from '@/data/settings'
@@ -45,11 +44,13 @@ export function subscribeAdminOrders(
 ): () => void {
   const db = getDb()
 
-  const adminQuery = query(collection(db, 'orders'), orderBy('createdAt', 'desc'), limit(200))
+  // Kept small on purpose: the Spark plan has a daily read quota, and nobody
+  // needs more than the latest 50 orders on one screen.
+  const adminQuery = query(collection(db, 'orders'), orderBy('createdAt', 'desc'), limit(50))
   const deliveryQuery = query(
     collection(db, 'orders'),
     where('assignedTo', '==', options.uid),
-    limit(100),
+    limit(50),
   )
 
   return onSnapshot(
@@ -77,10 +78,12 @@ export async function updateOrderStatus(
     throw new Error(`An order cannot move from ${from} to ${to}.`)
   }
 
+  const event = { status: to, at: Timestamp.now(), by: actor }
+
   await updateDoc(doc(getDb(), 'orders', orderNumber), {
     orderStatus: to,
     updatedAt: serverTimestamp(),
-    statusHistory: arrayUnion({ status: to, at: Timestamp.now(), by: actor }),
+    statusHistory: arrayUnion(event),
   })
 }
 
@@ -122,13 +125,6 @@ export async function fetchDeliveryStaff(): Promise<StaffMember[]> {
       email: String(data.email ?? ''),
     }
   })
-}
-
-export async function uploadProductImage(file: File, productId: string): Promise<string> {
-  const safeName = file.name.replace(/[^\w.-]/g, '_')
-  const storageRef = ref(getFirebaseStorage(), `products/${productId}/${Date.now()}-${safeName}`)
-  await uploadBytes(storageRef, file, { contentType: file.type })
-  return getDownloadURL(storageRef)
 }
 
 export async function saveProduct(

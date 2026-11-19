@@ -1,15 +1,15 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
-import { AlertCircle, ImagePlus, Loader2, Pencil, Plus, X } from 'lucide-react'
+import { AlertCircle, Pencil, Plus, X } from 'lucide-react'
 import { Container } from '@/components/ui/Container'
 import { FormField } from '@/components/ui/FormField'
 import { useAuth } from '@/context/authContext'
 import { buttonClasses } from '@/lib/buttonStyles'
 import { describeFirebaseError } from '@/lib/firebase/errors'
 import { formatPKR } from '@/lib/format'
-import { slugifyProductId, fetchAllProducts, seedLaunchProducts } from '@/services/catalog'
+import { fetchAllProducts, seedLaunchProducts } from '@/services/catalog'
 import type { ProductInput } from '@/services/catalog'
-import { saveProduct, updateProductAvailability, uploadProductImage } from '@/services/admin'
+import { saveProduct, updateProductAvailability } from '@/services/admin'
 import { useDocumentTitle } from '@/lib/useDocumentTitle'
 import type { Product } from '@/types'
 
@@ -61,7 +61,6 @@ export function AdminProductsPage() {
   const [editor, setEditor] = useState<EditorState | null>(null)
   const [saving, setSaving] = useState(false)
   const [busyId, setBusyId] = useState<string | null>(null)
-  const [uploading, setUploading] = useState(false)
   const [notice, setNotice] = useState<string | null>(null)
 
   const load = useCallback(async () => {
@@ -96,32 +95,6 @@ export function AdminProductsPage() {
     }
   }
 
-  const handleImage = async (file: File | null) => {
-    if (!file || !editor) return
-
-    if (!file.type.startsWith('image/')) {
-      setError('Choose an image file (JPG, PNG or WebP).')
-      return
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      setError('Images must be smaller than 5 MB.')
-      return
-    }
-
-    setUploading(true)
-    setError(null)
-
-    try {
-      const pathId = editor.productId ?? slugifyProductId(editor.name)
-      const url = await uploadProductImage(file, pathId)
-      setEditor((current) => (current ? { ...current, imageUrl: url } : current))
-    } catch (uploadError) {
-      setError(describeFirebaseError(uploadError, 'The image could not be uploaded.'))
-    } finally {
-      setUploading(false)
-    }
-  }
-
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (!editor || saving) return
@@ -136,7 +109,7 @@ export function AdminProductsPage() {
       return
     }
     if (!editor.imageUrl.trim()) {
-      setError('Add an image URL or upload a photo.')
+      setError('Add an image path or URL.')
       return
     }
 
@@ -186,8 +159,8 @@ export function AdminProductsPage() {
         <div>
           <h1 className="font-display text-[30px] leading-tight text-forest-900">Products</h1>
           <p className="mt-1 text-[13px] text-forest-900/65">
-            Prices here are the prices customers pay. The order function reads them again when an
-            order is placed.
+            Prices here are the prices customers pay. Checkout reads them again when an order is
+            placed.
           </p>
         </div>
         <button
@@ -274,37 +247,14 @@ export function AdminProductsPage() {
             />
             <FormField
               id="productImageUrl"
-              label="Image URL"
+              label="Image path or URL"
               value={editor.imageUrl}
               onChange={(value) => setEditor({ ...editor, imageUrl: value })}
               required
-              hint="Upload a photo below, or paste an HTTPS image URL."
+              hint="e.g. /images/doodh-patti.jpg (add the file to public/images) or any https:// image URL."
               className="sm:col-span-2"
-              disabled={saving || uploading}
+              disabled={saving}
             />
-            <label className="sm:col-span-2">
-              <span className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-forest-900/15 bg-cream-100/70 px-4 py-2.5 text-[12.5px] font-medium text-forest-900 transition hover:bg-cream-200/70">
-                {uploading ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                    Uploading…
-                  </>
-                ) : (
-                  <>
-                    <ImagePlus className="h-4 w-4" aria-hidden="true" />
-                    Upload product photo
-                  </>
-                )}
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="sr-only"
-                  onChange={(event) => void handleImage(event.target.files?.[0] ?? null)}
-                  disabled={saving || uploading}
-                />
-              </span>
-            </label>
-
             <FormField
               id="productBadge"
               label="Badge"
@@ -351,7 +301,7 @@ export function AdminProductsPage() {
 
           <button
             type="submit"
-            disabled={saving || uploading}
+            disabled={saving}
             className={buttonClasses('primary', 'md', 'mt-5')}
           >
             {saving ? 'Saving…' : 'Save product'}
