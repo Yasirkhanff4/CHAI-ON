@@ -68,7 +68,7 @@ export function OrderConfirmationPage() {
     return (
       <section className="py-20">
         <Container>
-          <div className="mx-auto max-w-lg rounded-[32px] border border-cream-300/80 bg-cream-50 px-6 py-14 text-center shadow-card">
+          <div className="mx-auto max-w-lg rounded-xl border border-cream-300/80 bg-cream-50 px-6 py-14 text-center">
             <span
               aria-hidden="true"
               className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-forest-900/15 border-t-forest-800"
@@ -87,11 +87,11 @@ export function OrderConfirmationPage() {
     return (
       <section className="py-16 sm:py-24">
         <Container>
-          <div className="mx-auto max-w-lg rounded-[32px] border border-cream-300/80 bg-cream-50 px-6 py-12 text-center shadow-card sm:px-10">
+          <div className="mx-auto max-w-lg rounded-xl border border-cream-300/80 bg-cream-50 px-6 py-12 text-center sm:px-10">
             <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-cream-200 text-tea-600">
               <AlertCircle className="h-6 w-6" aria-hidden="true" />
             </span>
-            <h1 className="mt-5 font-display text-[30px] leading-tight text-forest-900">
+            <h1 className="mt-5 font-bold text-[30px] leading-tight text-forest-900">
               {state === 'error' ? 'We could not load this order.' : 'Order not found here.'}
             </h1>
             <p className="mt-3 text-[14px] leading-relaxed text-forest-900/70">
@@ -124,15 +124,15 @@ export function OrderConfirmationPage() {
     <section className="py-10 sm:py-14">
       <Container>
         <div className="mx-auto max-w-3xl">
-          <div className="rounded-[32px] border border-cream-300/80 bg-cream-50 px-5 py-8 shadow-card sm:px-9 sm:py-10">
+          <div className="rounded-xl border border-cream-300/80 bg-cream-50 px-5 py-8 sm:px-9 sm:py-10">
             <div className="text-center">
               <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-forest-900 text-cream-50">
                 <CheckCircle2 className="h-6 w-6" aria-hidden="true" />
               </span>
-              <p className="mt-5 text-[10px] font-semibold uppercase tracking-[0.24em] text-tea-500">
+              <p className="mt-5 text-[12.5px] font-medium text-tea-500">
                 Order received
               </p>
-              <h1 className="mt-2 font-display text-[34px] leading-[1.05] tracking-[-0.015em] text-forest-900 sm:text-[42px]">
+              <h1 className="mt-2 font-bold text-[34px] leading-[1.05] tracking-[-0.015em] text-forest-900 sm:text-[42px]">
                 Thank you, {order.customerName.split(' ')[0]}.
               </h1>
               <p className="mx-auto mt-3 max-w-md text-[14px] leading-relaxed text-forest-900/70">
@@ -140,11 +140,11 @@ export function OrderConfirmationPage() {
                 need to reach you.
               </p>
 
-              <div className="mx-auto mt-6 inline-flex flex-col items-center rounded-2xl border border-cream-300 bg-cream-100/70 px-6 py-4">
-                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-forest-900/55">
+              <div className="mx-auto mt-6 inline-flex flex-col items-center rounded-[10px] border border-cream-300 bg-cream-100/70 px-6 py-4">
+                <span className="text-[12.5px] font-medium text-forest-900/55">
                   Order number
                 </span>
-                <span className="mt-1 font-display text-[26px] tracking-[0.04em] text-forest-900">
+                <span className="mt-1 font-bold text-[26px] tracking-[0.04em] text-forest-900">
                   {order.orderNumber}
                 </span>
               </div>
@@ -154,8 +154,8 @@ export function OrderConfirmationPage() {
             </div>
 
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
-              <div className="rounded-2xl border border-cream-300/80 px-4 py-4">
-                <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-tea-500">
+              <div className="rounded-[10px] border border-cream-300/80 px-4 py-4">
+                <p className="flex items-center gap-2 text-[12.5px] font-medium text-tea-500">
                   <Clock className="h-3.5 w-3.5" aria-hidden="true" />
                   Status
                 </p>
@@ -167,8 +167,8 @@ export function OrderConfirmationPage() {
                 </p>
               </div>
 
-              <div className="rounded-2xl border border-cream-300/80 px-4 py-4">
-                <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-tea-500">
+              <div className="rounded-[10px] border border-cream-300/80 px-4 py-4">
+                <p className="flex items-center gap-2 text-[12.5px] font-medium text-tea-500">
                   <Banknote className="h-3.5 w-3.5" aria-hidden="true" />
                   Payment
                 </p>
@@ -180,8 +180,8 @@ export function OrderConfirmationPage() {
               </div>
             </div>
 
-            <div className="mt-6 rounded-2xl border border-cream-300/80 px-4 py-4 sm:px-5">
-              <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-tea-500">
+            <div className="mt-6 rounded-[10px] border border-cream-300/80 px-4 py-4 sm:px-5">
+              <p className="flex items-center gap-2 text-[12.5px] font-medium text-tea-500">
                 <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
                 Delivering to
               </p>
@@ -202,10 +202,10 @@ export function OrderConfirmationPage() {
               )}
             </div>
 
-            <div className="mt-6 overflow-hidden rounded-2xl border border-cream-300/80">
+            <div className="mt-6 overflow-hidden rounded-[10px] border border-cream-300/80">
               <table className="w-full text-left">
                 <caption className="sr-only">Order items</caption>
-                <thead className="bg-cream-100/70 text-[10px] uppercase tracking-[0.14em] text-forest-900/55">
+                <thead className="bg-cream-100/70 text-[12px] font-medium text-forest-900/55">
                   <tr>
                     <th scope="col" className="px-4 py-2.5 font-semibold">
                       Item
@@ -252,7 +252,7 @@ export function OrderConfirmationPage() {
                 </div>
                 <div className="flex items-baseline justify-between gap-4 border-t border-cream-300/80 pt-2.5">
                   <dt className="font-semibold text-forest-900">Total</dt>
-                  <dd className="font-display text-[24px] leading-none text-forest-900">
+                  <dd className="font-bold text-[24px] leading-none text-forest-900">
                     {formatPKR(order.total)}
                   </dd>
                 </div>

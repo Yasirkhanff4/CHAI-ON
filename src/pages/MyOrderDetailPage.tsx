@@ -47,7 +47,7 @@ export function MyOrderDetailPage() {
     return (
       <section className="py-20">
         <Container>
-          <div className="mx-auto max-w-lg rounded-[28px] border border-cream-300/80 bg-cream-50 px-6 py-12 text-center shadow-card">
+          <div className="mx-auto max-w-lg rounded-xl border border-cream-300/80 bg-cream-50 px-6 py-12 text-center">
             <span
               aria-hidden="true"
               className="mx-auto h-7 w-7 animate-spin rounded-full border-2 border-forest-900/15 border-t-forest-800"
@@ -102,8 +102,8 @@ export function MyOrderDetailPage() {
       <section className="py-10 sm:py-14">
         <Container>
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start lg:gap-10">
-            <div className="rounded-[28px] border border-cream-300/80 bg-cream-50 p-5 shadow-card sm:p-7">
-              <h2 className="font-display text-[24px] leading-tight text-forest-900">
+            <div className="rounded-xl border border-cream-300/80 bg-cream-50 p-5 sm:p-7">
+              <h2 className="font-bold text-[24px] leading-tight text-forest-900">
                 Order progress
               </h2>
               <div className="mt-5">
@@ -115,7 +115,7 @@ export function MyOrderDetailPage() {
               </div>
 
               <div className="mt-6 border-t border-cream-300/80 pt-5">
-                <h3 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-tea-500">
+                <h3 className="text-[12.5px] font-medium text-tea-500">
                   Items
                 </h3>
                 <ul className="mt-3 divide-y divide-cream-300/60">
@@ -152,7 +152,7 @@ export function MyOrderDetailPage() {
                   </div>
                   <div className="flex justify-between border-t border-cream-300/70 pt-2">
                     <dt className="font-semibold text-forest-900">Total</dt>
-                    <dd className="font-display text-[22px] leading-none text-forest-900">
+                    <dd className="font-bold text-[22px] leading-none text-forest-900">
                       {formatPKR(order.total)}
                     </dd>
                   </div>
@@ -161,8 +161,8 @@ export function MyOrderDetailPage() {
             </div>
 
             <aside className="space-y-5">
-              <div className="rounded-[28px] border border-cream-300/80 bg-cream-50 p-5 shadow-card">
-                <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-tea-500">
+              <div className="rounded-xl border border-cream-300/80 bg-cream-50 p-5">
+                <p className="flex items-center gap-2 text-[12.5px] font-medium text-tea-500">
                   <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
                   Delivery details
                 </p>
@@ -185,8 +185,8 @@ export function MyOrderDetailPage() {
                 )}
               </div>
 
-              <div className="rounded-[28px] border border-cream-300/80 bg-cream-50 p-5 shadow-card">
-                <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-tea-500">
+              <div className="rounded-xl border border-cream-300/80 bg-cream-50 p-5">
+                <p className="flex items-center gap-2 text-[12.5px] font-medium text-tea-500">
                   <Banknote className="h-3.5 w-3.5" aria-hidden="true" />
                   Payment
                 </p>

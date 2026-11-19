@@ -43,7 +43,7 @@ export function AdminLayout() {
         <header className="border-b border-forest-900/10 bg-forest-950 text-cream-100">
           <Container className="flex h-16 items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <Logo onDark size="sm" showTagline={false} />
+              <Logo onDark size="sm" />
               <span className="hidden rounded-full bg-cream-50/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-cream-100/80 sm:inline">
                 Admin
               </span>

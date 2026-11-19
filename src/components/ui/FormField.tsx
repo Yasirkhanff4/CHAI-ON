@@ -25,7 +25,7 @@ type FormFieldProps = {
 }
 
 const controlClasses = [
-  'w-full rounded-2xl border bg-cream-50 px-4 text-[14.5px] text-forest-900',
+  'w-full rounded-[10px] border bg-cream-50 px-3.5 text-base text-forest-900',
   'placeholder:text-forest-900/40 transition',
   'focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500',
 ].join(' ')
@@ -58,24 +58,26 @@ export function FormField({
     'h-12',
     error
       ? 'border-red-500/70 focus-visible:outline-red-600'
-      : 'border-forest-900/15 focus:border-forest-900/30',
+      : 'border-forest-900/15 focus:border-forest-900/40',
   ].join(' ')
 
   return (
     <div className={className}>
       <label
         htmlFor={id}
-        className="flex items-baseline justify-between gap-3 text-[12px] font-semibold uppercase tracking-[0.14em] text-forest-900/70"
+        className="flex items-baseline justify-between gap-3 text-[13px] font-medium text-forest-900/80"
       >
         <span>
           {label}
           {required && (
-            <span className="ml-1 text-tea-500" aria-hidden="true">
+            <span className="ml-0.5 text-tea-600" aria-hidden="true">
               *
             </span>
           )}
         </span>
-        {!required && <span className="text-[10px] font-medium tracking-normal text-forest-900/45">Optional</span>}
+        {!required && (
+          <span className="text-[12px] font-normal text-forest-900/50">Optional</span>
+        )}
       </label>
 
       {multiline ? (
@@ -92,7 +94,7 @@ export function FormField({
           required={required}
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy}
-          className={`${controlStyle} mt-2 resize-y py-3 leading-relaxed`}
+          className={`${controlStyle} mt-1.5 resize-y py-2.5 leading-relaxed`}
         />
       ) : (
         <input
@@ -110,17 +112,17 @@ export function FormField({
           required={required}
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy}
-          className={`${controlStyle} mt-2`}
+          className={`${controlStyle} mt-1.5`}
         />
       )}
 
       {hint && !error && (
-        <p id={hintId} className="mt-1.5 text-[11.5px] leading-relaxed text-forest-900/60">
+        <p id={hintId} className="mt-1.5 text-[12px] leading-relaxed text-forest-900/60">
           {hint}
         </p>
       )}
       {error && (
-        <p id={errorId} className="mt-1.5 text-[12px] font-medium leading-relaxed text-red-700">
+        <p id={errorId} className="mt-1.5 text-[12.5px] font-medium leading-relaxed text-red-700">
           {error}
         </p>
       )}

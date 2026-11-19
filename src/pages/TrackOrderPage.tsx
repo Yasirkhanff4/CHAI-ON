@@ -62,23 +62,23 @@ export function TrackOrderPage() {
       <PageIntro
         eyebrow="Track order"
         title="Where is your chai?"
-        description="Enter your order number. Tracking works on the device or browser you ordered from — if you ordered elsewhere, message us on WhatsApp."
+        description="Enter your order number. Tracking works on the device you ordered from — if you ordered elsewhere, message us on WhatsApp."
       />
 
-      <section className="py-10 sm:py-14">
+      <section className="py-8 sm:py-10">
         <Container>
           <div className="mx-auto max-w-xl">
             <form
               onSubmit={handleSubmit}
               noValidate
-              className="rounded-[28px] border border-cream-300/80 bg-cream-50 p-5 shadow-card sm:p-7"
+              className="rounded-xl border border-cream-300 bg-cream-50 p-4 sm:p-5"
             >
               {error && (
                 <div
                   role="alert"
-                  className="mb-5 rounded-2xl border border-red-500/30 bg-red-50 px-4 py-3"
+                  className="mb-4 rounded-[10px] border border-red-500/30 bg-red-50 px-3.5 py-3"
                 >
-                  <p className="flex items-start gap-2 text-[13px] font-medium leading-relaxed text-red-800">
+                  <p className="flex items-start gap-2 text-[13px] leading-relaxed text-red-800">
                     <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
                     {error}
                   </p>
@@ -102,13 +102,13 @@ export function TrackOrderPage() {
                 type="submit"
                 disabled={submitting || status === 'loading'}
                 aria-busy={submitting || status === 'loading'}
-                className={buttonClasses('primary', 'lg', 'mt-5 w-full')}
+                className={buttonClasses('primary', 'lg', 'mt-4 w-full')}
               >
                 {submitting ? 'Looking up…' : 'Track order'}
                 {!submitting && <Search className="h-4 w-4" aria-hidden="true" />}
               </button>
 
-              <p className="mt-4 text-center text-[11.5px] leading-relaxed text-forest-900/60">
+              <p className="mt-3 text-center text-[12px] leading-relaxed text-forest-900/60">
                 Signed in?{' '}
                 <Link to="/account" className="font-semibold text-forest-800 hover:text-forest-600">
                   Your account
@@ -127,13 +127,11 @@ export function TrackOrderPage() {
             </form>
 
             {result && (
-              <div className="mt-6 rounded-[28px] border border-cream-300/80 bg-cream-50 p-5 shadow-card sm:p-7">
-                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-cream-300/70 pb-4">
+              <div className="mt-5 rounded-xl border border-cream-300 bg-cream-50 p-4 sm:p-5">
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-cream-300 pb-3">
                   <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-tea-500">
-                      Order
-                    </p>
-                    <p className="font-display text-[24px] leading-tight text-forest-900">
+                    <p className="text-[12.5px] text-forest-900/60">Order</p>
+                    <p className="text-[19px] font-semibold leading-tight text-forest-900">
                       {result.orderNumber}
                     </p>
                     <p className="mt-0.5 text-[11.5px] text-forest-900/60">
@@ -143,7 +141,7 @@ export function TrackOrderPage() {
                   <StatusBadge status={result.orderStatus} />
                 </div>
 
-                <div className="mt-5">
+                <div className="mt-4">
                   <OrderTimeline
                     status={result.orderStatus}
                     history={result.statusHistory}
@@ -151,7 +149,7 @@ export function TrackOrderPage() {
                   />
                 </div>
 
-                <div className="mt-5 border-t border-cream-300/70 pt-4">
+                <div className="mt-4 border-t border-cream-300 pt-3">
                   <ul className="space-y-2">
                     {result.items.map((item) => (
                       <li
@@ -170,11 +168,11 @@ export function TrackOrderPage() {
                       </li>
                     ))}
                   </ul>
-                  <p className="mt-3 flex items-baseline justify-between border-t border-cream-300/70 pt-3">
+                  <p className="mt-3 flex items-baseline justify-between border-t border-cream-300 pt-3">
                     <span className="text-[13px] font-semibold text-forest-900">
                       {result.paymentStatus === 'PAID' ? 'Paid' : 'Cash on delivery'}
                     </span>
-                    <span className="font-display text-[22px] leading-none text-forest-900">
+                    <span className="text-[19px] font-bold leading-none tabular-nums text-forest-900">
                       {formatPKR(result.total)}
                     </span>
                   </p>

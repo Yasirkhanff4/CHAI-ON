@@ -37,14 +37,14 @@ export function ComingSoonPage({
         className="pointer-events-none absolute -right-24 top-0 h-80 w-80 rounded-full bg-gold-200/40 blur-3xl"
       />
       <Container className="relative">
-        <div className="mx-auto max-w-xl rounded-[32px] border border-cream-300/80 bg-cream-50 px-6 py-12 text-center shadow-card sm:px-10 sm:py-14">
+        <div className="mx-auto max-w-xl rounded-xl border border-cream-300/80 bg-cream-50 px-6 py-12 text-center sm:px-10 sm:py-14">
           <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-forest-900 text-cream-50">
             <Icon className="h-6 w-6" />
           </span>
-          <p className="mt-6 text-[10px] font-semibold uppercase tracking-[0.24em] text-tea-500">
+          <p className="mt-6 text-[12.5px] font-medium text-tea-500">
             Coming soon
           </p>
-          <h1 className="mt-3 font-display text-[34px] leading-[1.08] tracking-[-0.015em] text-forest-900 sm:text-[40px]">
+          <h1 className="mt-3 font-bold text-[34px] leading-[1.08] tracking-[-0.015em] text-forest-900 sm:text-[40px]">
             {title}
           </h1>
           <p className="mt-4 text-[14.5px] leading-relaxed text-forest-900/70">{description}</p>

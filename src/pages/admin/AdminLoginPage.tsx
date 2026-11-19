@@ -60,7 +60,7 @@ export function AdminLoginPage() {
       <Container>
         <div className="mx-auto w-full max-w-md">
           <div className="flex justify-center">
-            <Logo onDark showTagline={false} />
+            <Logo onDark />
           </div>
 
           <div className="mt-8 rounded-[28px] border border-cream-50/15 bg-cream-50 px-6 py-8 shadow-lift sm:px-8">

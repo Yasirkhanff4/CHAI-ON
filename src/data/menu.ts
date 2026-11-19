@@ -4,8 +4,7 @@ export const featuredProducts: Product[] = [
   {
     id: 'doodh-patti',
     name: 'Doodh Patti',
-    description:
-      'Slow-simmered milk tea with a smooth, creamy finish — the cup your office already knows.',
+    description: 'Slow-simmered milk tea, smooth and creamy.',
     price: 150,
     imageUrl: '/images/doodh-patti.jpg',
     imagePosition: '50% 58%',
@@ -15,8 +14,7 @@ export const featuredProducts: Product[] = [
   {
     id: 'karak-chai',
     name: 'Karak Chai',
-    description:
-      'Strong, cardamom-forward chai brewed dark and served hot. Built for the 4 PM slump.',
+    description: 'Strong tea boiled with cardamom, served hot.',
     price: 180,
     imageUrl: '/images/karak-chai.jpg',
     imagePosition: '50% 52%',

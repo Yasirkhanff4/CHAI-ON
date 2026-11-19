@@ -55,7 +55,7 @@ export function ForgotPasswordPage() {
       }
     >
       {sent ? (
-        <div className="rounded-2xl border border-forest-200 bg-forest-50 px-4 py-4">
+        <div className="rounded-[10px] border border-forest-200 bg-forest-50 px-4 py-4">
           <p className="flex items-start gap-2 text-[13px] leading-relaxed text-forest-800">
             <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
             If an account exists for {email}, a reset link is on its way. Check your spam
@@ -65,7 +65,7 @@ export function ForgotPasswordPage() {
       ) : (
         <form onSubmit={handleSubmit} noValidate className="space-y-4">
           {error && (
-            <div role="alert" className="rounded-2xl border border-red-500/30 bg-red-50 px-4 py-3">
+            <div role="alert" className="rounded-[10px] border border-red-500/30 bg-red-50 px-4 py-3">
               <p className="flex items-start gap-2 text-[12.5px] font-medium leading-relaxed text-red-800">
                 <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
                 {error}

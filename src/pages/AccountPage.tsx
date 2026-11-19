@@ -103,8 +103,8 @@ export function AccountPage() {
         <Container>
           <div className="grid gap-6 lg:grid-cols-[minmax(0,360px)_minmax(0,1fr)] lg:items-start lg:gap-10">
             <div className="space-y-5">
-              <div className="rounded-[28px] border border-cream-300/80 bg-cream-50 p-5 shadow-card sm:p-6">
-                <h2 className="font-display text-[22px] leading-tight text-forest-900">Profile</h2>
+              <div className="rounded-xl border border-cream-300/80 bg-cream-50 p-5 sm:p-6">
+                <h2 className="font-bold text-[22px] leading-tight text-forest-900">Profile</h2>
                 <p className="mt-1 text-[12px] text-forest-900/60">
                   {profile?.email}
                 </p>
@@ -157,8 +157,8 @@ export function AccountPage() {
                 </form>
               </div>
 
-              <div className="rounded-[28px] border border-cream-300/80 bg-cream-50 p-5 shadow-card sm:p-6">
-                <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-tea-500">
+              <div className="rounded-xl border border-cream-300/80 bg-cream-50 p-5 sm:p-6">
+                <h2 className="text-[12.5px] font-medium text-tea-500">
                   Session
                 </h2>
                 <button
@@ -172,9 +172,9 @@ export function AccountPage() {
               </div>
             </div>
 
-            <div className="rounded-[28px] border border-cream-300/80 bg-cream-50 shadow-card">
+            <div className="rounded-xl border border-cream-300/80 bg-cream-50">
               <div className="flex items-center justify-between gap-3 border-b border-cream-300/80 px-5 py-4">
-                <h2 className="flex items-center gap-2 font-display text-[22px] leading-tight text-forest-900">
+                <h2 className="flex items-center gap-2 font-bold text-[22px] leading-tight text-forest-900">
                   <ClipboardList className="h-4.5 w-4.5 text-tea-500" aria-hidden="true" />
                   Your orders
                 </h2>
@@ -184,7 +184,7 @@ export function AccountPage() {
                     setState('loading')
                     setReloadToken((token) => token + 1)
                   }}
-                  className="rounded-full px-2.5 py-1.5 text-[12px] font-medium text-forest-900/70 transition hover:bg-cream-200/70"
+                  className="min-h-9 rounded-[8px] px-2 text-[12.5px] font-medium text-forest-900/70 transition hover:bg-cream-200/70"
                 >
                   Refresh
                 </button>
@@ -208,7 +208,7 @@ export function AccountPage() {
 
               {state === 'ready' && orders.length === 0 && (
                 <div className="px-5 py-10 text-center">
-                  <p className="font-display text-xl text-forest-900">No orders yet</p>
+                  <p className="font-bold text-xl text-forest-900">No orders yet</p>
                   <p className="mx-auto mt-2 max-w-xs text-[13px] leading-relaxed text-forest-900/65">
                     Your first order will appear here with its live status.
                   </p>

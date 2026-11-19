@@ -1,13 +1,18 @@
+import { useLocation } from 'react-router-dom'
 import WhatsAppIcon from '@/components/whatsapp/WhatsAppIcon'
 import { useCart } from '@/context/cartContext'
 import { buildWhatsAppOrderUrl } from '@/lib/whatsapp'
 
 /**
- * Fixed WhatsApp entry point on customer pages. On phones it is a 60×60 circle
- * with the icon only; from `sm` up it becomes a 60px pill with the label.
+ * Small chat widget for customer pages. Cart and checkout already carry their
+ * own WhatsApp button, so the floating chip stays out of their way.
+ * Phones get a 48px green circle; from `sm` up it is a white chip with a label.
  */
 export function FloatingWhatsAppButton() {
   const { items, totals } = useCart()
+  const { pathname } = useLocation()
+
+  if (pathname === '/cart' || pathname === '/checkout') return null
 
   return (
     <a
@@ -15,9 +20,15 @@ export function FloatingWhatsAppButton() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Order on WhatsApp — opens WhatsApp chat"
-      className="fixed bottom-5 right-4 z-40 flex h-[60px] w-[60px] items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_18px_38px_-18px_rgba(10,31,24,0.65)] transition duration-200 hover:-translate-y-0.5 hover:bg-[#1DA851] sm:bottom-6 sm:right-6 sm:w-auto sm:gap-3 sm:px-6"
+      className="floating-chat fixed right-4 z-30 grid h-12 w-12 place-items-center rounded-full bg-[#25D366] text-white shadow-[0_2px_8px_rgba(10,31,24,0.28)] transition hover:bg-[#1DA851] sm:right-6 sm:h-auto sm:w-auto sm:grid-flow-col sm:auto-cols-max sm:items-center sm:gap-3 sm:rounded-full sm:border sm:border-forest-900/12 sm:bg-cream-50 sm:py-1.5 sm:pl-1.5 sm:pr-4 sm:text-forest-900 sm:shadow-[0_1px_4px_rgba(20,52,42,0.14)] sm:hover:bg-cream-100"
     >
-      <WhatsAppIcon className="h-7 w-7 shrink-0" />
+      <span className="relative grid h-12 w-12 place-items-center rounded-full bg-[#25D366] text-white sm:h-9 sm:w-9">
+        <WhatsAppIcon className="h-6 w-6 sm:h-5 sm:w-5" />
+        <span
+          aria-hidden="true"
+          className="absolute -right-0.5 -top-0.5 hidden h-2.5 w-2.5 rounded-full bg-[#25D366] ring-2 ring-cream-50 sm:block"
+        />
+      </span>
       <span className="hidden whitespace-nowrap text-sm font-semibold sm:inline">
         Order on WhatsApp
       </span>

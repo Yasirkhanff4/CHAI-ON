@@ -23,11 +23,11 @@ function CenteredCard({
   return (
     <section className="py-16">
       <Container>
-        <div className="mx-auto max-w-lg rounded-[28px] border border-cream-300/80 bg-cream-50 px-6 py-10 text-center shadow-card">
+        <div className="mx-auto max-w-lg rounded-xl border border-cream-300/80 bg-cream-50 px-6 py-10 text-center">
           <span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-cream-200 text-forest-800">
             {icon}
           </span>
-          <h1 className="mt-4 font-display text-[26px] leading-tight text-forest-900">{title}</h1>
+          <h1 className="mt-4 font-bold text-[26px] leading-tight text-forest-900">{title}</h1>
           <p className="mt-3 text-[13.5px] leading-relaxed text-forest-900/70">{description}</p>
           {action && <div className="mt-6">{action}</div>}
         </div>

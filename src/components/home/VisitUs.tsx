@@ -4,15 +4,15 @@ import { SectionHeading } from '@/components/ui/SectionHeading'
 
 export function VisitUs() {
   return (
-    <section id="visit" className="py-20 sm:py-24">
+    <section id="visit" className="py-12 sm:py-16">
       <Container>
         <SectionHeading
           eyebrow="Find us"
-          title="Right where your office is."
-          description="On the 3rd floor of Al Ghaffar Mall — and at your desk a few minutes later."
+          title="Come by the shop."
+          description="3rd floor of Al Ghaffar Mall, G-11 Markaz. We are open every day."
         />
 
-        <div className="mt-10">
+        <div className="mt-6">
           <ContactCards />
         </div>
       </Container>

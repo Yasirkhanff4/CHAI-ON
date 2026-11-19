@@ -1,8 +1,12 @@
 @import "tailwindcss";
+@import "@fontsource-variable/plus-jakarta-sans";
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-display: "Fraunces", ui-serif, Georgia, Cambria, "Times New Roman", serif;
+  --font-sans: "Plus Jakarta Sans Variable", "Plus Jakarta Sans", ui-sans-serif, system-ui,
+    -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* Kept as an alias so older `font-display` classes resolve to the same family. */
+  --font-display: "Plus Jakarta Sans Variable", "Plus Jakarta Sans", ui-sans-serif, system-ui,
+    sans-serif;
 
   --color-cream-50: #fdfcf8;
   --color-cream-100: #faf6ee;
@@ -39,17 +43,34 @@
   --color-gold-600: #a37a22;
   --color-gold-700: #8a681b;
 
-  --shadow-card: 0 1px 2px rgb(20 52 42 / 0.04), 0 16px 40px -24px rgb(20 52 42 / 0.35);
-  --shadow-lift: 0 2px 6px rgb(20 52 42 / 0.05), 0 30px 60px -30px rgb(20 52 42 / 0.4);
+  /* No big soft shadows — a 1px border does most of the work now. */
+  --shadow-card: 0 1px 2px rgb(20 52 42 / 0.06);
+  --shadow-lift: 0 2px 6px rgb(20 52 42 / 0.08);
 }
 
 @layer base {
   html {
     scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
     @apply bg-cream-100 font-sans text-forest-900 antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-weight: 700;
+    letter-spacing: -0.015em;
+  }
+
+  /* 16px inputs so iOS Safari does not zoom into the checkout form. */
+  input,
+  textarea,
+  select {
+    font-size: 16px;
   }
 
   ::selection {
@@ -58,7 +79,11 @@
 
   :focus-visible {
     outline: 2px solid var(--color-gold-500);
-    outline-offset: 3px;
+    outline-offset: 2px;
+  }
+
+  img {
+    max-width: 100%;
   }
 
   h1,
@@ -72,10 +97,21 @@
   }
 }
 
+/* Floating chat chip: clears the phone's home bar, sits higher on desktop. */
+.floating-chat {
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 0.75rem);
+}
+
+@media (min-width: 640px) {
+  .floating-chat {
+    bottom: 1.5rem;
+  }
+}
+
 @keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -106,7 +142,7 @@
 }
 
 @utility animate-rise {
-  animation: rise 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @media (prefers-reduced-motion: reduce) {

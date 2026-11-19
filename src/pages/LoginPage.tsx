@@ -62,7 +62,7 @@ export function LoginPage() {
     >
       <form onSubmit={handleSubmit} noValidate className="space-y-4">
         {error && (
-          <div role="alert" className="rounded-2xl border border-red-500/30 bg-red-50 px-4 py-3">
+          <div role="alert" className="rounded-[10px] border border-red-500/30 bg-red-50 px-4 py-3">
             <p className="flex items-start gap-2 text-[12.5px] font-medium leading-relaxed text-red-800">
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
               {error}

@@ -11,7 +11,7 @@ const perks = [
   {
     icon: Clock,
     title: 'Brewed to order',
-    description: 'Cups are made after you order, never held under a warmer.',
+    description: 'Made after you order, never kept under a warmer.',
   },
   {
     icon: Truck,
@@ -33,53 +33,48 @@ export function MenuPage() {
   return (
     <>
       <PageIntro
-        eyebrow="The menu"
-        title="Two teas. Made exactly your way."
-        description="Choose your sugar and strength for every cup. Add as many as your team needs and we will brew them fresh for delivery."
+        eyebrow="Menu"
+        title="Doodh patti and karak chai."
+        description="Pick your sugar and strength for every cup. Add as many as you need and we will brew them fresh."
       />
 
-      <section aria-label="Tea menu" className="py-12 sm:py-16">
+      <section aria-label="Tea menu" className="py-8 sm:py-10">
         <Container>
           {error && (
             <p
               role="status"
-              className="mb-5 flex items-start gap-2 rounded-2xl border border-gold-400/50 bg-gold-100 px-4 py-3 text-[12.5px] leading-relaxed text-forest-900/80"
+              className="mb-5 flex items-start gap-2 rounded-[10px] border border-gold-400/50 bg-gold-100 px-3.5 py-3 text-[12.5px] leading-relaxed text-forest-900/80"
             >
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-gold-700" aria-hidden="true" />
-              We could not refresh the live menu, so you are seeing our standard teas. Call us if a
+              We could not load the live menu, so you are seeing our standard teas. Call us if a
               price looks wrong.
             </p>
           )}
 
           {loading ? (
-            <div className="grid gap-6 md:grid-cols-2 lg:gap-8" aria-hidden="true">
+            <div className="grid gap-4 md:grid-cols-2 lg:gap-5" aria-hidden="true">
               {[0, 1].map((key) => (
                 <div
                   key={key}
-                  className="h-96 animate-pulse rounded-[28px] border border-cream-300/60 bg-cream-200/50"
+                  className="h-80 animate-pulse rounded-xl border border-cream-300 bg-cream-200/50"
                 />
               ))}
             </div>
           ) : (
-            <div className="grid gap-6 md:grid-cols-2 lg:gap-8">
+            <div className="grid gap-4 md:grid-cols-2 lg:gap-5">
               {products.map((product) => (
                 <MenuProductCard key={product.id} product={product} />
               ))}
             </div>
           )}
 
-          <ul className="mt-10 grid gap-3 sm:grid-cols-3">
+          <ul className="mt-6 grid gap-3 border-t border-cream-300/80 pt-6 sm:grid-cols-3">
             {perks.map((perk) => (
-              <li
-                key={perk.title}
-                className="flex items-start gap-3 rounded-2xl border border-cream-300/70 bg-cream-50/70 px-4 py-4"
-              >
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-forest-900 text-cream-50">
-                  <perk.icon className="h-4 w-4" aria-hidden="true" />
-                </span>
+              <li key={perk.title} className="flex items-start gap-2.5">
+                <perk.icon className="mt-0.5 h-4 w-4 shrink-0 text-tea-500" aria-hidden="true" />
                 <div>
                   <p className="text-[13px] font-semibold text-forest-900">{perk.title}</p>
-                  <p className="mt-0.5 text-[12px] leading-relaxed text-forest-900/70">
+                  <p className="mt-0.5 text-[12.5px] leading-relaxed text-forest-900/70">
                     {perk.description}
                   </p>
                 </div>
@@ -87,7 +82,7 @@ export function MenuPage() {
             ))}
           </ul>
 
-          <p className="mt-8 text-center text-[12px] leading-relaxed text-forest-900/70">
+          <p className="mt-6 text-[12.5px] leading-relaxed text-forest-900/70">
             Prices are in Pakistani Rupees.
             {settings.deliveryCharge === 0
               ? ' Delivery is free within the delivery area.'

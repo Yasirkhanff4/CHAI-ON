@@ -17,20 +17,18 @@ export function CheckoutSummary({ formId, submitting, disabled = false }: Checko
   const { items, totals } = useCart()
 
   return (
-    <div className="rounded-[28px] border border-cream-300/80 bg-cream-50 shadow-card">
-      <div className="border-b border-cream-300/80 px-5 py-5 sm:px-6">
-        <h2 className="font-display text-[24px] leading-tight tracking-[-0.01em] text-forest-900">
-          Order summary
-        </h2>
-        <p className="mt-1 text-[12px] text-forest-900/60">
-          {totals.itemCount} {totals.itemCount === 1 ? 'cup' : 'cups'} ·{' '}
-          {items.length} {items.length === 1 ? 'line' : 'lines'}
+    <div className="rounded-xl border border-cream-300 bg-cream-50">
+      <div className="border-b border-cream-300 px-4 py-3 sm:px-5">
+        <h2 className="text-[20px] leading-tight text-forest-900">Order summary</h2>
+        <p className="mt-0.5 text-[12px] text-forest-900/60">
+          {totals.itemCount} {totals.itemCount === 1 ? 'cup' : 'cups'} · {items.length}{' '}
+          {items.length === 1 ? 'line' : 'lines'}
         </p>
       </div>
 
-      <ul className="divide-y divide-cream-300/70 px-5 sm:px-6">
+      <ul className="divide-y divide-cream-300/80 px-4 sm:px-5">
         {items.map((item) => (
-          <li key={item.id} className="flex items-start justify-between gap-3 py-4">
+          <li key={item.id} className="flex items-start justify-between gap-3 py-3">
             <div className="min-w-0">
               <p className="text-[14px] font-semibold text-forest-900">
                 {item.name}
@@ -50,20 +48,22 @@ export function CheckoutSummary({ formId, submitting, disabled = false }: Checko
         ))}
       </ul>
 
-      <div className="px-5 pt-4 sm:px-6">
-        <dl className="space-y-2.5 text-[13.5px]">
+      <div className="px-4 pt-3 sm:px-5">
+        <dl className="space-y-2 text-[13.5px]">
           <div className="flex items-center justify-between gap-4">
             <dt className="text-forest-900/70">Subtotal</dt>
-            <dd className="font-medium tabular-nums text-forest-900">{formatPKR(totals.subtotal)}</dd>
+            <dd className="font-semibold tabular-nums text-forest-900">
+              {formatPKR(totals.subtotal)}
+            </dd>
           </div>
           <div className="flex items-center justify-between gap-4">
             <dt className="text-forest-900/70">Delivery</dt>
-            <dd className="font-medium tabular-nums text-forest-900">
+            <dd className="font-semibold tabular-nums text-forest-900">
               {totals.deliveryCharge === 0 ? 'Free' : formatPKR(totals.deliveryCharge)}
             </dd>
           </div>
           <div className="flex items-center justify-between gap-4">
-            <dt className="text-forest-900/70">Payment method</dt>
+            <dt className="text-forest-900/70">Payment</dt>
             <dd className="flex items-center gap-1.5 font-medium text-forest-900">
               <Banknote className="h-3.5 w-3.5 text-tea-500" aria-hidden="true" />
               Cash on delivery
@@ -71,15 +71,15 @@ export function CheckoutSummary({ formId, submitting, disabled = false }: Checko
           </div>
         </dl>
 
-        <div className="mt-4 flex items-baseline justify-between gap-4 border-t border-cream-300/80 pt-4">
-          <p className="text-sm font-semibold text-forest-900">Payable on delivery</p>
-          <p className="font-display text-[30px] leading-none tracking-[-0.01em] text-forest-900">
+        <div className="mt-3 flex items-baseline justify-between gap-4 border-t border-cream-300 pt-3">
+          <p className="text-sm font-semibold text-forest-900">Pay on delivery</p>
+          <p className="text-[24px] font-bold leading-none tabular-nums text-forest-900">
             {formatPKR(totals.total)}
           </p>
         </div>
       </div>
 
-      <div className="px-5 pb-5 pt-5 sm:px-6">
+      <div className="px-4 pb-4 pt-4 sm:px-5">
         <button
           type="submit"
           form={formId}
@@ -103,28 +103,28 @@ export function CheckoutSummary({ formId, submitting, disabled = false }: Checko
           )}
         </button>
 
-        <p className="mt-3 text-center text-[11.5px] leading-relaxed text-forest-900/60">
-          You will be asked to pay {formatPKR(totals.total)} in cash when your chai arrives.
+        <p className="mt-2 text-center text-[11.5px] leading-relaxed text-forest-900/60">
+          Pay {formatPKR(totals.total)} in cash when your chai arrives.
         </p>
 
-        <div className="mt-4 space-y-2 border-t border-cream-300/80 pt-4 text-[11.5px] leading-relaxed text-forest-900/65">
+        <div className="mt-3 space-y-2 border-t border-cream-300 pt-3 text-[11.5px] leading-relaxed text-forest-900/65">
           <p className="flex items-start gap-2">
             <Truck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-tea-500" aria-hidden="true" />
             Delivered across {business.deliveryArea}.
           </p>
           <p className="flex items-start gap-2">
             <Clock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-tea-500" aria-hidden="true" />
-            Freshly brewed after you order. Typical delivery is 15–25 minutes.
+            Brewed after you order. Usually 15–25 minutes.
           </p>
           <p className="flex items-start gap-2">
             <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-tea-500" aria-hidden="true" />
-            No account needed. Prices are confirmed by CHAI ON when the order is placed.
+            No account needed.
           </p>
         </div>
 
         <Link
           to="/cart"
-          className="mt-4 inline-flex w-full items-center justify-center rounded-full px-4 py-2.5 text-[12.5px] font-medium text-forest-900/65 transition hover:bg-cream-200/60 hover:text-forest-900"
+          className="mt-2 inline-flex min-h-10 w-full items-center justify-center rounded-[10px] px-3 text-[12.5px] font-medium text-forest-900/65 transition hover:bg-cream-200/60 hover:text-forest-900"
         >
           Back to cart
         </Link>

@@ -45,22 +45,22 @@ function EmptyCheckout() {
         title="Your cart is empty."
         description="Add a cup of Doodh Patti or Karak Chai and your checkout will be waiting here."
       />
-      <section className="py-12 sm:py-16">
+      <section className="py-8 sm:py-10">
         <Container>
-          <div className="mx-auto max-w-lg rounded-[32px] border border-cream-300/80 bg-cream-50 px-6 py-12 text-center shadow-card sm:px-10">
-            <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-cream-200 text-tea-600">
-              <Coffee className="h-6 w-6" aria-hidden="true" />
+          <div className="mx-auto max-w-lg rounded-xl border border-cream-300 bg-cream-50 px-5 py-8 text-center sm:px-8">
+            <span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-cream-200 text-tea-600">
+              <Coffee className="h-5 w-5" aria-hidden="true" />
             </span>
-            <h2 className="mt-5 font-display text-[28px] leading-tight text-forest-900">
+            <h2 className="mt-4 text-[22px] leading-tight text-forest-900">
               Nothing to check out yet
             </h2>
-            <p className="mx-auto mt-3 max-w-xs text-[14px] leading-relaxed text-forest-900/70">
-              Pick your teas, sugar and strength. Guest checkout means no account is ever needed.
+            <p className="mx-auto mt-2 max-w-xs text-[14px] leading-relaxed text-forest-900/70">
+              Pick your teas, sugar and strength. Guest checkout means no account is needed.
             </p>
-            <Link to="/menu" className={buttonClasses('primary', 'lg', 'mt-7 w-full sm:w-auto')}>
+            <Link to="/menu" className={buttonClasses('primary', 'lg', 'mt-5 w-full sm:w-auto')}>
               Browse the menu
             </Link>
-            <p className="mt-6 border-t border-cream-300/70 pt-5 text-[12px] leading-relaxed text-forest-900/70">
+            <p className="mt-5 border-t border-cream-300 pt-4 text-[12.5px] leading-relaxed text-forest-900/70">
               Prefer to order by phone? Call{' '}
               <a
                 href={business.phoneHref}
@@ -217,44 +217,42 @@ function CheckoutFlow({ initialName, initialPhone, customerId }: CheckoutFlowPro
   return (
     <>
       <PageIntro
-        eyebrow="Almost there"
-        title="Checkout"
-        description="Tell us where to bring your chai. Pay in cash when it arrives — no account, no card, no online payment."
+        eyebrow="Checkout"
+        title="Where should we bring it?"
+        description="Pay in cash when it arrives. No account and no card needed."
       />
 
-      <section aria-label="Checkout" className="pb-28 pt-10 sm:py-14">
+      <section aria-label="Checkout" className="py-8 sm:py-10">
         <Container>
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_400px] lg:items-start lg:gap-10">
+          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start lg:gap-6">
             <form
               id={FORM_ID}
               onSubmit={handleSubmit}
               noValidate
-              className="rounded-[28px] border border-cream-300/80 bg-cream-50 px-5 py-6 shadow-card sm:px-7 sm:py-7"
+              className="order-1 rounded-xl border border-cream-300 bg-cream-50 px-4 py-5 sm:px-5 sm:py-6"
             >
-              <div className="flex items-center justify-between gap-4 border-b border-cream-300/70 pb-4">
-                <h2 className="font-display text-[26px] leading-tight tracking-[-0.01em] text-forest-900">
-                  Delivery details
-                </h2>
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-cream-300 pb-3">
+                <h2 className="text-[20px] leading-tight text-forest-900">Delivery details</h2>
                 {customerId ? (
                   <Link
                     to="/account"
-                    className="rounded-full px-2.5 py-1.5 text-[12px] font-medium text-forest-800 transition hover:bg-cream-200/70"
+                    className="inline-flex min-h-9 items-center px-1 text-[12.5px] font-medium text-forest-800 transition hover:text-forest-600"
                   >
                     Your account
                   </Link>
                 ) : (
                   <Link
                     to="/login"
-                    className="rounded-full px-2.5 py-1.5 text-[12px] font-medium text-forest-800 transition hover:bg-cream-200/70"
+                    className="inline-flex min-h-9 items-center px-1 text-[12.5px] font-medium text-forest-800 transition hover:text-forest-600"
                   >
                     Have an account?
                   </Link>
                 )}
               </div>
 
-              <p className="mt-4 text-[12.5px] leading-relaxed text-forest-900/65">
+              <p className="mt-3 text-[12.5px] leading-relaxed text-forest-900/65">
                 {customerId
-                  ? 'We saved your name and mobile number from your account. Edit anything that is different for this delivery.'
+                  ? 'We saved your name and number from your account. Change anything that is different for this order.'
                   : 'Checking out as a guest. No account needed.'}{' '}
                 Fields marked{' '}
                 <span className="text-tea-600" aria-hidden="true">
@@ -264,8 +262,8 @@ function CheckoutFlow({ initialName, initialPhone, customerId }: CheckoutFlowPro
               </p>
 
               {!orderingOpen && (
-                <div className="mt-5 rounded-2xl border border-gold-400/50 bg-gold-100 px-4 py-3.5">
-                  <p className="flex items-start gap-2 text-[13px] font-medium leading-relaxed text-forest-900/85">
+                <div className="mt-4 rounded-[10px] border border-gold-400/50 bg-gold-100 px-3.5 py-3">
+                  <p className="flex items-start gap-2 text-[13px] leading-relaxed text-forest-900/85">
                     <Clock className="mt-0.5 h-4 w-4 shrink-0 text-gold-700" aria-hidden="true" />
                     <span>
                       Online ordering is paused. Our hours are {formatClock(settings.openingTime)} –{' '}
@@ -279,9 +277,9 @@ function CheckoutFlow({ initialName, initialPhone, customerId }: CheckoutFlowPro
                 <div
                   role="alert"
                   aria-live="assertive"
-                  className="mt-5 rounded-2xl border border-red-500/30 bg-red-50 px-4 py-3.5"
+                  className="mt-4 rounded-[10px] border border-red-500/30 bg-red-50 px-3.5 py-3"
                 >
-                  <p className="flex items-start gap-2 text-[13px] font-medium leading-relaxed text-red-800">
+                  <p className="flex items-start gap-2 text-[13px] leading-relaxed text-red-800">
                     <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
                     <span>{formError}</span>
                   </p>
@@ -296,7 +294,7 @@ function CheckoutFlow({ initialName, initialPhone, customerId }: CheckoutFlowPro
                 </div>
               )}
 
-              <div className="mt-6 grid gap-5 sm:grid-cols-2">
+              <div className="mt-4 grid gap-4 sm:grid-cols-2">
                 <FormField
                   id="fullName"
                   label="Full name"
@@ -332,7 +330,7 @@ function CheckoutFlow({ initialName, initialPhone, customerId }: CheckoutFlowPro
 
                 <FormField
                   id="building"
-                  label="Building / Plaza"
+                  label="Building / plaza"
                   value={details.building}
                   onChange={updateField('building')}
                   onBlur={blurField('building')}
@@ -359,7 +357,7 @@ function CheckoutFlow({ initialName, initialPhone, customerId }: CheckoutFlowPro
 
                 <FormField
                   id="officeOrShop"
-                  label="Office / Shop number"
+                  label="Office / shop number"
                   value={details.officeOrShop}
                   onChange={updateField('officeOrShop')}
                   onBlur={blurField('officeOrShop')}
@@ -380,48 +378,43 @@ function CheckoutFlow({ initialName, initialPhone, customerId }: CheckoutFlowPro
                   multiline
                   rows={3}
                   placeholder="Ask for reception, or call when you reach the lobby."
-                  hint="Optional — anything that helps us deliver faster."
+                  hint="Anything that helps us deliver faster."
                   maxLength={300}
                   className="sm:col-span-2"
                   disabled={submitting}
                 />
               </div>
 
-              <div className="mt-6 rounded-2xl border border-cream-300 bg-cream-100/70 px-4 py-4">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-tea-500">
-                  Payment
-                </p>
-                <p className="mt-2 text-[13.5px] font-semibold text-forest-900">
-                  Cash on delivery
-                </p>
-                <p className="mt-1 text-[12.5px] leading-relaxed text-forest-900/65">
-                  Pay {formatPKR(totals.total)} in cash when your order arrives. Online payment
-                  is not available yet.
+              <div className="mt-4 rounded-[10px] border border-cream-300 bg-cream-100/70 px-3.5 py-3">
+                <p className="text-[13px] font-medium text-forest-900/70">Payment</p>
+                <p className="mt-1 text-[14px] font-semibold text-forest-900">Cash on delivery</p>
+                <p className="mt-0.5 text-[12.5px] leading-relaxed text-forest-900/65">
+                  Pay {formatPKR(totals.total)} in cash when your order arrives.
                 </p>
               </div>
 
               {belowMinimum && (
-                <p className="mt-5 rounded-xl bg-gold-100 px-3.5 py-3 text-[12.5px] leading-relaxed text-forest-900/80">
+                <p className="mt-4 rounded-[10px] bg-gold-100 px-3.5 py-2.5 text-[12.5px] leading-relaxed text-forest-900/80">
                   Add {formatPKR(shortfall)} more to reach the minimum order of{' '}
                   {formatPKR(settings.minimumOrder)}.
                 </p>
               )}
 
-              <div className="mt-6 flex items-center justify-between gap-3 border-t border-cream-300/70 pt-5 lg:hidden">
+              <div className="mt-5 flex items-center justify-between gap-3 border-t border-cream-300 pt-4 lg:hidden">
                 <Link
                   to="/cart"
-                  className="inline-flex items-center gap-1.5 text-[13px] font-medium text-forest-900/70 hover:text-forest-900"
+                  className="inline-flex min-h-10 items-center gap-1.5 text-[13px] font-medium text-forest-900/70 hover:text-forest-900"
                 >
                   <ArrowLeft className="h-4 w-4" aria-hidden="true" />
                   Cart
                 </Link>
-                <span className="text-[13px] font-semibold text-forest-900">
+                <span className="text-[14px] font-semibold tabular-nums text-forest-900">
                   {formatPKR(totals.total)}
                 </span>
               </div>
             </form>
 
-            <aside aria-label="Order summary" className="lg:sticky lg:top-28">
+            <aside aria-label="Order summary" className="order-2 lg:sticky lg:top-28">
               <CheckoutSummary
                 formId={FORM_ID}
                 submitting={submitting}

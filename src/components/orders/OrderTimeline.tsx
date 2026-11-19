@@ -25,7 +25,7 @@ export function OrderTimeline({ status, history = [], createdAt }: OrderTimeline
   return (
     <div>
       {isCancelled && (
-        <div className="mb-5 flex items-start gap-2.5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3.5">
+        <div className="mb-5 flex items-start gap-2.5 rounded-[10px] border border-red-200 bg-red-50 px-4 py-3.5">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-red-700" aria-hidden="true" />
           <p className="text-[13px] leading-relaxed text-red-800">
             This order is {ORDER_STATUS_LABELS[status].toLowerCase()}. Call us if you would like
@@ -74,7 +74,7 @@ export function OrderTimeline({ status, history = [], createdAt }: OrderTimeline
                 >
                   {ORDER_STATUS_LABELS[step]}
                   {isCurrent && (
-                    <span className="ml-2 rounded-full bg-gold-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-gold-700">
+                    <span className="ml-2 rounded-full bg-gold-100 px-2 py-0.5 text-[12.5px] font-medium text-gold-700">
                       Now
                     </span>
                   )}

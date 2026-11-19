@@ -22,26 +22,21 @@ export function SectionHeading({
 
   return (
     <div
-      className={[
-        centered ? 'mx-auto max-w-2xl text-center' : 'max-w-2xl',
-        className,
-      ].join(' ')}
+      className={[centered ? 'mx-auto max-w-xl text-center' : 'max-w-xl', className].join(' ')}
     >
       {eyebrow && (
         <p
           className={[
-            'flex items-center gap-2.5 text-[11px] font-semibold uppercase tracking-[0.24em]',
-            isLight ? 'text-gold-300' : 'text-tea-500',
-            centered ? 'justify-center' : '',
+            'text-[13px] font-medium',
+            isLight ? 'text-gold-300' : 'text-tea-600',
           ].join(' ')}
         >
-          <span className="h-px w-6 bg-current opacity-60" aria-hidden="true" />
           {eyebrow}
         </p>
       )}
       <h2
         className={[
-          'mt-4 font-display text-[30px] leading-[1.08] tracking-[-0.015em] sm:text-[38px] lg:text-[44px]',
+          'mt-2 text-[24px] leading-[1.15] sm:text-[30px]',
           isLight ? 'text-cream-50' : 'text-forest-900',
         ].join(' ')}
       >
@@ -50,7 +45,7 @@ export function SectionHeading({
       {description && (
         <p
           className={[
-            'mt-4 text-[15px] leading-relaxed sm:text-base',
+            'mt-3 text-[14.5px] leading-relaxed',
             isLight ? 'text-cream-100/70' : 'text-forest-900/70',
           ].join(' ')}
         >

@@ -3,31 +3,20 @@ import { Link } from 'react-router-dom'
 type LogoProps = {
   size?: 'sm' | 'md'
   onDark?: boolean
-  showTagline?: boolean
   className?: string
 }
 
-export function Logo({
-  size = 'md',
-  onDark = false,
-  showTagline = true,
-  className = '',
-}: LogoProps) {
-  const markSize = size === 'sm' ? 'h-9 w-9 rounded-xl' : 'h-11 w-11 rounded-2xl'
-  const wordSize = size === 'sm' ? 'text-[17px]' : 'text-[21px]'
+export function Logo({ size = 'md', onDark = false, className = '' }: LogoProps) {
+  const markSize = size === 'sm' ? 'h-9 w-9' : 'h-10 w-10'
+  const wordSize = size === 'sm' ? 'text-[16px]' : 'text-[19px]'
 
   return (
-    <Link
-      to="/"
-      className={`group inline-flex shrink-0 items-center gap-3 ${className}`}
-    >
+    <Link to="/" className={`group inline-flex shrink-0 items-center gap-2.5 ${className}`}>
       <span
         className={[
-          'grid place-items-center transition duration-300 group-hover:-rotate-3',
+          'grid place-items-center rounded-xl',
           markSize,
-          onDark
-            ? 'bg-cream-50 text-forest-900'
-            : 'bg-forest-900 text-cream-50 shadow-[0_10px_24px_-14px_rgba(20,52,42,0.9)]',
+          onDark ? 'bg-cream-50 text-forest-900' : 'bg-forest-900 text-cream-50',
         ].join(' ')}
       >
         <svg
@@ -72,27 +61,15 @@ export function Logo({
         </svg>
       </span>
 
-      <span className="flex flex-col">
-        <span
-          className={[
-            'font-display font-semibold leading-none tracking-[0.17em]',
-            wordSize,
-            onDark ? 'text-cream-50' : 'text-forest-900',
-          ].join(' ')}
-        >
-          CHAI
-          <span className={onDark ? 'text-gold-300' : 'text-gold-700'}> ON</span>
-        </span>
-        {showTagline && (
-          <span
-            className={[
-              'mt-1.5 text-[9px] font-medium uppercase tracking-[0.23em]',
-              onDark ? 'text-cream-200/60' : 'text-forest-900/75',
-            ].join(' ')}
-          >
-            Your Office. Your Chai.
-          </span>
-        )}
+      <span
+        className={[
+          'font-bold leading-none tracking-tight',
+          wordSize,
+          onDark ? 'text-cream-50' : 'text-forest-900',
+        ].join(' ')}
+      >
+        CHAI
+        <span className={onDark ? 'text-gold-300' : 'text-gold-700'}> ON</span>
       </span>
     </Link>
   )
