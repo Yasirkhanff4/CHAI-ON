@@ -11,18 +11,18 @@ import { useDocumentTitle } from '@/lib/useDocumentTitle'
 const teamPoints = [
   'Add as many cups as you need in one order.',
   'One delivery, one address, one cash payment.',
-  'Tell us the floor and office number — we bring it up.',
+  'Tell us the floor and office number. We bring it up.',
 ]
 
 export function ContactPage() {
-  useDocumentTitle('Contact — CHAI ON')
+  useDocumentTitle('Contact | CHAI ON')
 
   return (
     <>
       <PageIntro
         eyebrow="Contact"
         title="We are one floor away."
-        description="Questions about an order, a delivery, or a tray for the whole office? Give us a call."
+        description="Questions about an order or a tray for the whole office? Give us a call."
       />
 
       <section className="py-8 sm:py-10">

@@ -2,7 +2,7 @@
 
 **Your Office. Your Chai.**
 
-Tea ordering and management for CHAI ON — 3rd Floor, Al Ghaffar Mall, G-11 Markaz, Islamabad.
+Tea ordering and management for CHAI ON, 3rd Floor, Al Ghaffar Mall, G-11 Markaz, Islamabad.
 
 The product has exactly **two panels**: the customer website and a **secure admin panel**. Delivery management lives inside the admin panel; there is no third application.
 
@@ -23,7 +23,7 @@ pinned by security rules (see [Security model](#security-model)).
 
 The updated `firestore.rules` still has to be deployed by you, and the Vercel site is
 not published. Follow [DEPLOYMENT.md](DEPLOYMENT.md). Without `VITE_FIREBASE_*`
-values the app runs in **local mode** for design work only — see
+values the app runs in **local mode** for design work only. See
 [Where orders live without Firebase](#where-orders-live-without-firebase).
 
 ---
@@ -37,7 +37,7 @@ values the app runs in **local mode** for design work only — see
   (light/normal/strong)
 - Cart with quantity controls, line customization, live prices, delivery charge, badge
   and `localStorage` persistence, re-priced from the live catalog
-- **Guest checkout** — no account, ever required
+- **Guest checkout**, no account ever required
 - Checkout with full name, Pakistani mobile validation, building, floor, office/shop and
   optional delivery instructions; loading, error, offline and paused-ordering states
 - Totals rebuilt from the live Firestore catalog before checkout; rules pin the
@@ -57,16 +57,16 @@ values the app runs in **local mode** for design work only — see
 
 - Separate login; **no public admin registration**; roles come from Firebase custom
   claims, verified by rules and the UI
-- Dashboard: today's orders, pending, completed today, today's sales — real Firestore
+- Dashboard: today's orders, pending, completed today, today's sales, real Firestore
   data only, with loading/error/empty states
 - Orders: search by number/name/phone/building, status filter, full details, and every
   status transition guarded by an allowed-moves map (accept, reject, preparing, ready,
   out for delivery, delivered, cancel, delivery failed)
 - Manual COD confirmation (`Confirm cash received` → `PAID`)
 - Products: add, edit price/description/badge/order, availability, public visibility and
-  a photo path or URL (e.g. `/images/doodh-patti.jpg`) — no Firebase Storage needed
+  a photo path or URL (e.g. `/images/doodh-patti.jpg`), no Firebase Storage needed
 - Settings: business name, contact phone, delivery charge, minimum order, opening and
-  closing time, and an online-ordering pause switch — reflected on the site immediately
+  closing time, and an online-ordering pause switch, reflected on the site immediately
 - Delivery: ready orders, assign/reassign delivery staff, monitor progress
 - **Delivery staff** sign into the same panel with restricted access: only their assigned
   orders, only delivery statuses, no products/settings/sales
@@ -79,7 +79,7 @@ values the app runs in **local mode** for design work only — see
 - Tailwind CSS v4 (design tokens in `src/index.css`)
 - React Router 7, Lucide icons
 - Firebase Auth (Anonymous for guest checkout, Email/Password for staff) and
-  Firestore — Spark plan, no Storage, no Cloud Functions
+  Firestore (Spark plan, no Storage, no Cloud Functions)
 - Vercel (frontend)
 
 ---
@@ -152,7 +152,7 @@ alone. The confirmation page always shows the order number and a Track button.
 Enable **Anonymous** (guest checkout) and **Email/Password** (staff sign-in) providers
 in Firebase Authentication. Anonymous sign-in is required: without it checkout cannot
 write an order. No admin can ever be created from the customer site; roles come from
-custom claims set by the provisioning script — see
+custom claims set by the provisioning script. See
 [Admin setup](#admin-setup-spark-plan).
 
 ---
@@ -170,16 +170,22 @@ whatsappUrl: 'https://wa.me/923291018591'
 such as:
 
 ```
-Assalam-o-Alaikum CHAI ON! I would like to order:
+Assalam-o-Alaikum CHAI ON!
+Mujhe ye order karna hai:
 
-• 2 × Doodh Patti (Less sugar, Strong) — Rs 300
-• 1 × Karak Chai (Normal sugar, Normal strength) — Rs 180
+• 2 x Doodh Patti
+  Sugar: Less Sugar | Strength: Strong | Rs 300
+• 1 x Karak Chai
+  Sugar: Normal Sugar | Strength: Normal | Rs 180
 
 Subtotal: Rs 480
 Delivery: Free
 Total: Rs 480
 
-My delivery details (building, floor, office):
+Naam: Ahmed Raza
+Building / Plaza: Al Ghaffar Mall
+Floor: 3rd Floor
+Office / Shop: Office 302
 ```
 
 Nothing is sent until the customer presses send inside WhatsApp. The button appears in
@@ -219,7 +225,7 @@ Firestore rules enforce ownership and document shape:
 - customers can read only their own orders (and a missing order number reads as null,
   which lets checkout pick an unused number);
 - a profile document can only be read or written by its own owner with a real
-  (non-anonymous) email token — only staff accounts exist — and the role can never be
+  (non-anonymous) email token. Only staff accounts exist, and the role can never be
   changed from the browser;
 - admins may change status/payment/assignment; delivery staff only their assigned
   orders and only delivery statuses;
@@ -262,7 +268,7 @@ only assigned orders and only set delivery statuses.
 - **First super admin** via `functions/scripts/provision-admin.mjs` (§5)
 - **Vercel deployment** and adding the domain to Firebase Auth's authorized domains (§6)
 - **Real business data**: the phone number in `src/data/site.ts` is now
-  `+92 329 1018591` — make sure Settings → contact phone matches it; prices, delivery
+  `+92 329 1018591`. Make sure Settings → contact phone matches it. Prices, delivery
   charge, minimum order and hours are launch defaults until changed in the admin panel
 - A pass through the launch checklist on the live domain
 
@@ -313,7 +319,7 @@ DEPLOYMENT.md
 ## Business configuration
 
 - Business details, navigation and cart limits: `src/data/site.ts`
-- Launch product catalog (a fallback only — Firestore products take over): `src/data/menu.ts`
+- Launch product catalog (a fallback only, Firestore products take over): `src/data/menu.ts`
 - Store settings defaults: `src/data/settings.ts`; live values come from `settings/store`
 - Product photography lives in `public/images/` (Pexels, credited in the footer)
 
@@ -322,7 +328,7 @@ DEPLOYMENT.md
 ## Photography
 
 Photos are stored locally under `public/images/` so the site has no runtime dependency on
-external image hosts. Source: [Pexels](https://www.pexels.com/license/) — free to use, no
+external image hosts. Source: [Pexels](https://www.pexels.com/license/), free to use, no
 attribution required (credited in the footer as a courtesy).
 
 | File | Pexels photo |

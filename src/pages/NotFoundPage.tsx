@@ -4,7 +4,7 @@ import { Container } from '@/components/ui/Container'
 import { useDocumentTitle } from '@/lib/useDocumentTitle'
 
 export function NotFoundPage() {
-  useDocumentTitle('Page not found — CHAI ON')
+  useDocumentTitle('Page not found | CHAI ON')
 
   return (
     <section className="relative overflow-hidden">

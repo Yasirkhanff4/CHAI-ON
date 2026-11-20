@@ -73,7 +73,7 @@ export async function placeOrder(
   if (typeof navigator !== 'undefined' && navigator.onLine === false) {
     throw new OrderError(
       'NETWORK',
-      'You appear to be offline. Reconnect and try again — your cart is safe.',
+      'You appear to be offline. Reconnect and try again. Your cart is safe.',
     )
   }
 
@@ -95,7 +95,7 @@ export async function placeOrder(
   return order
 }
 
-/** Local development path — mirrors the checkout checks without Firebase. */
+/** Local development path: mirrors the checkout checks without Firebase. */
 function placeOrderLocally(input: PlaceOrderInput, catalog: PlaceOrderCatalog): Order {
   const itemError = validateSubmissionItems(input.items)
   if (itemError) throw new OrderError('VALIDATION', itemError)
@@ -410,7 +410,7 @@ export type TrackedOrder = {
 /**
  * Tracking without Cloud Functions: the order document itself is the source of
  * truth. Only the account that placed the order can read it, so tracking works
- * on the same device/session — WhatsApp is the fallback when the order belongs
+ * on the same device/session. WhatsApp is the fallback when the order belongs
  * to another device or browser profile.
  */
 export async function trackOrderRequest(orderNumber: string): Promise<TrackedOrder> {

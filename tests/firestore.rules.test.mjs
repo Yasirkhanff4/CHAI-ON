@@ -8,7 +8,7 @@
  * profile and orders, anonymous guests own their orders but cannot create a
  * profile, nobody can rewrite totals, payments or statuses from the client,
  * and only staff manage products. There are no orderLookups / orderRequests /
- * rateLimits collections any more — orders are the single source of truth.
+ * rateLimits collections any more. Orders are the single source of truth.
  */
 import { readFileSync } from 'node:fs'
 import { assertFails, assertSucceeds, initializeTestEnvironment } from '@firebase/rules-unit-testing'

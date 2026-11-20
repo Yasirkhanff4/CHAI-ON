@@ -1,4 +1,4 @@
-# CHAI ON — deployment guide
+# CHAI ON deployment guide
 
 Everything needed to take the app from this repository to a live site, in order.
 
@@ -61,7 +61,7 @@ npx firebase use --add        # choose your project, alias: default
 `firebase use --add` writes `.firebaserc`. It is safe to commit (it contains only
 the project id).
 
-Create `.env` in the project root (never commit it — it is gitignored):
+Create `.env` in the project root (never commit it, it is gitignored):
 
 ```ini
 VITE_FIREBASE_API_KEY=...
@@ -74,7 +74,7 @@ VITE_FIREBASE_USE_EMULATORS=false
 
 All `VITE_*` values are **public identifiers**, visible in the browser bundle.
 Never put a service-account key, Admin SDK credential or private API key in a
-`VITE_*` variable — anything with that prefix ends up in the shipped JavaScript.
+`VITE_*` variable. Anything with that prefix ends up in the shipped JavaScript.
 
 `VITE_FIREBASE_USE_EMULATORS=true` makes the app talk to local emulators
 instead of production (development only).
@@ -87,7 +87,7 @@ instead of production (development only).
 npx firebase deploy --only firestore:rules,firestore:indexes
 ```
 
-That is the whole backend. **Do not deploy functions or Storage** — the Spark
+That is the whole backend. **Do not deploy functions or Storage.** The Spark
 build never calls them, and deploying functions requires Blaze.
 
 The rules are what make customer orders safe: they check that an order belongs
@@ -236,7 +236,7 @@ It runs entirely on the emulator (Java required) and does not touch production.
 - Nothing can be deleted from the client; totals, payment status and order status
   cannot be changed by customers.
 - Cart totals are rebuilt from Firestore products in the browser. Spark has no
-  server code, so this is the one thing rules cannot prove per line — staff review
+  server code, so this is the one thing rules cannot prove per line. Staff review
   every order before accepting it.
 - Idempotency is handled per checkout attempt in `sessionStorage`; the order number
   also acts as the document id, so retries reuse the same order.
@@ -263,7 +263,7 @@ It runs entirely on the emulator (Java required) and does not touch production.
 
 ## 10. Launch checklist
 
-- [x] Real phone number set in `src/data/site.ts` (`+92 329 1018591`) — confirm
+- [x] Real phone number set in `src/data/site.ts` (`+92 329 1018591`). Confirm
       Settings → contact phone matches it.
 - [ ] Real prices confirmed with the owner and set in Products.
 - [ ] Delivery charge and minimum order configured in Settings.

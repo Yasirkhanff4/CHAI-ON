@@ -270,7 +270,7 @@ export const createOrder = onCall(CALL_OPTIONS, async (request) => {
     console.error('createOrder failed', clientLog(error))
     throw new HttpsError(
       'internal',
-      'We could not place your order just now. Please try again — you have not been charged.',
+      'We could not place your order just now. Please try again. You have not been charged.',
     )
   }
 })

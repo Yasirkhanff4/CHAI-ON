@@ -8,7 +8,7 @@ const AUTH_MESSAGES: Record<string, string> = {
   'auth/wrong-password': 'That password is not correct.',
   'auth/admin-restricted-operation':
     'Guest sessions are disabled for this project. Enable Anonymous sign-in in Firebase Authentication.',
-  'auth/weak-password': 'Choose a stronger password — at least 6 characters.',
+  'auth/weak-password': 'Choose a stronger password. Use at least 6 characters.',
   'auth/missing-password': 'Enter your password.',
   'auth/too-many-requests': 'Too many attempts. Wait a few minutes and try again.',
   'auth/network-request-failed': 'Network problem. Check your connection and try again.',

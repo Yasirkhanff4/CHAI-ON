@@ -33,7 +33,7 @@ export function WhatsAppOrderButton({
       href={buildWhatsAppOrderUrl(items, totals)}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label={`${label} — opens WhatsApp chat`}
+      aria-label={`${label} (opens WhatsApp chat)`}
       className={buttonClasses(variant, size, className)}
     >
       <WhatsAppIcon className={iconClassName} />

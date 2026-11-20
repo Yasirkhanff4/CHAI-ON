@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Secure staff provisioning. There is no public admin signup — this script is
+ * Secure staff provisioning. There is no public admin signup. This script is
  * the only way the first admin exists.
  *
  * It needs a Firebase service account key (Project settings → Service accounts

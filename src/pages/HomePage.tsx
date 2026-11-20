@@ -8,7 +8,7 @@ import { VisitUs } from '@/components/home/VisitUs'
 import { useDocumentTitle } from '@/lib/useDocumentTitle'
 
 export function HomePage() {
-  useDocumentTitle('CHAI ON — Your Office. Your Chai.')
+  useDocumentTitle('CHAI ON | Your Office. Your Chai.')
 
   return (
     <>

@@ -51,7 +51,7 @@ export default function App() {
                   <Route path="*" element={<NotFoundPage />} />
                 </Route>
 
-                {/* Staff panel — separate shell, protected by claims-checked auth */}
+                {/* Staff panel: separate shell, protected by claims-checked auth */}
                 <Route path="admin/login" element={<AdminLoginPage />} />
                 <Route path="admin" element={<AdminLayout />}>
                   <Route

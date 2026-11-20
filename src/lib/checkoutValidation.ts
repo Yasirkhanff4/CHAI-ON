@@ -116,7 +116,7 @@ export function focusFirstError(errors: CustomerDetailsErrors): void {
 
 /**
  * Validates the cart lines the customer is submitting. This is a shape check
- * only — quantities are clamped and prices are read server-side.
+ * only. Quantities are clamped and prices are read server-side.
  */
 export function validateSubmissionItems(items: OrderSubmissionItem[]): string | null {
   if (items.length === 0) return 'Your cart is empty.'

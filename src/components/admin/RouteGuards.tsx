@@ -75,7 +75,7 @@ export function RequireStaff({ children }: GuardProps) {
       <CenteredCard
         icon={<ShieldOff className="h-5 w-5" aria-hidden="true" />}
         title="Staff access only"
-        description="This account is a customer account. Admin access is granted by CHAI ON using Firebase custom claims — there is no public admin registration."
+        description="This account is a customer account. Admin access is granted by CHAI ON with Firebase custom claims. There is no public admin registration."
         action={
           <Link to="/" className={buttonClasses('secondary', 'md')}>
             Back to the site

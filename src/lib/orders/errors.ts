@@ -42,7 +42,7 @@ export function toOrderError(error: unknown): OrderError {
 
   return new OrderError(
     'UNKNOWN',
-    'We could not place your order just now. Please try again — nothing has been charged.',
+    'We could not place your order just now. Please try again. Nothing has been charged.',
     { cause: error },
   )
 }

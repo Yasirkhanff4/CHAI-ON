@@ -16,7 +16,7 @@ import { useDocumentTitle } from '@/lib/useDocumentTitle'
 import type { TrackedOrder } from '@/services/orders'
 
 export function TrackOrderPage() {
-  useDocumentTitle('Track your order — CHAI ON')
+  useDocumentTitle('Track your order | CHAI ON')
 
   const [orderNumber, setOrderNumber] = useState('')
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
@@ -59,7 +59,7 @@ export function TrackOrderPage() {
       <PageIntro
         eyebrow="Track order"
         title="Where is your chai?"
-        description="Enter your order number. Tracking works on the device you ordered from — if you ordered elsewhere, message us on WhatsApp."
+        description="Enter your order number. Tracking works on the device you ordered from. If you ordered elsewhere, message us on WhatsApp."
       />
 
       <section className="py-8 sm:py-10">

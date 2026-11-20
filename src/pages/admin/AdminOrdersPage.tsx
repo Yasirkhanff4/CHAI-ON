@@ -26,7 +26,7 @@ const STATUS_FILTERS: ('ALL' | OrderStatus)[] = [
 ]
 
 export function AdminOrdersPage() {
-  useDocumentTitle('Orders — CHAI ON Admin')
+  useDocumentTitle('Orders | CHAI ON Admin')
   const { profile, isDeliveryStaff } = useAuth()
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)

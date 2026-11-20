@@ -17,6 +17,7 @@ import {
   validateCustomerDetails,
 } from '@/lib/checkoutValidation'
 import { buttonClasses } from '@/lib/buttonStyles'
+import { saveCustomerDetails } from '@/lib/customerDetails'
 import { formatPKR } from '@/lib/format'
 import { getCheckoutRequestKey, resetCheckoutRequestKey } from '@/lib/orders/idempotency'
 import { isOrderingOpen, formatClock } from '@/lib/openingHours'
@@ -77,7 +78,7 @@ function EmptyCheckout() {
 }
 
 export function CheckoutPage() {
-  useDocumentTitle('Checkout — CHAI ON')
+  useDocumentTitle('Checkout | CHAI ON')
   const { items } = useCart()
 
   if (items.length === 0) return <EmptyCheckout />
@@ -103,7 +104,9 @@ function CheckoutFlow() {
   const shortfall = settings.minimumOrder - totals.subtotal
 
   const updateField = (field: CustomerDetailsField) => (value: string) => {
-    setDetails((current) => ({ ...current, [field]: value }))
+    const next = { ...details, [field]: value }
+    setDetails(next)
+    saveCustomerDetails(next)
     if (errors[field]) {
       setErrors((current) => {
         const next = { ...current }
@@ -175,6 +178,7 @@ function CheckoutFlow() {
       )
 
       // Only clear the cart once the order is safely stored.
+      saveCustomerDetails(normalizeCustomerDetails(details))
       resetCheckoutRequestKey()
       clearCart({ silent: true })
       navigate(`/order-confirmation/${order.orderNumber}`, { replace: true })
@@ -225,7 +229,7 @@ function CheckoutFlow() {
                   <p className="flex items-start gap-2 text-[13px] leading-relaxed text-forest-900/85">
                     <Clock className="mt-0.5 h-4 w-4 shrink-0 text-gold-700" aria-hidden="true" />
                     <span>
-                      Online ordering is paused. Our hours are {formatClock(settings.openingTime)} –{' '}
+                      Online ordering is paused. Our hours are {formatClock(settings.openingTime)} to{' '}
                       {formatClock(settings.closingTime)}. Call us to order in the meantime.
                     </span>
                   </p>

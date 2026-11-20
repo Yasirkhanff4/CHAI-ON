@@ -113,8 +113,44 @@ test('cart: "Order on WhatsApp" opens wa.me with the items and total', async ({ 
   expect(url.origin + url.pathname).toBe('https://wa.me/923291018591')
 
   const text = url.searchParams.get('text') ?? ''
-  expect(text).toContain('Assalam-o-Alaikum CHAI ON')
-  expect(text).toContain('×')
+  expect(text).toContain('Assalam-o-Alaikum CHAI ON!')
+  expect(text).toContain('Mujhe ye order karna hai:')
+  expect(text).toContain('• 1 x ')
+  expect(text).toContain('Sugar:')
+  expect(text).toContain('Strength:')
   expect(text).toContain('Subtotal: Rs')
   expect(text).toContain(`Total: Rs ${new Intl.NumberFormat('en-PK').format(cartTotal)}`)
+  expect(text).toContain('Building / Plaza:')
+
+  // Newlines must survive as %0A in the wa.me link.
+  expect(href).toContain('%0A')
+})
+
+test('cart: WhatsApp message prefills saved checkout details', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.localStorage.setItem(
+      'chai-on:customer-details:v1',
+      JSON.stringify({
+        fullName: 'Ahmed Raza',
+        building: 'Al Ghaffar Mall',
+        floor: '3rd Floor',
+        officeOrShop: 'Office 302',
+      }),
+    )
+  })
+
+  await page.goto('/menu')
+  const card = page.getByRole('article').first()
+  await card.getByRole('button', { name: /^Add/ }).click()
+  await page.getByRole('link', { name: /View cart/ }).click()
+
+  const href = await summary(page)
+    .getByRole('link', { name: /Order on WhatsApp/i })
+    .getAttribute('href')
+  const text = new URL(href as string).searchParams.get('text') ?? ''
+
+  expect(text).toContain('Naam: Ahmed Raza')
+  expect(text).toContain('Building / Plaza: Al Ghaffar Mall')
+  expect(text).toContain('Floor: 3rd Floor')
+  expect(text).toContain('Office / Shop: Office 302')
 })

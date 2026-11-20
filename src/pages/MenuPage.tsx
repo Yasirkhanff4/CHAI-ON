@@ -26,7 +26,7 @@ const perks = [
 ]
 
 export function MenuPage() {
-  useDocumentTitle('Menu — CHAI ON')
+  useDocumentTitle('Menu | CHAI ON')
   const { products, loading, error } = useCatalog()
   const { settings } = useStoreSettings()
 

@@ -52,7 +52,7 @@ export function AdminOrderDetailPage() {
   const [busy, setBusy] = useState(false)
   const [staff, setStaff] = useState<StaffMember[]>([])
 
-  useDocumentTitle(order ? `Order ${order.orderNumber} — CHAI ON Admin` : 'Order — CHAI ON Admin')
+  useDocumentTitle(order ? `Order ${order.orderNumber} | CHAI ON Admin` : 'Order | CHAI ON Admin')
 
   const loadOrder = async () => {
     try {
@@ -189,7 +189,7 @@ export function AdminOrderDetailPage() {
 
   // Prices can change after an order is placed. Re-add the items at today's
   // catalog prices (falling back to the price that was charged) and warn when
-  // the stored total no longer matches — never block the owner.
+  // the stored total no longer matches. Never block the owner.
   const currentTotal = order.items.reduce((sum, line) => {
     const product = products.find((entry) => entry.id === line.productId)
     return sum + (product ? product.price : line.unitPrice) * line.quantity

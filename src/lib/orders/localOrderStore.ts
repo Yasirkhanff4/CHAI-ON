@@ -2,7 +2,7 @@ import { OrderError } from '@/lib/orders/errors'
 import type { Order } from '@/types/order'
 
 /**
- * INTERIM ORDER STORAGE — REPLACED IN PHASE 4.
+ * INTERIM ORDER STORAGE. REPLACED IN PHASE 4.
  *
  * Phase 3 has no backend yet (Firebase is Phase 4), so placed orders are kept
  * in this browser to make checkout, confirmation and retry behaviour real and

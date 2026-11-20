@@ -26,7 +26,7 @@ function isToday(iso: string, today: string): boolean {
 }
 
 export function AdminDashboardPage() {
-  useDocumentTitle('Dashboard — CHAI ON Admin')
+  useDocumentTitle('Dashboard | CHAI ON Admin')
   const { profile } = useAuth()
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
@@ -88,7 +88,7 @@ export function AdminDashboardPage() {
         <div>
           <h1 className="font-display text-[30px] leading-tight text-forest-900">Dashboard</h1>
           <p className="mt-1 text-[13px] text-forest-900/65">
-            Live figures from Firestore. Nothing on this screen is simulated.
+            Live figures from Firestore.
           </p>
         </div>
         <Link to="/admin/orders" className={buttonClasses('primary', 'md')}>
@@ -119,7 +119,7 @@ export function AdminDashboardPage() {
               <stat.icon className="h-4 w-4 text-forest-900/35" aria-hidden="true" />
             </div>
             <p className="mt-2 font-display text-[32px] leading-none text-forest-900">
-              {loading ? '—' : stat.value}
+              {loading ? '…' : stat.value}
             </p>
             <p className="mt-1.5 text-[11px] text-forest-900/55">{stat.hint}</p>
           </div>

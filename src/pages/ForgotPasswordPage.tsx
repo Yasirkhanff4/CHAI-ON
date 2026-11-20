@@ -10,7 +10,7 @@ import { describeFirebaseError } from '@/lib/firebase/errors'
 import { useDocumentTitle } from '@/lib/useDocumentTitle'
 
 export function ForgotPasswordPage() {
-  useDocumentTitle('Reset password — CHAI ON')
+  useDocumentTitle('Reset password | CHAI ON')
   const { resetPassword, status } = useAuth()
 
   const [email, setEmail] = useState('')

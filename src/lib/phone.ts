@@ -1,7 +1,7 @@
 /**
  * Pakistani mobile numbers only: 03XX XXXXXXX (11 digits, local format).
  * Accepted input includes +92 300 1234567, 0092 300 1234567, 3001234567 and
- * numbers with spaces, dashes or brackets — they are normalised first.
+ * numbers with spaces, dashes or brackets. They are normalised first.
  */
 const PK_MOBILE_PATTERN = /^03\d{9}$/
 

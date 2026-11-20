@@ -6,8 +6,8 @@
  * working against local storage while accounts, admin and tracking show a
  * clear setup notice instead of failing silently.
  *
- * Only Authentication and Firestore are used — no Storage, no Cloud Functions
- * and no Cloud Messaging — so the project runs entirely on the free Spark plan.
+ * Only Authentication and Firestore are used: no Storage, no Cloud Functions
+ * and no Cloud Messaging, so the project runs entirely on the free Spark plan.
  */
 import { getApps, initializeApp } from 'firebase/app'
 import type { FirebaseApp } from 'firebase/app'

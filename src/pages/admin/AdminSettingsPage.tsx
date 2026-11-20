@@ -12,7 +12,7 @@ import { fetchSettings } from '@/services/settings'
 import { useDocumentTitle } from '@/lib/useDocumentTitle'
 
 export function AdminSettingsPage() {
-  useDocumentTitle('Settings — CHAI ON Admin')
+  useDocumentTitle('Settings | CHAI ON Admin')
   const [settings, setSettings] = useState<StoreSettings>(DEFAULT_STORE_SETTINGS)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)

@@ -11,7 +11,7 @@ import { describeFirebaseError } from '@/lib/firebase/errors'
 import { useDocumentTitle } from '@/lib/useDocumentTitle'
 
 export function AdminLoginPage() {
-  useDocumentTitle('Admin login — CHAI ON')
+  useDocumentTitle('Admin login | CHAI ON')
   const { login, logout, status, profile, isAdmin, isDeliveryStaff } = useAuth()
   const navigate = useNavigate()
 
@@ -42,7 +42,7 @@ export function AdminLoginPage() {
       if (!isStaffRole(signedIn.role)) {
         await logout()
         setError(
-          'This is a customer account. Admin access is granted by CHAI ON — there is no public admin registration.',
+          'This is a customer account. Admin access is granted by CHAI ON with Firebase custom claims. There is no public admin registration.',
         )
         setSubmitting(false)
         return
@@ -72,7 +72,7 @@ export function AdminLoginPage() {
               Admin sign in
             </h1>
             <p className="mt-2 text-[13px] leading-relaxed text-forest-900/70">
-              Accounts are provisioned by the owner. Roles are verified by the server — nothing
+              Accounts are provisioned by the owner. Roles are verified by the server, so nothing
               here can grant admin access on its own.
             </p>
 

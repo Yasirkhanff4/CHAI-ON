@@ -22,7 +22,7 @@ const ACTION_LABELS: Partial<Record<OrderStatus, string>> = {
 }
 
 export function AdminDeliveryPage() {
-  useDocumentTitle('Delivery — CHAI ON Admin')
+  useDocumentTitle('Delivery | CHAI ON Admin')
   const { profile, isAdmin, isDeliveryStaff } = useAuth()
 
   const [orders, setOrders] = useState<Order[]>([])
@@ -203,7 +203,7 @@ export function AdminDeliveryPage() {
         <h1 className="font-display text-[30px] leading-tight text-forest-900">Delivery</h1>
         <p className="mt-1 text-[13px] text-forest-900/65">
           {isAdmin
-            ? 'Assign ready orders to delivery staff and monitor progress. Everything stays inside this admin panel.'
+            ? 'Assign ready orders to delivery staff and track progress.'
             : 'These are the deliveries assigned to you.'}
         </p>
       </div>

@@ -46,7 +46,7 @@ export function OrderConfirmationPage() {
         : 'loading'
   const order = state === 'ready' ? result?.order ?? null : null
 
-  useDocumentTitle(order ? `Order ${order.orderNumber} — CHAI ON` : 'Order confirmation — CHAI ON')
+  useDocumentTitle(order ? `Order ${order.orderNumber} | CHAI ON` : 'Order confirmation | CHAI ON')
 
   useEffect(() => {
     let cancelled = false
@@ -97,7 +97,7 @@ export function OrderConfirmationPage() {
             <p className="mt-3 text-[14px] leading-relaxed text-forest-900/70">
               {state === 'error'
                 ? 'Please refresh the page. If it keeps failing, call us and we will confirm your order.'
-                : 'This device has no record of that order number. If you placed it here, check the number or call us — we have your order on our side.'}
+                : 'This device has no record of that order number. If you placed it here, check the number or call us. We have your order on our side.'}
             </p>
             <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
               <Link to="/track" className={buttonClasses('primary', 'md')}>

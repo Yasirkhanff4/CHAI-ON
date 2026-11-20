@@ -52,7 +52,7 @@ function editorFromProduct(product: Product): EditorState {
 }
 
 export function AdminProductsPage() {
-  useDocumentTitle('Products — CHAI ON Admin')
+  useDocumentTitle('Products | CHAI ON Admin')
   const { profile } = useAuth()
 
   const [products, setProducts] = useState<Product[]>([])

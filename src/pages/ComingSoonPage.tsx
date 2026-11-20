@@ -18,7 +18,7 @@ type ComingSoonPageProps = {
 
 /**
  * Honest placeholder for screens that are built in later phases.
- * It never pretends a feature works — it points people back to the live site
+ * It never pretends a feature works. It points people back to the live site
  * or to the phone number.
  */
 export function ComingSoonPage({

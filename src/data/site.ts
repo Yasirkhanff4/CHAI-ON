@@ -11,7 +11,7 @@ export const business = {
   phoneHref: 'tel:+923291018591',
   addressLine1: '3rd Floor, Al Ghaffar Mall',
   addressLine2: 'G-11 Markaz, Islamabad',
-  hours: '9:00 AM – 11:00 PM',
+  hours: '9:00 AM to 11:00 PM',
   mapsUrl:
     'https://www.google.com/maps/search/?api=1&query=Al+Ghaffar+Mall+G-11+Markaz+Islamabad',
   deliveryArea: 'G-11 Markaz and the buildings around Al Ghaffar Mall',

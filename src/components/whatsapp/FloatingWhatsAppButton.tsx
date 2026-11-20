@@ -19,7 +19,7 @@ export function FloatingWhatsAppButton() {
       href={buildWhatsAppOrderUrl(items, totals)}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Order on WhatsApp — opens WhatsApp chat"
+      aria-label="Order on WhatsApp (opens WhatsApp chat)"
       className="floating-chat fixed right-4 z-30 grid h-12 w-12 place-items-center rounded-full bg-[#25D366] text-white shadow-[0_2px_8px_rgba(10,31,24,0.28)] transition hover:bg-[#1DA851] sm:right-6 sm:h-auto sm:w-auto sm:grid-flow-col sm:auto-cols-max sm:items-center sm:gap-3 sm:rounded-full sm:border sm:border-forest-900/12 sm:bg-cream-50 sm:py-1.5 sm:pl-1.5 sm:pr-4 sm:text-forest-900 sm:shadow-[0_1px_4px_rgba(20,52,42,0.14)] sm:hover:bg-cream-100"
     >
       <span className="relative grid h-12 w-12 place-items-center rounded-full bg-[#25D366] text-white sm:h-9 sm:w-9">

@@ -10,7 +10,7 @@ import { buttonClasses } from '@/lib/buttonStyles'
 import { useDocumentTitle } from '@/lib/useDocumentTitle'
 
 export function CartPage() {
-  useDocumentTitle('Your cart — CHAI ON')
+  useDocumentTitle('Your cart | CHAI ON')
   const { items, clearCart } = useCart()
 
   return (
@@ -34,7 +34,7 @@ export function CartPage() {
               </span>
               <h2 className="mt-4 text-[24px] leading-tight text-forest-900">Your cart is empty</h2>
               <p className="mx-auto mt-2 max-w-xs text-[14px] leading-relaxed text-forest-900/70">
-                Pick your tea, sugar and strength — we will brew it fresh and bring it to your
+                Pick your tea, sugar and strength. We will brew it fresh and bring it to your
                 office.
               </p>
               <Link to="/menu" className={buttonClasses('primary', 'lg', 'mt-5 w-full sm:w-auto')}>

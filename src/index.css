@@ -43,7 +43,7 @@
   --color-gold-600: #a37a22;
   --color-gold-700: #8a681b;
 
-  /* No big soft shadows — a 1px border does most of the work now. */
+  /* No big soft shadows. A 1px border does most of the work now. */
   --shadow-card: 0 1px 2px rgb(20 52 42 / 0.06);
   --shadow-lift: 0 2px 6px rgb(20 52 42 / 0.08);
 }

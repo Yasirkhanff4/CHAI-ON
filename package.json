@@ -2,7 +2,7 @@
   "name": "chai-on",
   "private": true,
   "version": "0.1.0",
-  "description": "CHAI ON — tea ordering and management for Your Office. Your Chai.",
+  "description": "CHAI ON: tea ordering and management for Your Office. Your Chai.",
   "type": "module",
   "scripts": {
     "dev": "vite",

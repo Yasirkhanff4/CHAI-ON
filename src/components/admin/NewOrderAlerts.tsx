@@ -123,7 +123,7 @@ export function NewOrderAlerts() {
   )
 }
 
-/** Short two-tone chime, synthesised — no audio file, no external service. */
+/** Short two-tone chime, synthesised. No audio file, no external service. */
 function playChime(context: AudioContext | null) {
   if (!context || context.state !== 'running') return
 

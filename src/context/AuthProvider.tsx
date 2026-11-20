@@ -20,7 +20,7 @@ type AuthProviderProps = {
 /**
  * Customer and staff sessions.
  *
- * The role always comes from the Firebase ID token's custom claim — never from
+ * The role always comes from the Firebase ID token's custom claim, never from
  * localStorage or a field the account holder can edit. The Firestore `users`
  * document supplies the display name and phone number.
  *
