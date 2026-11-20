@@ -19,6 +19,7 @@ import { mapOrder } from '@/lib/orders/mapOrder'
 import type { StoreSettings } from '@/data/settings'
 import type { OrderStatus } from '@/types'
 import type { Order } from '@/types/order'
+import { isAllowedImageSrc } from '@/lib/productImage'
 import { createProduct } from '@/services/catalog'
 import type { ProductInput } from '@/services/catalog'
 
@@ -131,6 +132,12 @@ export async function saveProduct(
   productId: string | null,
   input: ProductInput,
 ): Promise<string> {
+  // An /images/… path, an https url or an uploaded image data url. Nothing
+  // else, so a javascript: or svg data url can never be stored.
+  if (!isAllowedImageSrc(input.imageUrl)) {
+    throw new Error('Use an /images/… path, an https:// image URL, or an uploaded image.')
+  }
+
   if (!productId) return createProduct(input)
 
   await updateDoc(doc(getDb(), 'products', productId), {

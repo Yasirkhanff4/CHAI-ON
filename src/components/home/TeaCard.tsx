@@ -1,6 +1,7 @@
 import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { formatPKR } from '@/lib/format'
+import { safeImageSrc } from '@/lib/productImage'
 import type { Product } from '@/types'
 
 type TeaCardProps = {
@@ -11,11 +12,12 @@ export function TeaCard({ product }: TeaCardProps) {
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-xl border border-cream-300 bg-cream-50">
       <img
-        src={product.imageUrl}
+        src={safeImageSrc(product.imageUrl)}
         alt={product.name}
         loading="lazy"
+        decoding="async"
         width={1000}
-        height={1333}
+        height={750}
         className="aspect-[4/3] w-full object-cover"
         style={{ objectPosition: product.imagePosition ?? 'center' }}
       />

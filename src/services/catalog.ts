@@ -2,6 +2,7 @@ import { collection, doc, getDoc, getDocs, onSnapshot, query, setDoc, where } fr
 import { serverTimestamp } from 'firebase/firestore'
 import { getDb, isFirebaseConfigured } from '@/lib/firebase/config'
 import { featuredProducts } from '@/data/menu'
+import { safeImageSrc } from '@/lib/productImage'
 import type { Product } from '@/types'
 
 export const PRODUCT_FIELDS = [
@@ -27,7 +28,8 @@ export function mapProduct(id: string, data: Record<string, unknown>): Product {
     name: String(data.name ?? 'Tea'),
     description: String(data.description ?? ''),
     price: Math.max(0, toNumber(data.price, 0)),
-    imageUrl: String(data.imageUrl ?? '/images/doodh-patti.jpg'),
+    // Accepts /images/…, an https url or an uploaded image data url only.
+    imageUrl: safeImageSrc(typeof data.imageUrl === 'string' ? data.imageUrl : null),
     imagePosition: typeof data.imagePosition === 'string' ? data.imagePosition : undefined,
     badge: typeof data.badge === 'string' && data.badge ? data.badge : undefined,
     isAvailable: data.isAvailable !== false,

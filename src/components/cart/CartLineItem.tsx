@@ -3,6 +3,7 @@ import { useCart } from '@/context/cartContext'
 import { orderSettings } from '@/data/site'
 import { strengthLabel, sugarLabel } from '@/data/menu'
 import { formatPKR } from '@/lib/format'
+import { safeImageSrc } from '@/lib/productImage'
 import { QuantityStepper } from '@/components/ui/QuantityStepper'
 import type { CartItem } from '@/types'
 
@@ -17,11 +18,12 @@ export function CartLineItem({ item }: CartLineItemProps) {
   return (
     <li className="flex gap-3 py-4 sm:gap-4">
       <img
-        src={item.imageUrl}
+        src={safeImageSrc(item.imageUrl)}
         alt={item.name}
         width={200}
         height={250}
         loading="lazy"
+        decoding="async"
         className="h-20 w-16 shrink-0 rounded-lg border border-cream-300 object-cover sm:h-24 sm:w-20"
       />
 

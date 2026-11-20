@@ -6,6 +6,7 @@ import { defaultStrength, defaultSugar, strengthOptions, sugarOptions } from '@/
 import { orderSettings } from '@/data/site'
 import { formatPKR } from '@/lib/format'
 import { buttonClasses } from '@/lib/buttonStyles'
+import { safeImageSrc } from '@/lib/productImage'
 import { QuantityStepper } from '@/components/ui/QuantityStepper'
 import type { Product, SugarLevel, TeaStrength } from '@/types'
 
@@ -33,11 +34,12 @@ export function MenuProductCard({ product }: MenuProductCardProps) {
     <article className="flex h-full flex-col overflow-hidden rounded-xl border border-cream-300 bg-cream-50">
       <div className="relative">
         <img
-          src={product.imageUrl}
+          src={safeImageSrc(product.imageUrl)}
           alt={product.name}
           width={1000}
           height={750}
           loading="lazy"
+          decoding="async"
           className="aspect-[16/10] w-full object-cover"
           style={{ objectPosition: product.imagePosition ?? 'center' }}
         />

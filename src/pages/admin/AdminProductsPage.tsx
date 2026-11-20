@@ -1,17 +1,29 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
-import { AlertCircle, Pencil, Plus, X } from 'lucide-react'
+import { AlertCircle, Pencil, Plus, Upload, X } from 'lucide-react'
 import { Container } from '@/components/ui/Container'
 import { FormField } from '@/components/ui/FormField'
 import { useAuth } from '@/context/authContext'
 import { buttonClasses } from '@/lib/buttonStyles'
 import { describeFirebaseError } from '@/lib/firebase/errors'
 import { formatPKR } from '@/lib/format'
+import {
+  ALLOWED_UPLOAD_TYPES,
+  compressProductImage,
+  dataUrlBytes,
+  isAllowedImageSrc,
+  safeImageSrc,
+} from '@/lib/productImage'
 import { fetchAllProducts, seedLaunchProducts } from '@/services/catalog'
 import type { ProductInput } from '@/services/catalog'
 import { saveProduct, updateProductAvailability } from '@/services/admin'
 import { useDocumentTitle } from '@/lib/useDocumentTitle'
 import type { Product } from '@/types'
+
+type UploadedImage = {
+  dataUrl: string
+  bytes: number
+}
 
 type EditorState = {
   productId: string | null
@@ -19,6 +31,7 @@ type EditorState = {
   description: string
   price: string
   imageUrl: string
+  uploadedImage: UploadedImage | null
   badge: string
   sortOrder: string
   isAvailable: boolean
@@ -31,6 +44,7 @@ const emptyEditor: EditorState = {
   description: '',
   price: '',
   imageUrl: '',
+  uploadedImage: null,
   badge: '',
   sortOrder: '10',
   isAvailable: true,
@@ -38,12 +52,19 @@ const emptyEditor: EditorState = {
 }
 
 function editorFromProduct(product: Product): EditorState {
+  // An image that was uploaded before lives in the document as a data url.
+  // Keep it in the preview instead of dumping base64 into the path field.
+  const uploaded = product.imageUrl.startsWith('data:')
+    ? { dataUrl: product.imageUrl, bytes: dataUrlBytes(product.imageUrl) }
+    : null
+
   return {
     productId: product.id,
     name: product.name,
     description: product.description,
     price: String(product.price),
-    imageUrl: product.imageUrl,
+    imageUrl: uploaded ? '' : product.imageUrl,
+    uploadedImage: uploaded,
     badge: product.badge ?? '',
     sortOrder: String(product.sortOrder ?? 10),
     isAvailable: product.isAvailable,
@@ -62,6 +83,9 @@ export function AdminProductsPage() {
   const [saving, setSaving] = useState(false)
   const [busyId, setBusyId] = useState<string | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
+  const [imageBusy, setImageBusy] = useState(false)
+  const [imageError, setImageError] = useState<string | null>(null)
+  const fileInput = useRef<HTMLInputElement>(null)
 
   const load = useCallback(async () => {
     try {
@@ -95,6 +119,34 @@ export function AdminProductsPage() {
     }
   }
 
+  const handleImageFile = async (file: File | undefined) => {
+    if (!file) return
+
+    setImageError(null)
+    setImageBusy(true)
+
+    try {
+      const compressed = await compressProductImage(file)
+      setEditor((current) =>
+        current
+          ? {
+              ...current,
+              uploadedImage: { dataUrl: compressed.dataUrl, bytes: compressed.bytes },
+            }
+          : current,
+      )
+    } catch (uploadError) {
+      setImageError(
+        uploadError instanceof Error
+          ? uploadError.message
+          : 'That image could not be prepared. Try another file.',
+      )
+    } finally {
+      setImageBusy(false)
+      if (fileInput.current) fileInput.current.value = ''
+    }
+  }
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (!editor || saving) return
@@ -108,8 +160,14 @@ export function AdminProductsPage() {
       setError('Enter a valid price in PKR.')
       return
     }
-    if (!editor.imageUrl.trim()) {
-      setError('Add an image path or URL.')
+
+    const typedImage = editor.imageUrl.trim()
+    if (!typedImage && !editor.uploadedImage) {
+      setError('Add an image: upload one from your computer, or enter an image path or URL.')
+      return
+    }
+    if (typedImage && !editor.uploadedImage && !isAllowedImageSrc(typedImage)) {
+      setError('Use an /images/… path or an https:// image URL, or upload an image instead.')
       return
     }
 
@@ -117,7 +175,7 @@ export function AdminProductsPage() {
       name: editor.name.trim(),
       description: editor.description.trim(),
       price: Math.round(price),
-      imageUrl: editor.imageUrl.trim(),
+      imageUrl: editor.uploadedImage?.dataUrl ?? typedImage,
       badge: editor.badge.trim(),
       isAvailable: editor.isAvailable,
       isActive: editor.isActive,
@@ -168,6 +226,7 @@ export function AdminProductsPage() {
           onClick={() => {
             setEditor(emptyEditor)
             setNotice(null)
+            setImageError(null)
           }}
           className={buttonClasses('primary', 'md')}
         >
@@ -245,13 +304,91 @@ export function AdminProductsPage() {
               className="sm:col-span-2"
               disabled={saving}
             />
+
+            <div className="rounded-[10px] border border-cream-300 bg-cream-100/60 p-3.5 sm:col-span-2">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                <button
+                  type="button"
+                  onClick={() => fileInput.current?.click()}
+                  disabled={saving || imageBusy}
+                  className={buttonClasses('secondary', 'sm')}
+                >
+                  <Upload className="h-3.5 w-3.5" aria-hidden="true" />
+                  {imageBusy ? 'Preparing image…' : 'Choose image from computer'}
+                </button>
+                <span className="text-[11.5px] text-forest-900/60">
+                  JPEG, PNG or WebP · up to 8 MB. It is scaled to 640px and saved with the product.
+                </span>
+              </div>
+
+              <input
+                ref={fileInput}
+                id="productImageFile"
+                type="file"
+                accept={ALLOWED_UPLOAD_TYPES.join(',')}
+                onChange={(event) => void handleImageFile(event.target.files?.[0])}
+                disabled={saving || imageBusy}
+                aria-label="Choose image from computer"
+                aria-describedby={imageError ? 'productImageFile-error' : undefined}
+                className="sr-only"
+              />
+
+              {imageError && (
+                <p
+                  id="productImageFile-error"
+                  role="alert"
+                  className="mt-2 text-[12.5px] font-medium leading-relaxed text-red-700"
+                >
+                  {imageError}
+                </p>
+              )}
+
+              {editor.uploadedImage && (
+                <div className="mt-3 flex flex-wrap items-start gap-3">
+                  <img
+                    src={safeImageSrc(editor.uploadedImage.dataUrl)}
+                    alt="Preview of the chosen product image"
+                    width={640}
+                    height={480}
+                    decoding="async"
+                    className="aspect-[4/3] h-24 w-32 rounded-lg border border-cream-300/80 object-cover"
+                  />
+                  <div className="min-w-0">
+                    <p className="text-[12.5px] font-medium text-forest-900">
+                      Uploaded image · {Math.max(1, Math.round(editor.uploadedImage.bytes / 1024))}{' '}
+                      KB
+                    </p>
+                    <p className="mt-0.5 text-[11.5px] leading-relaxed text-forest-900/60">
+                      Saved inside the product, so no image hosting is needed.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditor({ ...editor, uploadedImage: null })
+                        setImageError(null)
+                      }}
+                      disabled={saving || imageBusy}
+                      className="mt-1.5 inline-flex min-h-9 items-center gap-1 text-[12.5px] font-semibold text-red-700 hover:text-red-800"
+                    >
+                      <X className="h-3.5 w-3.5" aria-hidden="true" />
+                      Remove image
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
             <FormField
               id="productImageUrl"
               label="Image path or URL"
               value={editor.imageUrl}
               onChange={(value) => setEditor({ ...editor, imageUrl: value })}
-              required
-              hint="e.g. /images/doodh-patti.jpg (add the file to public/images) or any https:// image URL."
+              required={!editor.uploadedImage}
+              hint={
+                editor.uploadedImage
+                  ? 'Optional: an uploaded image is already attached and will be used.'
+                  : 'e.g. /images/doodh-patti.jpg (add the file to public/images) or any https:// image URL.'
+              }
               className="sm:col-span-2"
               disabled={saving}
             />
@@ -343,9 +480,13 @@ export function AdminProductsPage() {
             {products.map((product) => (
               <li key={product.id} className="flex flex-wrap items-center gap-4 px-4 py-4 sm:px-5">
                 <img
-                  src={product.imageUrl}
+                  src={safeImageSrc(product.imageUrl)}
                   alt={product.name}
-                  className="h-16 w-20 shrink-0 rounded-xl border border-cream-300/70 object-cover"
+                  width={640}
+                  height={480}
+                  loading="lazy"
+                  decoding="async"
+                  className="aspect-[4/3] h-16 w-20 shrink-0 rounded-xl border border-cream-300/70 object-cover"
                 />
                 <div className="min-w-0 flex-1">
                   <p className="text-[13.5px] font-semibold text-forest-900">{product.name}</p>
@@ -385,6 +526,7 @@ export function AdminProductsPage() {
                     onClick={() => {
                       setEditor(editorFromProduct(product))
                       setNotice(null)
+                      setImageError(null)
                       window.scrollTo({ top: 0, behavior: 'smooth' })
                     }}
                     className={buttonClasses('secondary', 'sm')}
