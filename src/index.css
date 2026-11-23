@@ -1,51 +1,25 @@
 @import "tailwindcss";
-@import "@fontsource-variable/plus-jakarta-sans";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/barlow-condensed/700.css";
 
 @theme {
-  --font-sans: "Plus Jakarta Sans Variable", "Plus Jakarta Sans", ui-sans-serif, system-ui,
-    -apple-system, "Segoe UI", Roboto, sans-serif;
-  /* Kept as an alias so older `font-display` classes resolve to the same family. */
-  --font-display: "Plus Jakarta Sans Variable", "Plus Jakarta Sans", ui-sans-serif, system-ui,
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     sans-serif;
+  --font-display: "Barlow Condensed", "Inter", ui-sans-serif, system-ui, sans-serif;
 
-  --color-cream-50: #fdfcf8;
-  --color-cream-100: #faf6ee;
-  --color-cream-200: #f4edde;
-  --color-cream-300: #e9ddc6;
-  --color-cream-400: #d8c6a6;
+  /* CHAYON poster palette */
+  --color-brand-brown: #5b3a2e;
+  --color-brand-red: #b00000;
+  --color-brand-maroon: #7a0f0f;
+  --color-cream: #f4f2ef;
+  --color-off-white: #fbf9f6;
+  --color-soft-pink: #e6b8b5;
 
-  --color-forest-50: #f1f6f2;
-  --color-forest-100: #dce9e0;
-  --color-forest-200: #bcd4c3;
-  --color-forest-300: #92b7a0;
-  --color-forest-400: #629178;
-  --color-forest-500: #427a5d;
-  --color-forest-600: #2f6249;
-  --color-forest-700: #264f3c;
-  --color-forest-800: #1c3f31;
-  --color-forest-900: #14342a;
-  --color-forest-950: #0a1f18;
-
-  --color-tea-100: #f2e6da;
-  --color-tea-200: #e2cbb2;
-  --color-tea-300: #cba883;
-  --color-tea-400: #b1845c;
-  --color-tea-500: #8c5f38;
-  --color-tea-600: #7c5232;
-  --color-tea-700: #613f28;
-  --color-tea-800: #4a3020;
-
-  --color-gold-100: #faf0d2;
-  --color-gold-200: #f2dfa6;
-  --color-gold-300: #e6c977;
-  --color-gold-400: #d8b04a;
-  --color-gold-500: #c1962c;
-  --color-gold-600: #a37a22;
-  --color-gold-700: #8a681b;
-
-  /* No big soft shadows. A 1px border does most of the work now. */
-  --shadow-card: 0 1px 2px rgb(20 52 42 / 0.06);
-  --shadow-lift: 0 2px 6px rgb(20 52 42 / 0.08);
+  /* One small shadow, no glow. A 1px border does most of the work. */
+  --shadow-card: 0 1px 2px rgb(91 58 46 / 0.06);
+  --shadow-lift: 0 2px 6px rgb(91 58 46 / 0.08);
 }
 
 @layer base {
@@ -55,7 +29,7 @@
   }
 
   body {
-    @apply bg-cream-100 font-sans text-forest-900 antialiased;
+    @apply bg-cream font-sans text-brand-brown antialiased;
   }
 
   h1,
@@ -66,6 +40,11 @@
     letter-spacing: -0.015em;
   }
 
+  h1 {
+    font-family: var(--font-display);
+    letter-spacing: 0.01em;
+  }
+
   /* 16px inputs so iOS Safari does not zoom into the checkout form. */
   input,
   textarea,
@@ -74,11 +53,11 @@
   }
 
   ::selection {
-    @apply bg-gold-200 text-forest-950;
+    @apply bg-soft-pink text-brand-maroon;
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-gold-500);
+    outline: 2px solid var(--color-brand-red);
     outline-offset: 2px;
   }
 
@@ -143,6 +122,15 @@
 
 @utility animate-rise {
   animation: rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Big poster headings only. Body, menu items and buttons stay Inter. */
+@utility poster-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  line-height: 0.98;
 }
 
 @media (prefers-reduced-motion: reduce) {

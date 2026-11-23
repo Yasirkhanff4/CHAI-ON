@@ -10,7 +10,7 @@ import { describeFirebaseError } from '@/lib/firebase/errors'
 import { useDocumentTitle } from '@/lib/useDocumentTitle'
 
 export function ForgotPasswordPage() {
-  useDocumentTitle('Reset password | CHAI ON')
+  useDocumentTitle('Reset password | CHAYON')
   const { resetPassword, status } = useAuth()
 
   const [email, setEmail] = useState('')
@@ -48,15 +48,15 @@ export function ForgotPasswordPage() {
       footer={
         <p>
           Remembered it?{' '}
-          <Link to="/admin/login" className="font-semibold text-forest-800 hover:text-forest-600">
+          <Link to="/admin/login" className="font-semibold text-brand-red hover:text-brand-maroon">
             Back to admin login
           </Link>
         </p>
       }
     >
       {sent ? (
-        <div className="rounded-[10px] border border-forest-200 bg-forest-50 px-4 py-4">
-          <p className="flex items-start gap-2 text-[13px] leading-relaxed text-forest-800">
+        <div className="rounded-xl border border-soft-pink bg-cream px-4 py-4">
+          <p className="flex items-start gap-2 text-[13px] leading-relaxed text-brand-red">
             <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
             If an account exists for {email}, a reset link is on its way. Check your spam
             folder too.
@@ -65,8 +65,8 @@ export function ForgotPasswordPage() {
       ) : (
         <form onSubmit={handleSubmit} noValidate className="space-y-4">
           {error && (
-            <div role="alert" className="rounded-[10px] border border-red-500/30 bg-red-50 px-4 py-3">
-              <p className="flex items-start gap-2 text-[12.5px] font-medium leading-relaxed text-red-800">
+            <div role="alert" className="rounded-xl border border-brand-red/30 bg-soft-pink/30 px-4 py-3">
+              <p className="flex items-start gap-2 text-[12.5px] font-medium leading-relaxed text-brand-red">
                 <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
                 {error}
               </p>

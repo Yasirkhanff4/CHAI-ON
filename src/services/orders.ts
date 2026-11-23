@@ -83,7 +83,7 @@ export async function placeOrder(
   }
 
   if (!Array.isArray(input.items) || input.items.length === 0) {
-    throw new OrderError('VALIDATION', 'Your cart is empty. Add a tea before checking out.')
+    throw new OrderError('VALIDATION', 'Your cart is empty. Add something from the menu before checking out.')
   }
 
   if (isFirebaseConfigured) {
@@ -183,7 +183,7 @@ async function placeOrderInFirestore(
   if (!isOrderingOpen(catalog.settings)) {
     throw new OrderError(
       'UNKNOWN',
-      'CHAI ON is not taking online orders right now. Please call us or message us on WhatsApp.',
+      'CHAYON is not taking online orders right now. Please call us or message us on WhatsApp.',
     )
   }
 

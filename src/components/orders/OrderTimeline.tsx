@@ -25,9 +25,9 @@ export function OrderTimeline({ status, history = [], createdAt }: OrderTimeline
   return (
     <div>
       {isCancelled && (
-        <div className="mb-5 flex items-start gap-2.5 rounded-[10px] border border-red-200 bg-red-50 px-4 py-3.5">
-          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-red-700" aria-hidden="true" />
-          <p className="text-[13px] leading-relaxed text-red-800">
+        <div className="mb-5 flex items-start gap-2.5 rounded-xl border border-red-200 bg-soft-pink/30 px-4 py-3.5">
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-brand-red" aria-hidden="true" />
+          <p className="text-[13px] leading-relaxed text-brand-red">
             This order is {ORDER_STATUS_LABELS[status].toLowerCase()}. Call us if you would like
             to order again.
           </p>
@@ -49,15 +49,15 @@ export function OrderTimeline({ status, history = [], createdAt }: OrderTimeline
                 <span
                   aria-hidden="true"
                   className={`absolute left-[11px] top-6 h-[calc(100%-12px)] w-0.5 ${
-                    completed ? 'bg-forest-400' : 'bg-cream-300'
+                    completed ? 'bg-brand-brown' : 'bg-soft-pink'
                   }`}
                 />
               )}
               <span
                 className={`relative z-10 mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full border ${
                   completed
-                    ? 'border-forest-700 bg-forest-800 text-cream-50'
-                    : 'border-cream-300 bg-cream-100 text-forest-900/30'
+                    ? 'border-brand-maroon bg-brand-red text-off-white'
+                    : 'border-soft-pink bg-cream text-brand-brown/30'
                 }`}
               >
                 {completed ? (
@@ -69,18 +69,18 @@ export function OrderTimeline({ status, history = [], createdAt }: OrderTimeline
               <div className="min-w-0">
                 <p
                   className={`text-[13.5px] ${
-                    isCurrent ? 'font-semibold text-forest-900' : 'font-medium text-forest-900/80'
+                    isCurrent ? 'font-semibold text-brand-brown' : 'font-medium text-brand-brown/80'
                   }`}
                 >
                   {ORDER_STATUS_LABELS[step]}
                   {isCurrent && (
-                    <span className="ml-2 rounded-full bg-gold-100 px-2 py-0.5 text-[12.5px] font-medium text-gold-700">
+                    <span className="ml-2 rounded-full bg-cream px-2 py-0.5 text-[12.5px] font-medium text-brand-maroon">
                       Now
                     </span>
                   )}
                 </p>
                 {at && (
-                  <p className="mt-0.5 text-[11.5px] text-forest-900/55">{formatDateTime(at)}</p>
+                  <p className="mt-0.5 text-[11.5px] text-brand-brown/55">{formatDateTime(at)}</p>
                 )}
               </div>
             </li>

@@ -12,7 +12,7 @@ import { fetchSettings } from '@/services/settings'
 import { useDocumentTitle } from '@/lib/useDocumentTitle'
 
 export function AdminSettingsPage() {
-  useDocumentTitle('Settings | CHAI ON Admin')
+  useDocumentTitle('Settings | CHAYON Admin')
   const [settings, setSettings] = useState<StoreSettings>(DEFAULT_STORE_SETTINGS)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -80,14 +80,14 @@ export function AdminSettingsPage() {
   return (
     <Container>
       <div className="max-w-2xl">
-        <h1 className="font-display text-[30px] leading-tight text-forest-900">Store settings</h1>
-        <p className="mt-1 text-[13px] text-forest-900/65">
+        <h1 className="font-display text-[30px] leading-tight text-brand-brown">Store settings</h1>
+        <p className="mt-1 text-[13px] text-brand-brown/65">
           These values drive the customer website: delivery charges, minimum order and ordering
           hours are checked again inside the trusted order function.
         </p>
 
         {loading ? (
-          <div className="mt-6 flex items-center gap-2 text-[13px] text-forest-900/60">
+          <div className="mt-6 flex items-center gap-2 text-[13px] text-brand-brown/60">
             <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
             Loading settings…
           </div>
@@ -95,12 +95,12 @@ export function AdminSettingsPage() {
           <form
             onSubmit={handleSubmit}
             noValidate
-            className="mt-5 rounded-[24px] border border-cream-300/80 bg-cream-50 p-5 shadow-card sm:p-6"
+            className="mt-5 rounded-xl border border-soft-pink/80 bg-off-white p-5 shadow-card sm:p-6"
           >
             {error && (
               <p
                 role="alert"
-                className="mb-4 flex items-start gap-2 rounded-xl bg-red-50 px-3.5 py-2.5 text-[12.5px] leading-relaxed text-red-800"
+                className="mb-4 flex items-start gap-2 rounded-xl bg-soft-pink/30 px-3.5 py-2.5 text-[12.5px] leading-relaxed text-brand-red"
               >
                 <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 {error}
@@ -109,7 +109,7 @@ export function AdminSettingsPage() {
             {saved && (
               <p
                 role="status"
-                className="mb-4 flex items-start gap-2 rounded-xl bg-forest-50 px-3.5 py-2.5 text-[12.5px] leading-relaxed text-forest-800"
+                className="mb-4 flex items-start gap-2 rounded-xl bg-cream px-3.5 py-2.5 text-[12.5px] leading-relaxed text-brand-red"
               >
                 <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 Settings saved. The customer site updates immediately.
@@ -181,19 +181,19 @@ export function AdminSettingsPage() {
               />
             </div>
 
-            <label className="mt-5 flex items-start gap-3 rounded-2xl border border-cream-300 bg-cream-100/60 px-4 py-3.5">
+            <label className="mt-5 flex items-start gap-3 rounded-xl border border-soft-pink bg-cream/60 px-4 py-3.5">
               <input
                 type="checkbox"
                 checked={settings.isOrderingOpen}
                 onChange={(event) => update('isOrderingOpen', event.target.checked)}
                 disabled={saving}
-                className="mt-0.5 h-4 w-4 rounded border-forest-900/30 text-forest-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
+                className="mt-0.5 h-4 w-4 rounded border-brand-brown/30 text-brand-red focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red"
               />
               <span>
-                <span className="block text-[13px] font-semibold text-forest-900">
+                <span className="block text-[13px] font-semibold text-brand-brown">
                   Online ordering is open
                 </span>
-                <span className="mt-0.5 block text-[11.5px] leading-relaxed text-forest-900/60">
+                <span className="mt-0.5 block text-[11.5px] leading-relaxed text-brand-brown/60">
                   Turn this off to pause new orders (for example when you run out of milk). The
                   menu stays visible and checkout explains that ordering is paused.
                 </span>

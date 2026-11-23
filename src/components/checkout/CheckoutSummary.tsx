@@ -1,7 +1,12 @@
 import { Banknote, CheckCircle2, Clock, ShoppingBag, Truck } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useCart } from '@/context/cartContext'
-import { strengthLabel, sugarLabel } from '@/data/menu'
+import {
+  categoryForProduct,
+  strengthLabel,
+  sugarLabel,
+  supportsTeaOptions,
+} from '@/data/menu'
 import { business } from '@/data/site'
 import { formatPKR } from '@/lib/format'
 import { buttonClasses } from '@/lib/buttonStyles'
@@ -17,63 +22,68 @@ export function CheckoutSummary({ formId, submitting, disabled = false }: Checko
   const { items, totals } = useCart()
 
   return (
-    <div className="rounded-xl border border-cream-300 bg-cream-50">
-      <div className="border-b border-cream-300 px-4 py-3 sm:px-5">
-        <h2 className="text-[20px] leading-tight text-forest-900">Order summary</h2>
-        <p className="mt-0.5 text-[12px] text-forest-900/60">
-          {totals.itemCount} {totals.itemCount === 1 ? 'cup' : 'cups'} · {items.length}{' '}
+    <div className="rounded-xl border border-soft-pink bg-off-white shadow-card">
+      <div className="border-b border-soft-pink px-4 py-3 sm:px-5">
+        <h2 className="text-[20px] font-semibold leading-tight text-brand-brown">Order summary</h2>
+        <p className="mt-0.5 text-[12px] text-brand-brown/60">
+          {totals.itemCount} {totals.itemCount === 1 ? 'item' : 'items'} · {items.length}{' '}
           {items.length === 1 ? 'line' : 'lines'}
         </p>
       </div>
 
-      <ul className="divide-y divide-cream-300/80 px-4 sm:px-5">
-        {items.map((item) => (
-          <li key={item.id} className="flex items-start justify-between gap-3 py-3">
-            <div className="min-w-0">
-              <p className="text-[14px] font-semibold text-forest-900">
-                {item.name}
-                <span className="ml-1.5 font-normal text-forest-900/60">× {item.quantity}</span>
+      <ul className="divide-y divide-soft-pink px-4 sm:px-5">
+        {items.map((item) => {
+          const customizable = supportsTeaOptions(categoryForProduct({ name: item.name }))
+          return (
+            <li key={item.id} className="flex items-start justify-between gap-3 py-3">
+              <div className="min-w-0">
+                <p className="text-[14px] font-semibold text-brand-brown">
+                  {item.name}
+                  <span className="ml-1.5 font-normal text-brand-brown/60">× {item.quantity}</span>
+                </p>
+                {customizable && (
+                  <p className="mt-0.5 text-[12px] text-brand-brown/65">
+                    {sugarLabel(item.sugar)} · {strengthLabel(item.strength)}
+                  </p>
+                )}
+                <p className="mt-0.5 text-[11.5px] text-brand-brown/55">
+                  {formatPKR(item.unitPrice)} each
+                </p>
+              </div>
+              <p className="shrink-0 text-[14px] font-semibold tabular-nums text-brand-brown">
+                {formatPKR(item.unitPrice * item.quantity)}
               </p>
-              <p className="mt-0.5 text-[12px] text-forest-900/65">
-                {sugarLabel(item.sugar)} · {strengthLabel(item.strength)}
-              </p>
-              <p className="mt-0.5 text-[11.5px] text-forest-900/55">
-                {formatPKR(item.unitPrice)} each
-              </p>
-            </div>
-            <p className="shrink-0 text-[14px] font-semibold tabular-nums text-forest-900">
-              {formatPKR(item.unitPrice * item.quantity)}
-            </p>
-          </li>
-        ))}
+            </li>
+          )
+        })}
       </ul>
 
       <div className="px-4 pt-3 sm:px-5">
         <dl className="space-y-2 text-[13.5px]">
           <div className="flex items-center justify-between gap-4">
-            <dt className="text-forest-900/70">Subtotal</dt>
-            <dd className="font-semibold tabular-nums text-forest-900">
+            <dt className="text-brand-brown/70">Subtotal</dt>
+            <dd className="font-semibold tabular-nums text-brand-brown">
               {formatPKR(totals.subtotal)}
             </dd>
           </div>
           <div className="flex items-center justify-between gap-4">
-            <dt className="text-forest-900/70">Delivery</dt>
-            <dd className="font-semibold tabular-nums text-forest-900">
+            <dt className="text-brand-brown/70">Delivery</dt>
+            <dd className="font-semibold tabular-nums text-brand-brown">
               {totals.deliveryCharge === 0 ? 'Free' : formatPKR(totals.deliveryCharge)}
             </dd>
           </div>
           <div className="flex items-center justify-between gap-4">
-            <dt className="text-forest-900/70">Payment</dt>
-            <dd className="flex items-center gap-1.5 font-medium text-forest-900">
-              <Banknote className="h-3.5 w-3.5 text-tea-500" aria-hidden="true" />
+            <dt className="text-brand-brown/70">Payment</dt>
+            <dd className="flex items-center gap-1.5 font-medium text-brand-brown">
+              <Banknote className="h-3.5 w-3.5 text-brand-red" aria-hidden="true" />
               Cash on delivery
             </dd>
           </div>
         </dl>
 
-        <div className="mt-3 flex items-baseline justify-between gap-4 border-t border-cream-300 pt-3">
-          <p className="text-sm font-semibold text-forest-900">Pay on delivery</p>
-          <p className="text-[24px] font-bold leading-none tabular-nums text-forest-900">
+        <div className="mt-3 flex items-baseline justify-between gap-4 border-t border-soft-pink pt-3">
+          <p className="text-sm font-semibold text-brand-brown">Pay on delivery</p>
+          <p className="text-[24px] font-bold leading-none tabular-nums text-brand-brown">
             {formatPKR(totals.total)}
           </p>
         </div>
@@ -91,9 +101,9 @@ export function CheckoutSummary({ formId, submitting, disabled = false }: Checko
             <>
               <span
                 aria-hidden="true"
-                className="h-4 w-4 animate-spin rounded-full border-2 border-cream-50/40 border-t-cream-50"
+                className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white"
               />
-              Placing your order…
+              Placing your order...
             </>
           ) : (
             <>
@@ -103,28 +113,28 @@ export function CheckoutSummary({ formId, submitting, disabled = false }: Checko
           )}
         </button>
 
-        <p className="mt-2 text-center text-[11.5px] leading-relaxed text-forest-900/60">
-          Pay {formatPKR(totals.total)} in cash when your chai arrives.
+        <p className="mt-2 text-center text-[11.5px] leading-relaxed text-brand-brown/60">
+          Pay {formatPKR(totals.total)} in cash when your order arrives.
         </p>
 
-        <div className="mt-3 space-y-2 border-t border-cream-300 pt-3 text-[11.5px] leading-relaxed text-forest-900/65">
+        <div className="mt-3 space-y-2 border-t border-soft-pink pt-3 text-[11.5px] leading-relaxed text-brand-brown/65">
           <p className="flex items-start gap-2">
-            <Truck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-tea-500" aria-hidden="true" />
+            <Truck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-red" aria-hidden="true" />
             Delivered across {business.deliveryArea}.
           </p>
           <p className="flex items-start gap-2">
-            <Clock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-tea-500" aria-hidden="true" />
-            Brewed after you order. Usually 15–25 minutes.
+            <Clock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-red" aria-hidden="true" />
+            Brewed after you order. Usually 15 to 25 minutes.
           </p>
           <p className="flex items-start gap-2">
-            <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-tea-500" aria-hidden="true" />
+            <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-red" aria-hidden="true" />
             No account needed.
           </p>
         </div>
 
         <Link
           to="/cart"
-          className="mt-2 inline-flex min-h-10 w-full items-center justify-center rounded-[10px] px-3 text-[12.5px] font-medium text-forest-900/65 transition hover:bg-cream-200/60 hover:text-forest-900"
+          className="mt-2 inline-flex min-h-10 w-full items-center justify-center rounded-xl px-3 text-[12.5px] font-medium text-brand-brown/65 transition hover:bg-soft-pink/40 hover:text-brand-brown"
         >
           Back to cart
         </Link>

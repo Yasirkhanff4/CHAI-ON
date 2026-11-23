@@ -35,7 +35,7 @@ export function priceOrder(
   settings: PricingSettings = orderSettings,
 ): OrderPricing {
   if (!Array.isArray(items) || items.length === 0) {
-    throw new OrderError('VALIDATION', 'Your cart is empty. Add a tea before checking out.')
+    throw new OrderError('VALIDATION', 'Your cart is empty. Add something from the menu before checking out.')
   }
 
   if (items.length > 20) {
@@ -62,7 +62,7 @@ export function priceOrder(
     if (item.quantity > MAX_QUANTITY_PER_LINE) {
       throw new OrderError(
         'VALIDATION',
-        `We can make up to ${MAX_QUANTITY_PER_LINE} cups of ${product.name} per order.`,
+        `We can make up to ${MAX_QUANTITY_PER_LINE} of ${product.name} per order.`,
       )
     }
 
@@ -82,7 +82,7 @@ export function priceOrder(
       if (existing.quantity > MAX_QUANTITY_PER_LINE) {
         throw new OrderError(
           'VALIDATION',
-          `We can make up to ${MAX_QUANTITY_PER_LINE} cups of ${product.name} per order.`,
+          `We can make up to ${MAX_QUANTITY_PER_LINE} of ${product.name} per order.`,
         )
       }
       existing.lineTotal = existing.unitPrice * existing.quantity

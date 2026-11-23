@@ -2,15 +2,17 @@ export type ButtonVariant = 'primary' | 'secondary' | 'gold' | 'ghost' | 'invers
 export type ButtonSize = 'sm' | 'md' | 'lg'
 
 const base =
-  'inline-flex min-h-11 items-center justify-center gap-2 rounded-[10px] font-semibold transition duration-150 disabled:pointer-events-none disabled:opacity-50'
+  'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl font-semibold transition duration-150 disabled:pointer-events-none disabled:opacity-50'
 
 const variants: Record<ButtonVariant, string> = {
-  primary: 'bg-forest-800 text-cream-50 hover:bg-forest-700',
+  primary: 'bg-brand-red text-white hover:bg-brand-maroon',
   secondary:
-    'border border-forest-900/15 bg-cream-50 text-forest-900 hover:border-forest-900/30 hover:bg-cream-100',
-  gold: 'bg-gold-400 text-forest-950 hover:bg-gold-300',
-  ghost: 'text-forest-800 hover:bg-forest-800/5',
-  inverse: 'border border-cream-50/30 text-cream-50 hover:border-cream-50/50 hover:bg-cream-50/10',
+    'border border-soft-pink bg-off-white text-brand-brown hover:border-brand-red/45 hover:bg-cream',
+  // Kept as an alias for the old accent button; it now uses the brand red.
+  gold: 'bg-brand-red text-white hover:bg-brand-maroon',
+  ghost: 'text-brand-red hover:bg-brand-red/5',
+  inverse:
+    'border border-off-white/40 text-off-white hover:border-off-white/70 hover:bg-off-white/10',
 }
 
 const sizes: Record<ButtonSize, string> = {

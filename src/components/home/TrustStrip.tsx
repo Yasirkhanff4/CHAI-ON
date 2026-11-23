@@ -1,39 +1,32 @@
-import { Banknote, Building2, Flame, MapPin } from 'lucide-react'
+import { Building2, Clock, Coffee } from 'lucide-react'
+import { business } from '@/data/site'
 
 const items = [
   {
-    icon: Flame,
-    title: 'Brewed to order',
-    text: 'No pre-made batches',
+    icon: Coffee,
+    text: 'Chai, coffee, nuggets, cake rusk',
   },
   {
     icon: Building2,
-    title: 'Office delivery',
-    text: 'To your floor and desk',
+    text: 'Delivered to your office desk',
   },
   {
-    icon: Banknote,
-    title: 'Cash on delivery',
-    text: 'Pay when it arrives',
-  },
-  {
-    icon: MapPin,
-    title: 'Local, always',
-    text: 'G-11 Markaz, Islamabad',
+    icon: Clock,
+    text: `Open ${business.hours}`,
   },
 ]
 
 export function TrustStrip() {
   return (
-    <section className="bg-forest-900 text-cream-100">
-      <div className="mx-auto grid w-full max-w-7xl grid-cols-2 gap-x-4 gap-y-5 px-5 py-6 sm:px-8 lg:grid-cols-4 lg:px-10">
-        {items.map(({ icon: Icon, title, text }) => (
-          <div key={title} className="flex items-start gap-2.5">
-            <Icon className="mt-0.5 h-4 w-4 shrink-0 text-gold-300" aria-hidden="true" />
-            <div>
-              <p className="text-[13px] font-semibold text-cream-50">{title}</p>
-              <p className="mt-0.5 text-[12px] text-cream-100/65">{text}</p>
-            </div>
+    <section className="border-b border-soft-pink bg-off-white">
+      <div className="mx-auto grid w-full max-w-7xl gap-3 px-5 py-5 sm:grid-cols-3 sm:gap-4 sm:px-8 lg:px-10">
+        {items.map(({ icon: Icon, text }) => (
+          <div
+            key={text}
+            className="flex items-center gap-2.5 rounded-xl border border-soft-pink/70 bg-cream px-4 py-3"
+          >
+            <Icon className="h-4 w-4 shrink-0 text-brand-red" aria-hidden="true" />
+            <p className="text-[13px] font-medium text-brand-brown">{text}</p>
           </div>
         ))}
       </div>

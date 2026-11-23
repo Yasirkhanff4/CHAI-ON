@@ -6,7 +6,7 @@ import { StatusBadge } from '@/components/orders/StatusBadge'
 import { Container } from '@/components/ui/Container'
 import { FormField } from '@/components/ui/FormField'
 import { PageIntro } from '@/components/ui/PageIntro'
-import { strengthLabel, sugarLabel } from '@/data/menu'
+import { categoryForProduct, strengthLabel, sugarLabel, supportsTeaOptions } from '@/data/menu'
 import { business } from '@/data/site'
 import { buttonClasses } from '@/lib/buttonStyles'
 import { formatDateTime, formatPKR } from '@/lib/format'
@@ -16,7 +16,7 @@ import { useDocumentTitle } from '@/lib/useDocumentTitle'
 import type { TrackedOrder } from '@/services/orders'
 
 export function TrackOrderPage() {
-  useDocumentTitle('Track your order | CHAI ON')
+  useDocumentTitle('Track your order | CHAYON')
 
   const [orderNumber, setOrderNumber] = useState('')
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
@@ -68,14 +68,14 @@ export function TrackOrderPage() {
             <form
               onSubmit={handleSubmit}
               noValidate
-              className="rounded-xl border border-cream-300 bg-cream-50 p-4 sm:p-5"
+              className="rounded-xl border border-soft-pink bg-off-white p-4 sm:p-5"
             >
               {error && (
                 <div
                   role="alert"
-                  className="mb-4 rounded-[10px] border border-red-500/30 bg-red-50 px-3.5 py-3"
+                  className="mb-4 rounded-xl border border-brand-red/30 bg-soft-pink/30 px-3.5 py-3"
                 >
-                  <p className="flex items-start gap-2 text-[13px] leading-relaxed text-red-800">
+                  <p className="flex items-start gap-2 text-[13px] leading-relaxed text-brand-red">
                     <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
                     {error}
                   </p>
@@ -105,13 +105,13 @@ export function TrackOrderPage() {
                 {!submitting && <Search className="h-4 w-4" aria-hidden="true" />}
               </button>
 
-              <p className="mt-3 text-center text-[12px] leading-relaxed text-forest-900/60">
+              <p className="mt-3 text-center text-[12px] leading-relaxed text-brand-brown/60">
                 Ordered on another device?{' '}
                 <a
                   href={business.whatsappUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="font-semibold text-forest-800 hover:text-forest-600"
+                  className="font-semibold text-brand-red hover:text-brand-maroon"
                 >
                   WhatsApp us
                 </a>{' '}
@@ -120,14 +120,14 @@ export function TrackOrderPage() {
             </form>
 
             {result && (
-              <div className="mt-5 rounded-xl border border-cream-300 bg-cream-50 p-4 sm:p-5">
-                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-cream-300 pb-3">
+              <div className="mt-5 rounded-xl border border-soft-pink bg-off-white p-4 sm:p-5">
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-soft-pink pb-3">
                   <div>
-                    <p className="text-[12.5px] text-forest-900/60">Order</p>
-                    <p className="text-[19px] font-semibold leading-tight text-forest-900">
+                    <p className="text-[12.5px] text-brand-brown/60">Order</p>
+                    <p className="text-[19px] font-semibold leading-tight text-brand-brown">
                       {result.orderNumber}
                     </p>
-                    <p className="mt-0.5 text-[11.5px] text-forest-900/60">
+                    <p className="mt-0.5 text-[11.5px] text-brand-brown/60">
                       Placed {formatDateTime(result.createdAt)}
                     </p>
                   </div>
@@ -142,30 +142,37 @@ export function TrackOrderPage() {
                   />
                 </div>
 
-                <div className="mt-4 border-t border-cream-300 pt-3">
+                <div className="mt-4 border-t border-soft-pink pt-3">
                   <ul className="space-y-2">
-                    {result.items.map((item) => (
-                      <li
-                        key={`${item.name}-${item.sugar}-${item.strength}`}
-                        className="flex items-start justify-between gap-3 text-[13px]"
-                      >
-                        <span className="text-forest-900/80">
-                          {item.name} × {item.quantity}
-                          <span className="block text-[11.5px] text-forest-900/55">
-                            {sugarLabel(item.sugar)} · {strengthLabel(item.strength)}
+                    {result.items.map((item) => {
+                      const showOptions = supportsTeaOptions(
+                        categoryForProduct({ name: item.name }),
+                      )
+                      return (
+                        <li
+                          key={`${item.name}-${item.sugar}-${item.strength}`}
+                          className="flex items-start justify-between gap-3 text-[13px]"
+                        >
+                          <span className="text-brand-brown/80">
+                            {item.name} × {item.quantity}
+                            {showOptions && (
+                              <span className="block text-[11.5px] text-brand-brown/55">
+                                {sugarLabel(item.sugar)} · {strengthLabel(item.strength)}
+                              </span>
+                            )}
                           </span>
-                        </span>
-                        <span className="font-semibold tabular-nums text-forest-900">
-                          {formatPKR(item.lineTotal)}
-                        </span>
-                      </li>
-                    ))}
+                          <span className="font-semibold tabular-nums text-brand-brown">
+                            {formatPKR(item.lineTotal)}
+                          </span>
+                        </li>
+                      )
+                    })}
                   </ul>
-                  <p className="mt-3 flex items-baseline justify-between border-t border-cream-300 pt-3">
-                    <span className="text-[13px] font-semibold text-forest-900">
+                  <p className="mt-3 flex items-baseline justify-between border-t border-soft-pink pt-3">
+                    <span className="text-[13px] font-semibold text-brand-brown">
                       {result.paymentStatus === 'PAID' ? 'Paid' : 'Cash on delivery'}
                     </span>
-                    <span className="text-[19px] font-bold leading-none tabular-nums text-forest-900">
+                    <span className="text-[19px] font-bold leading-none tabular-nums text-brand-brown">
                       {formatPKR(result.total)}
                     </span>
                   </p>

@@ -12,7 +12,7 @@ import {
 import { Link, useParams } from 'react-router-dom'
 import { Container } from '@/components/ui/Container'
 import { buttonClasses } from '@/lib/buttonStyles'
-import { strengthLabel, sugarLabel } from '@/data/menu'
+import { categoryForProduct, strengthLabel, sugarLabel, supportsTeaOptions } from '@/data/menu'
 import { business } from '@/data/site'
 import { formatDateTime, formatPKR } from '@/lib/format'
 import { useAuth } from '@/context/authContext'
@@ -46,7 +46,7 @@ export function OrderConfirmationPage() {
         : 'loading'
   const order = state === 'ready' ? result?.order ?? null : null
 
-  useDocumentTitle(order ? `Order ${order.orderNumber} | CHAI ON` : 'Order confirmation | CHAI ON')
+  useDocumentTitle(order ? `Order ${order.orderNumber} | CHAYON` : 'Order confirmation | CHAYON')
 
   useEffect(() => {
     let cancelled = false
@@ -68,12 +68,12 @@ export function OrderConfirmationPage() {
     return (
       <section className="py-20">
         <Container>
-          <div className="mx-auto max-w-lg rounded-xl border border-cream-300/80 bg-cream-50 px-6 py-14 text-center">
+          <div className="mx-auto max-w-lg rounded-xl border border-soft-pink/80 bg-off-white px-6 py-14 text-center">
             <span
               aria-hidden="true"
-              className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-forest-900/15 border-t-forest-800"
+              className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-brand-brown/15 border-t-brand-red"
             />
-            <p className="mt-5 text-[13.5px] text-forest-900/70">Finding your order…</p>
+            <p className="mt-5 text-[13.5px] text-brand-brown/70">Finding your order…</p>
             <p aria-live="polite" className="sr-only">
               Loading your order
             </p>
@@ -87,14 +87,14 @@ export function OrderConfirmationPage() {
     return (
       <section className="py-16 sm:py-24">
         <Container>
-          <div className="mx-auto max-w-lg rounded-xl border border-cream-300/80 bg-cream-50 px-6 py-12 text-center sm:px-10">
-            <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-cream-200 text-tea-600">
+          <div className="mx-auto max-w-lg rounded-xl border border-soft-pink/80 bg-off-white px-6 py-12 text-center sm:px-10">
+            <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-soft-pink text-brand-red">
               <AlertCircle className="h-6 w-6" aria-hidden="true" />
             </span>
-            <h1 className="mt-5 font-bold text-[30px] leading-tight text-forest-900">
+            <h1 className="mt-5 font-bold text-[30px] leading-tight text-brand-brown">
               {state === 'error' ? 'We could not load this order.' : 'Order not found here.'}
             </h1>
-            <p className="mt-3 text-[14px] leading-relaxed text-forest-900/70">
+            <p className="mt-3 text-[14px] leading-relaxed text-brand-brown/70">
               {state === 'error'
                 ? 'Please refresh the page. If it keeps failing, call us and we will confirm your order.'
                 : 'This device has no record of that order number. If you placed it here, check the number or call us. We have your order on our side.'}
@@ -108,9 +108,9 @@ export function OrderConfirmationPage() {
                 Back to menu
               </Link>
             </div>
-            <p className="mt-6 border-t border-cream-300/70 pt-5 text-[12px] text-forest-900/70">
+            <p className="mt-6 border-t border-soft-pink/70 pt-5 text-[12px] text-brand-brown/70">
               Need help now? Call{' '}
-              <a href={business.phoneHref} className="font-semibold text-forest-800">
+              <a href={business.phoneHref} className="font-semibold text-brand-red">
                 {business.phoneDisplay}
               </a>
             </p>
@@ -124,88 +124,88 @@ export function OrderConfirmationPage() {
     <section className="py-10 sm:py-14">
       <Container>
         <div className="mx-auto max-w-3xl">
-          <div className="rounded-xl border border-cream-300/80 bg-cream-50 px-5 py-8 sm:px-9 sm:py-10">
+          <div className="rounded-xl border border-soft-pink/80 bg-off-white px-5 py-8 sm:px-9 sm:py-10">
             <div className="text-center">
-              <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-forest-900 text-cream-50">
+              <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-brand-brown text-off-white">
                 <CheckCircle2 className="h-6 w-6" aria-hidden="true" />
               </span>
-              <p className="mt-5 text-[12.5px] font-medium text-tea-500">
+              <p className="mt-5 text-[12.5px] font-medium text-brand-brown">
                 Order received
               </p>
-              <h1 className="mt-2 font-bold text-[34px] leading-[1.05] tracking-[-0.015em] text-forest-900 sm:text-[42px]">
+              <h1 className="mt-2 font-bold text-[34px] leading-[1.05] tracking-[-0.015em] text-brand-brown sm:text-[42px]">
                 Thank you, {order.customerName.split(' ')[0]}.
               </h1>
-              <p className="mx-auto mt-3 max-w-md text-[14px] leading-relaxed text-forest-900/70">
+              <p className="mx-auto mt-3 max-w-md text-[14px] leading-relaxed text-brand-brown/70">
                 Your chai is queued with the kitchen. We will call the number you gave us if we
                 need to reach you.
               </p>
 
-              <div className="mx-auto mt-6 inline-flex flex-col items-center rounded-[10px] border border-cream-300 bg-cream-100/70 px-6 py-4">
-                <span className="text-[12.5px] font-medium text-forest-900/55">
+              <div className="mx-auto mt-6 inline-flex flex-col items-center rounded-xl border border-soft-pink bg-cream/70 px-6 py-4">
+                <span className="text-[12.5px] font-medium text-brand-brown/55">
                   Order number
                 </span>
-                <span className="mt-1 font-bold text-[26px] tracking-[0.04em] text-forest-900">
+                <span className="mt-1 font-bold text-[26px] tracking-[0.04em] text-brand-brown">
                   {order.orderNumber}
                 </span>
               </div>
-              <p className="mt-2 text-[11.5px] text-forest-900/55">
+              <p className="mt-2 text-[11.5px] text-brand-brown/55">
                 Keep this number to track your order.
               </p>
             </div>
 
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
-              <div className="rounded-[10px] border border-cream-300/80 px-4 py-4">
-                <p className="flex items-center gap-2 text-[12.5px] font-medium text-tea-500">
+              <div className="rounded-xl border border-soft-pink/80 px-4 py-4">
+                <p className="flex items-center gap-2 text-[12.5px] font-medium text-brand-brown">
                   <Clock className="h-3.5 w-3.5" aria-hidden="true" />
                   Status
                 </p>
-                <p className="mt-2 text-[14px] font-semibold text-forest-900">
+                <p className="mt-2 text-[14px] font-semibold text-brand-brown">
                   {ORDER_STATUS_LABELS[order.orderStatus]}
                 </p>
-                <p className="mt-1 text-[12px] text-forest-900/60">
+                <p className="mt-1 text-[12px] text-brand-brown/60">
                   Placed {formatDateTime(order.createdAt)}
                 </p>
               </div>
 
-              <div className="rounded-[10px] border border-cream-300/80 px-4 py-4">
-                <p className="flex items-center gap-2 text-[12.5px] font-medium text-tea-500">
+              <div className="rounded-xl border border-soft-pink/80 px-4 py-4">
+                <p className="flex items-center gap-2 text-[12.5px] font-medium text-brand-brown">
                   <Banknote className="h-3.5 w-3.5" aria-hidden="true" />
                   Payment
                 </p>
-                <p className="mt-2 text-[14px] font-semibold text-forest-900">Cash on delivery</p>
-                <p className="mt-1 text-[12px] text-forest-900/60">
+                <p className="mt-2 text-[14px] font-semibold text-brand-brown">Cash on delivery</p>
+                <p className="mt-1 text-[12px] text-brand-brown/60">
                   {formatPKR(order.total)} due on delivery ·{' '}
                   {order.paymentStatus === 'PAID' ? 'Paid' : 'Unpaid'}
                 </p>
               </div>
             </div>
 
-            <div className="mt-6 rounded-[10px] border border-cream-300/80 px-4 py-4 sm:px-5">
-              <p className="flex items-center gap-2 text-[12.5px] font-medium text-tea-500">
+            <div className="mt-6 rounded-xl border border-soft-pink/80 px-4 py-4 sm:px-5">
+              <p className="flex items-center gap-2 text-[12.5px] font-medium text-brand-brown">
                 <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
                 Delivering to
               </p>
-              <p className="mt-2 text-[14px] font-semibold text-forest-900">{order.customerName}</p>
-              <p className="mt-0.5 text-[13px] leading-relaxed text-forest-900/75">
+              <p className="mt-2 text-[14px] font-semibold text-brand-brown">{order.customerName}</p>
+              <p className="mt-0.5 text-[13px] leading-relaxed text-brand-brown/75">
                 {order.officeOrShop}, {order.floor}
                 <br />
                 {order.building}
               </p>
-              <p className="mt-1.5 flex items-center gap-1.5 text-[13px] text-forest-900/75">
-                <Phone className="h-3.5 w-3.5 text-tea-500" aria-hidden="true" />
+              <p className="mt-1.5 flex items-center gap-1.5 text-[13px] text-brand-brown/75">
+                <Phone className="h-3.5 w-3.5 text-brand-brown" aria-hidden="true" />
                 {order.phone}
               </p>
               {order.deliveryInstructions && (
-                <p className="mt-2 rounded-xl bg-cream-100 px-3 py-2 text-[12.5px] leading-relaxed text-forest-900/70">
+                <p className="mt-2 rounded-xl bg-cream px-3 py-2 text-[12.5px] leading-relaxed text-brand-brown/70">
                   {order.deliveryInstructions}
                 </p>
               )}
             </div>
 
-            <div className="mt-6 overflow-hidden rounded-[10px] border border-cream-300/80">
+            <div className="mt-6 overflow-hidden rounded-xl border border-soft-pink/80">
               <table className="w-full text-left">
                 <caption className="sr-only">Order items</caption>
-                <thead className="bg-cream-100/70 text-[12px] font-medium text-forest-900/55">
+                <thead className="bg-cream/70 text-[12px] font-medium text-brand-brown/55">
                   <tr>
                     <th scope="col" className="px-4 py-2.5 font-semibold">
                       Item
@@ -218,41 +218,47 @@ export function OrderConfirmationPage() {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-cream-300/70">
-                  {order.items.map((item) => (
-                    <tr key={`${item.productId}-${item.sugar}-${item.strength}`}>
-                      <td className="px-4 py-3">
-                        <p className="text-[13.5px] font-medium text-forest-900">{item.name}</p>
-                        <p className="mt-0.5 text-[11.5px] text-forest-900/60">
-                          {sugarLabel(item.sugar)} · {strengthLabel(item.strength)} ·{' '}
-                          {formatPKR(item.unitPrice)} each
-                        </p>
-                      </td>
-                      <td className="px-4 py-3 text-center text-[13px] tabular-nums text-forest-900/75">
-                        {item.quantity}
-                      </td>
-                      <td className="px-4 py-3 text-right text-[13px] font-semibold tabular-nums text-forest-900">
-                        {formatPKR(item.lineTotal)}
-                      </td>
-                    </tr>
-                  ))}
+                <tbody className="divide-y divide-soft-pink/70">
+                  {order.items.map((item) => {
+                    const showOptions = supportsTeaOptions(
+                      categoryForProduct({ name: item.name }),
+                    )
+                    return (
+                      <tr key={`${item.productId}-${item.sugar}-${item.strength}`}>
+                        <td className="px-4 py-3">
+                          <p className="text-[13.5px] font-medium text-brand-brown">{item.name}</p>
+                          <p className="mt-0.5 text-[11.5px] text-brand-brown/60">
+                            {showOptions &&
+                              `${sugarLabel(item.sugar)} · ${strengthLabel(item.strength)} · `}
+                            {formatPKR(item.unitPrice)} each
+                          </p>
+                        </td>
+                        <td className="px-4 py-3 text-center text-[13px] tabular-nums text-brand-brown/75">
+                          {item.quantity}
+                        </td>
+                        <td className="px-4 py-3 text-right text-[13px] font-semibold tabular-nums text-brand-brown">
+                          {formatPKR(item.lineTotal)}
+                        </td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
 
-              <dl className="space-y-2 border-t border-cream-300/80 px-4 py-4 text-[13px]">
+              <dl className="space-y-2 border-t border-soft-pink/80 px-4 py-4 text-[13px]">
                 <div className="flex justify-between gap-4">
-                  <dt className="text-forest-900/70">Subtotal</dt>
-                  <dd className="tabular-nums text-forest-900">{formatPKR(order.subtotal)}</dd>
+                  <dt className="text-brand-brown/70">Subtotal</dt>
+                  <dd className="tabular-nums text-brand-brown">{formatPKR(order.subtotal)}</dd>
                 </div>
                 <div className="flex justify-between gap-4">
-                  <dt className="text-forest-900/70">Delivery</dt>
-                  <dd className="tabular-nums text-forest-900">
+                  <dt className="text-brand-brown/70">Delivery</dt>
+                  <dd className="tabular-nums text-brand-brown">
                     {order.deliveryCharge === 0 ? 'Free' : formatPKR(order.deliveryCharge)}
                   </dd>
                 </div>
-                <div className="flex items-baseline justify-between gap-4 border-t border-cream-300/80 pt-2.5">
-                  <dt className="font-semibold text-forest-900">Total</dt>
-                  <dd className="font-bold text-[24px] leading-none text-forest-900">
+                <div className="flex items-baseline justify-between gap-4 border-t border-soft-pink/80 pt-2.5">
+                  <dt className="font-semibold text-brand-brown">Total</dt>
+                  <dd className="font-bold text-[24px] leading-none text-brand-brown">
                     {formatPKR(order.total)}
                   </dd>
                 </div>
@@ -269,9 +275,9 @@ export function OrderConfirmationPage() {
               </Link>
             </div>
 
-            <p className="mt-5 text-center text-[11.5px] leading-relaxed text-forest-900/55">
+            <p className="mt-5 text-center text-[11.5px] leading-relaxed text-brand-brown/55">
               Something wrong with this order? Call{' '}
-              <a href={business.phoneHref} className="font-semibold text-forest-800">
+              <a href={business.phoneHref} className="font-semibold text-brand-red">
                 {business.phoneDisplay}
               </a>{' '}
               and quote {order.orderNumber}.

@@ -121,7 +121,7 @@ export async function createProduct(input: ProductInput): Promise<string> {
   return productId
 }
 
-/** Seeds the two launch teas when the catalog is still empty. */
+/** Seeds the CHAYON menu when the catalog is still empty. */
 export async function seedLaunchProducts(): Promise<void> {
   for (const product of featuredProducts) {
     const reference = doc(getDb(), 'products', product.id)
@@ -137,7 +137,7 @@ export async function seedLaunchProducts(): Promise<void> {
       badge: product.badge ?? '',
       isAvailable: product.isAvailable,
       isActive: true,
-      sortOrder: featuredProducts.indexOf(product),
+      sortOrder: product.sortOrder ?? 999,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     })

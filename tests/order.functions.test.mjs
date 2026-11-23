@@ -59,8 +59,8 @@ const existingOrders = await db.collection('orders').get()
 await Promise.all(existingOrders.docs.map((entry) => entry.ref.delete()))
 
 await db.doc('settings/store').set({
-  businessName: 'CHAI ON',
-  contactPhone: '+92 300 000 0000',
+  businessName: 'CHAYON',
+  contactPhone: '0309-1104343',
   deliveryCharge: 0,
   minimumOrder: 0,
   openingTime: '00:00',

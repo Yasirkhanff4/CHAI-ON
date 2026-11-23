@@ -2,15 +2,15 @@ import { ORDER_STATUS_LABELS } from '@/lib/orderStatus'
 import type { OrderStatus } from '@/types'
 
 const TONES: Record<OrderStatus, string> = {
-  NEW: 'bg-gold-100 text-gold-700 border-gold-300/60',
-  ACCEPTED: 'bg-forest-50 text-forest-700 border-forest-200',
-  PREPARING: 'bg-tea-100 text-tea-700 border-tea-200',
-  READY: 'bg-forest-100 text-forest-800 border-forest-200',
-  OUT_FOR_DELIVERY: 'bg-forest-100 text-forest-800 border-forest-300',
-  DELIVERED: 'bg-forest-800 text-cream-50 border-forest-800',
-  REJECTED: 'bg-red-50 text-red-700 border-red-200',
-  CANCELLED: 'bg-cream-200 text-forest-900/70 border-cream-300',
-  DELIVERY_FAILED: 'bg-red-50 text-red-700 border-red-200',
+  NEW: 'bg-cream text-brand-maroon border-soft-pink/60',
+  ACCEPTED: 'bg-cream text-brand-maroon border-soft-pink',
+  PREPARING: 'bg-cream text-brand-brown border-soft-pink',
+  READY: 'bg-cream text-brand-red border-soft-pink',
+  OUT_FOR_DELIVERY: 'bg-cream text-brand-red border-soft-pink',
+  DELIVERED: 'bg-brand-red text-off-white border-brand-red',
+  REJECTED: 'bg-soft-pink text-brand-red border-red-200',
+  CANCELLED: 'bg-soft-pink text-brand-brown/70 border-soft-pink',
+  DELIVERY_FAILED: 'bg-soft-pink text-brand-red border-red-200',
 }
 
 type StatusBadgeProps = {

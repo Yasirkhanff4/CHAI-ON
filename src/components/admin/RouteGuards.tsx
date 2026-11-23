@@ -23,12 +23,12 @@ function CenteredCard({
   return (
     <section className="py-16">
       <Container>
-        <div className="mx-auto max-w-lg rounded-xl border border-cream-300/80 bg-cream-50 px-6 py-10 text-center">
-          <span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-cream-200 text-forest-800">
+        <div className="mx-auto max-w-lg rounded-xl border border-soft-pink/80 bg-off-white px-6 py-10 text-center">
+          <span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-soft-pink text-brand-red">
             {icon}
           </span>
-          <h1 className="mt-4 font-bold text-[26px] leading-tight text-forest-900">{title}</h1>
-          <p className="mt-3 text-[13.5px] leading-relaxed text-forest-900/70">{description}</p>
+          <h1 className="mt-4 font-bold text-[26px] leading-tight text-brand-brown">{title}</h1>
+          <p className="mt-3 text-[13.5px] leading-relaxed text-brand-brown/70">{description}</p>
           {action && <div className="mt-6">{action}</div>}
         </div>
       </Container>
@@ -75,7 +75,7 @@ export function RequireStaff({ children }: GuardProps) {
       <CenteredCard
         icon={<ShieldOff className="h-5 w-5" aria-hidden="true" />}
         title="Staff access only"
-        description="This account is a customer account. Admin access is granted by CHAI ON with Firebase custom claims. There is no public admin registration."
+        description="This account is a customer account. Admin access is granted by CHAYON with Firebase custom claims. There is no public admin registration."
         action={
           <Link to="/" className={buttonClasses('secondary', 'md')}>
             Back to the site

@@ -1,8 +1,8 @@
 {
-  "name": "chai-on",
+  "name": "chayon",
   "private": true,
   "version": "0.1.0",
-  "description": "CHAI ON: tea ordering and management for Your Office. Your Chai.",
+  "description": "CHAYON: chai, coffee, nuggets and cake rusk, delivered to your office desk.",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -11,10 +11,12 @@
     "preview": "vite preview",
     "test:rules": "firebase emulators:exec --only firestore --project demo-chaion \"node tests/firestore.rules.test.mjs\"",
     "test:e2e": "playwright test",
-    "functions:build": "npm --prefix functions run build"
+    "functions:build": "npm --prefix functions run build",
+    "brand:images": "node scripts/optimize-brand-images.mjs"
   },
   "dependencies": {
-    "@fontsource-variable/plus-jakarta-sans": "^5.3.0",
+    "@fontsource/barlow-condensed": "^5.3.0",
+    "@fontsource/inter": "^5.3.0",
     "firebase": "^13.4.0",
     "lucide-react": "^1.75.0",
     "react": "^19.3.1",
@@ -32,6 +34,7 @@
     "firebase-admin": "^14.5.1",
     "firebase-tools": "^15.36.0",
     "oxlint": "^1.90.0",
+    "sharp": "^0.34.5",
     "tailwindcss": "^4.3.5",
     "typescript": "~7.0.2",
     "vite": "^8.3.6"

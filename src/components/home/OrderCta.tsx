@@ -7,13 +7,13 @@ export function OrderCta() {
   return (
     <section className="pb-12 sm:pb-16">
       <Container>
-        <div className="rounded-xl bg-forest-900 px-5 py-8 text-cream-50 sm:px-8 sm:py-10">
+        <div className="rounded-xl bg-brand-brown px-5 py-8 text-off-white sm:px-8 sm:py-10">
           <div className="grid gap-6 lg:grid-cols-[1.5fr_1fr] lg:items-center">
             <div>
-              <h2 className="max-w-lg text-[24px] leading-tight sm:text-[30px]">
-                Ready for a cup?
+              <h2 className="poster-title max-w-lg text-[28px] sm:text-[36px]">
+                Ready for a break?
               </h2>
-              <p className="mt-2 max-w-lg text-[14px] leading-relaxed text-cream-100/70">
+              <p className="mt-2 max-w-lg text-[14px] leading-relaxed text-cream/70">
                 Order online, pay cash when it reaches you. No account needed.
               </p>
             </div>

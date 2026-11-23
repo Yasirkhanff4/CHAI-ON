@@ -61,7 +61,7 @@ export function NewOrderAlerts() {
   useEffect(() => {
     if (newCount > 0) {
       if (previousTitleRef.current === null) previousTitleRef.current = document.title
-      document.title = `(${newCount}) New Orders · CHAI ON Admin`
+      document.title = `(${newCount}) New Orders · CHAYON Admin`
     } else if (previousTitleRef.current !== null) {
       document.title = previousTitleRef.current
       previousTitleRef.current = null
@@ -99,7 +99,7 @@ export function NewOrderAlerts() {
         <button
           type="button"
           onClick={dismiss}
-          className="inline-flex h-9 items-center gap-1.5 rounded-full bg-gold-400 px-3 text-[12px] font-semibold text-forest-950 transition hover:bg-gold-300"
+          className="inline-flex h-9 items-center gap-1.5 rounded-full bg-brand-red px-3 text-[12px] font-semibold text-brand-maroon transition hover:bg-soft-pink"
           title="Clear the new-order count"
         >
           <BellRing className="h-3.5 w-3.5" aria-hidden="true" />
@@ -110,7 +110,7 @@ export function NewOrderAlerts() {
         type="button"
         onClick={() => void enableSound()}
         disabled={soundOn}
-        className="inline-flex h-9 items-center gap-1.5 rounded-full border border-cream-50/20 px-3 text-[12px] font-medium text-cream-100 transition hover:bg-cream-50/10 disabled:opacity-70"
+        className="inline-flex h-9 items-center gap-1.5 rounded-full border border-off-white/20 px-3 text-[12px] font-medium text-cream transition hover:bg-off-white/10 disabled:opacity-70"
       >
         {soundOn ? (
           <Bell className="h-3.5 w-3.5" aria-hidden="true" />

@@ -25,9 +25,9 @@ type FormFieldProps = {
 }
 
 const controlClasses = [
-  'w-full rounded-[10px] border bg-cream-50 px-3.5 text-base text-forest-900',
-  'placeholder:text-forest-900/40 transition',
-  'focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500',
+  'w-full rounded-xl border bg-off-white px-3.5 text-base text-brand-brown',
+  'placeholder:text-brand-brown/40 transition',
+  'focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red',
 ].join(' ')
 
 export function FormField({
@@ -57,26 +57,26 @@ export function FormField({
     controlClasses,
     'h-12',
     error
-      ? 'border-red-500/70 focus-visible:outline-red-600'
-      : 'border-forest-900/15 focus:border-forest-900/40',
+      ? 'border-brand-red/70 focus-visible:outline-brand-red'
+      : 'border-brand-brown/15 focus:border-brand-brown/40',
   ].join(' ')
 
   return (
     <div className={className}>
       <label
         htmlFor={id}
-        className="flex items-baseline justify-between gap-3 text-[13px] font-medium text-forest-900/80"
+        className="flex items-baseline justify-between gap-3 text-[13px] font-medium text-brand-brown/80"
       >
         <span>
           {label}
           {required && (
-            <span className="ml-0.5 text-tea-600" aria-hidden="true">
+            <span className="ml-0.5 text-brand-red" aria-hidden="true">
               *
             </span>
           )}
         </span>
         {!required && (
-          <span className="text-[12px] font-normal text-forest-900/50">Optional</span>
+          <span className="text-[12px] font-normal text-brand-brown/50">Optional</span>
         )}
       </label>
 
@@ -117,12 +117,12 @@ export function FormField({
       )}
 
       {hint && !error && (
-        <p id={hintId} className="mt-1.5 text-[12px] leading-relaxed text-forest-900/60">
+        <p id={hintId} className="mt-1.5 text-[12px] leading-relaxed text-brand-brown/60">
           {hint}
         </p>
       )}
       {error && (
-        <p id={errorId} className="mt-1.5 text-[12.5px] font-medium leading-relaxed text-red-700">
+        <p id={errorId} className="mt-1.5 text-[12.5px] font-medium leading-relaxed text-brand-red">
           {error}
         </p>
       )}

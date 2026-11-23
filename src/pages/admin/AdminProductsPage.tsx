@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
-import { AlertCircle, Pencil, Plus, Upload, X } from 'lucide-react'
+import { AlertCircle, ClipboardList, Pencil, Plus, Upload, X } from 'lucide-react'
+import { MenuImportDialog } from '@/components/admin/MenuImportDialog'
 import { Container } from '@/components/ui/Container'
 import { FormField } from '@/components/ui/FormField'
 import { useAuth } from '@/context/authContext'
@@ -14,7 +15,7 @@ import {
   isAllowedImageSrc,
   safeImageSrc,
 } from '@/lib/productImage'
-import { fetchAllProducts, seedLaunchProducts } from '@/services/catalog'
+import { fetchAllProducts } from '@/services/catalog'
 import type { ProductInput } from '@/services/catalog'
 import { saveProduct, updateProductAvailability } from '@/services/admin'
 import { useDocumentTitle } from '@/lib/useDocumentTitle'
@@ -73,7 +74,7 @@ function editorFromProduct(product: Product): EditorState {
 }
 
 export function AdminProductsPage() {
-  useDocumentTitle('Products | CHAI ON Admin')
+  useDocumentTitle('Products | CHAYON Admin')
   const { profile } = useAuth()
 
   const [products, setProducts] = useState<Product[]>([])
@@ -85,6 +86,7 @@ export function AdminProductsPage() {
   const [notice, setNotice] = useState<string | null>(null)
   const [imageBusy, setImageBusy] = useState(false)
   const [imageError, setImageError] = useState<string | null>(null)
+  const [importOpen, setImportOpen] = useState(false)
   const fileInput = useRef<HTMLInputElement>(null)
 
   const load = useCallback(async () => {
@@ -197,48 +199,47 @@ export function AdminProductsPage() {
     }
   }
 
-  const seed = async () => {
-    setBusyId('seed')
-    setError(null)
-    try {
-      await seedLaunchProducts()
-      setNotice('Launch teas added to Firestore.')
-      await load()
-    } catch (seedError) {
-      setError(describeFirebaseError(seedError, 'The launch catalog could not be created.'))
-    } finally {
-      setBusyId(null)
-    }
-  }
-
   return (
     <Container>
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="font-display text-[30px] leading-tight text-forest-900">Products</h1>
-          <p className="mt-1 text-[13px] text-forest-900/65">
+          <h1 className="font-display text-[30px] leading-tight text-brand-brown">Products</h1>
+          <p className="mt-1 text-[13px] text-brand-brown/65">
             Prices here are the prices customers pay. Checkout reads them again when an order is
             placed.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => {
-            setEditor(emptyEditor)
-            setNotice(null)
-            setImageError(null)
-          }}
-          className={buttonClasses('primary', 'md')}
-        >
-          <Plus className="h-4 w-4" aria-hidden="true" />
-          Add product
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              setImportOpen(true)
+              setNotice(null)
+            }}
+            className={buttonClasses('secondary', 'md')}
+          >
+            <ClipboardList className="h-4 w-4" aria-hidden="true" />
+            Load CHAYON menu
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setEditor(emptyEditor)
+              setNotice(null)
+              setImageError(null)
+            }}
+            className={buttonClasses('primary', 'md')}
+          >
+            <Plus className="h-4 w-4" aria-hidden="true" />
+            Add product
+          </button>
+        </div>
       </div>
 
       {error && (
         <p
           role="alert"
-          className="mt-4 flex items-start gap-2 rounded-2xl border border-red-500/30 bg-red-50 px-4 py-3 text-[13px] text-red-800"
+          className="mt-4 flex items-start gap-2 rounded-xl border border-brand-red/30 bg-soft-pink/30 px-4 py-3 text-[13px] text-brand-red"
         >
           <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
           {error}
@@ -247,7 +248,7 @@ export function AdminProductsPage() {
       {notice && (
         <p
           role="status"
-          className="mt-4 rounded-2xl border border-forest-200 bg-forest-50 px-4 py-3 text-[13px] text-forest-800"
+          className="mt-4 rounded-xl border border-soft-pink bg-cream px-4 py-3 text-[13px] text-brand-red"
         >
           {notice}
         </p>
@@ -257,17 +258,17 @@ export function AdminProductsPage() {
         <form
           onSubmit={handleSubmit}
           noValidate
-          className="mt-5 rounded-[24px] border border-forest-900/15 bg-cream-50 p-5 shadow-card sm:p-6"
+          className="mt-5 rounded-xl border border-brand-brown/15 bg-off-white p-5 shadow-card sm:p-6"
         >
           <div className="flex items-center justify-between">
-            <h2 className="font-display text-[22px] leading-tight text-forest-900">
+            <h2 className="font-display text-[22px] leading-tight text-brand-brown">
               {editor.productId ? 'Edit product' : 'New product'}
             </h2>
             <button
               type="button"
               onClick={() => setEditor(null)}
               aria-label="Close product editor"
-              className="inline-flex h-8 w-8 items-center justify-center rounded-full text-forest-900/60 hover:bg-cream-200"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-full text-brand-brown/60 hover:bg-soft-pink"
             >
               <X className="h-4 w-4" aria-hidden="true" />
             </button>
@@ -305,7 +306,7 @@ export function AdminProductsPage() {
               disabled={saving}
             />
 
-            <div className="rounded-[10px] border border-cream-300 bg-cream-100/60 p-3.5 sm:col-span-2">
+            <div className="rounded-xl border border-soft-pink bg-cream/60 p-3.5 sm:col-span-2">
               <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
                 <button
                   type="button"
@@ -316,7 +317,7 @@ export function AdminProductsPage() {
                   <Upload className="h-3.5 w-3.5" aria-hidden="true" />
                   {imageBusy ? 'Preparing image…' : 'Choose image from computer'}
                 </button>
-                <span className="text-[11.5px] text-forest-900/60">
+                <span className="text-[11.5px] text-brand-brown/60">
                   JPEG, PNG or WebP · up to 8 MB. It is scaled to 640px and saved with the product.
                 </span>
               </div>
@@ -337,7 +338,7 @@ export function AdminProductsPage() {
                 <p
                   id="productImageFile-error"
                   role="alert"
-                  className="mt-2 text-[12.5px] font-medium leading-relaxed text-red-700"
+                  className="mt-2 text-[12.5px] font-medium leading-relaxed text-brand-red"
                 >
                   {imageError}
                 </p>
@@ -351,14 +352,14 @@ export function AdminProductsPage() {
                     width={640}
                     height={480}
                     decoding="async"
-                    className="aspect-[4/3] h-24 w-32 rounded-lg border border-cream-300/80 object-cover"
+                    className="aspect-[4/3] h-24 w-32 rounded-lg border border-soft-pink/80 object-cover"
                   />
                   <div className="min-w-0">
-                    <p className="text-[12.5px] font-medium text-forest-900">
+                    <p className="text-[12.5px] font-medium text-brand-brown">
                       Uploaded image · {Math.max(1, Math.round(editor.uploadedImage.bytes / 1024))}{' '}
                       KB
                     </p>
-                    <p className="mt-0.5 text-[11.5px] leading-relaxed text-forest-900/60">
+                    <p className="mt-0.5 text-[11.5px] leading-relaxed text-brand-brown/60">
                       Saved inside the product, so no image hosting is needed.
                     </p>
                     <button
@@ -368,7 +369,7 @@ export function AdminProductsPage() {
                         setImageError(null)
                       }}
                       disabled={saving || imageBusy}
-                      className="mt-1.5 inline-flex min-h-9 items-center gap-1 text-[12.5px] font-semibold text-red-700 hover:text-red-800"
+                      className="mt-1.5 inline-flex min-h-9 items-center gap-1 text-[12.5px] font-semibold text-brand-red hover:text-brand-red"
                     >
                       <X className="h-3.5 w-3.5" aria-hidden="true" />
                       Remove image
@@ -414,22 +415,22 @@ export function AdminProductsPage() {
           </div>
 
           <div className="mt-4 flex flex-wrap gap-4">
-            <label className="flex items-center gap-2 text-[12.5px] font-medium text-forest-900/75">
+            <label className="flex items-center gap-2 text-[12.5px] font-medium text-brand-brown/75">
               <input
                 type="checkbox"
                 checked={editor.isAvailable}
                 onChange={(event) => setEditor({ ...editor, isAvailable: event.target.checked })}
-                className="h-4 w-4 rounded border-forest-900/30"
+                className="h-4 w-4 rounded border-brand-brown/30"
                 disabled={saving}
               />
               Available to order
             </label>
-            <label className="flex items-center gap-2 text-[12.5px] font-medium text-forest-900/75">
+            <label className="flex items-center gap-2 text-[12.5px] font-medium text-brand-brown/75">
               <input
                 type="checkbox"
                 checked={editor.isActive}
                 onChange={(event) => setEditor({ ...editor, isActive: event.target.checked })}
-                className="h-4 w-4 rounded border-forest-900/30"
+                className="h-4 w-4 rounded border-brand-brown/30"
                 disabled={saving}
               />
               Visible on the public menu
@@ -446,37 +447,36 @@ export function AdminProductsPage() {
         </form>
       )}
 
-      <div className="mt-5 rounded-[24px] border border-cream-300/80 bg-cream-50 shadow-card">
+      <div className="mt-5 rounded-xl border border-soft-pink/80 bg-off-white shadow-card">
         {loading && (
           <div className="px-5 py-12 text-center">
             <span
               aria-hidden="true"
-              className="mx-auto h-7 w-7 animate-spin rounded-full border-2 border-forest-900/15 border-t-forest-800"
+              className="mx-auto h-7 w-7 animate-spin rounded-full border-2 border-brand-brown/15 border-t-brand-red"
             />
-            <p className="mt-3 text-[13px] text-forest-900/60">Loading products…</p>
+            <p className="mt-3 text-[13px] text-brand-brown/60">Loading products…</p>
           </div>
         )}
 
         {!loading && products.length === 0 && (
           <div className="px-5 py-12 text-center">
-            <p className="font-display text-xl text-forest-900">No products in Firestore yet</p>
-            <p className="mx-auto mt-2 max-w-sm text-[13px] leading-relaxed text-forest-900/65">
-              The storefront is showing the built-in launch menu. Create the two teas in Firestore
-              to start managing them here.
+            <p className="font-display text-xl text-brand-brown">No products in Firestore yet</p>
+            <p className="mx-auto mt-2 max-w-sm text-[13px] leading-relaxed text-brand-brown/65">
+              The storefront is showing the built-in CHAYON menu. Load it into Firestore to start
+              managing names, prices and availability here.
             </p>
             <button
               type="button"
-              onClick={seed}
-              disabled={busyId === 'seed'}
+              onClick={() => setImportOpen(true)}
               className={buttonClasses('primary', 'md', 'mt-5')}
             >
-              {busyId === 'seed' ? 'Adding…' : 'Add launch teas'}
+              Load CHAYON menu
             </button>
           </div>
         )}
 
         {!loading && products.length > 0 && (
-          <ul className="divide-y divide-cream-300/70">
+          <ul className="divide-y divide-soft-pink/70">
             {products.map((product) => (
               <li key={product.id} className="flex flex-wrap items-center gap-4 px-4 py-4 sm:px-5">
                 <img
@@ -486,20 +486,20 @@ export function AdminProductsPage() {
                   height={480}
                   loading="lazy"
                   decoding="async"
-                  className="aspect-[4/3] h-16 w-20 shrink-0 rounded-xl border border-cream-300/70 object-cover"
+                  className="aspect-[4/3] h-16 w-20 shrink-0 rounded-xl border border-soft-pink/70 object-cover"
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="text-[13.5px] font-semibold text-forest-900">{product.name}</p>
-                  <p className="text-[11.5px] text-forest-900/60">
+                  <p className="text-[13.5px] font-semibold text-brand-brown">{product.name}</p>
+                  <p className="text-[11.5px] text-brand-brown/60">
                     {formatPKR(product.price)} · ID {product.id}
                   </p>
-                  <p className="mt-1 line-clamp-2 text-[11.5px] leading-relaxed text-forest-900/55">
+                  <p className="mt-1 line-clamp-2 text-[11.5px] leading-relaxed text-brand-brown/55">
                     {product.description}
                   </p>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2">
-                  <label className="flex items-center gap-1.5 rounded-full border border-cream-300 bg-cream-100/70 px-2.5 py-1.5 text-[11px] font-medium text-forest-900/75">
+                  <label className="flex items-center gap-1.5 rounded-full border border-soft-pink bg-cream/70 px-2.5 py-1.5 text-[11px] font-medium text-brand-brown/75">
                     <input
                       type="checkbox"
                       checked={product.isAvailable}
@@ -507,17 +507,17 @@ export function AdminProductsPage() {
                         void toggle(product, { isAvailable: event.target.checked })
                       }
                       disabled={busyId === product.id}
-                      className="h-3.5 w-3.5 rounded border-forest-900/30"
+                      className="h-3.5 w-3.5 rounded border-brand-brown/30"
                     />
                     Available
                   </label>
-                  <label className="flex items-center gap-1.5 rounded-full border border-cream-300 bg-cream-100/70 px-2.5 py-1.5 text-[11px] font-medium text-forest-900/75">
+                  <label className="flex items-center gap-1.5 rounded-full border border-soft-pink bg-cream/70 px-2.5 py-1.5 text-[11px] font-medium text-brand-brown/75">
                     <input
                       type="checkbox"
                       checked={product.isActive ?? true}
                       onChange={(event) => void toggle(product, { isActive: event.target.checked })}
                       disabled={busyId === product.id}
-                      className="h-3.5 w-3.5 rounded border-forest-900/30"
+                      className="h-3.5 w-3.5 rounded border-brand-brown/30"
                     />
                     Visible
                   </label>
@@ -541,9 +541,20 @@ export function AdminProductsPage() {
         )}
       </div>
 
-      <p className="mt-4 text-[11.5px] leading-relaxed text-forest-900/50">
+      <p className="mt-4 text-[11.5px] leading-relaxed text-brand-brown/50">
         Signed in as {profile?.name}. Only admins can change products; Firestore rules enforce it.
       </p>
+
+      {importOpen && (
+        <MenuImportDialog
+          products={products}
+          onClose={() => setImportOpen(false)}
+          onImported={async () => {
+            setNotice('CHAYON menu loaded. Existing products were not deleted.')
+            await load()
+          }}
+        />
+      )}
     </Container>
   )
 }

@@ -52,7 +52,7 @@ export function AdminOrderDetailPage() {
   const [busy, setBusy] = useState(false)
   const [staff, setStaff] = useState<StaffMember[]>([])
 
-  useDocumentTitle(order ? `Order ${order.orderNumber} | CHAI ON Admin` : 'Order | CHAI ON Admin')
+  useDocumentTitle(order ? `Order ${order.orderNumber} | CHAYON Admin` : 'Order | CHAYON Admin')
 
   const loadOrder = async () => {
     try {
@@ -155,12 +155,12 @@ export function AdminOrderDetailPage() {
   if (loading) {
     return (
       <Container>
-        <div className="rounded-[24px] border border-cream-300/80 bg-cream-50 px-5 py-12 text-center shadow-card">
+        <div className="rounded-xl border border-soft-pink/80 bg-off-white px-5 py-12 text-center shadow-card">
           <span
             aria-hidden="true"
-            className="mx-auto h-7 w-7 animate-spin rounded-full border-2 border-forest-900/15 border-t-forest-800"
+            className="mx-auto h-7 w-7 animate-spin rounded-full border-2 border-brand-brown/15 border-t-brand-red"
           />
-          <p className="mt-3 text-[13px] text-forest-900/60">Loading order…</p>
+          <p className="mt-3 text-[13px] text-brand-brown/60">Loading order…</p>
         </div>
       </Container>
     )
@@ -169,10 +169,10 @@ export function AdminOrderDetailPage() {
   if (!order) {
     return (
       <Container>
-        <div className="rounded-[24px] border border-cream-300/80 bg-cream-50 px-5 py-12 text-center shadow-card">
+        <div className="rounded-xl border border-soft-pink/80 bg-off-white px-5 py-12 text-center shadow-card">
           <AlertCircle className="mx-auto h-6 w-6 text-red-600" aria-hidden="true" />
-          <p className="mt-3 font-display text-xl text-forest-900">Order unavailable</p>
-          <p className="mx-auto mt-2 max-w-sm text-[13px] text-forest-900/65">
+          <p className="mt-3 font-display text-xl text-brand-brown">Order unavailable</p>
+          <p className="mx-auto mt-2 max-w-sm text-[13px] text-brand-brown/65">
             {error ?? 'You do not have access to this order.'}
           </p>
           <Link to="/admin/orders" className={buttonClasses('secondary', 'md', 'mt-5')}>
@@ -200,7 +200,7 @@ export function AdminOrderDetailPage() {
     <Container>
       <Link
         to="/admin/orders"
-        className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-forest-900/60 hover:text-forest-900"
+        className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-brand-brown/60 hover:text-brand-brown"
       >
         <ArrowLeft className="h-4 w-4" aria-hidden="true" />
         All orders
@@ -208,22 +208,22 @@ export function AdminOrderDetailPage() {
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-[30px] leading-tight text-forest-900">
+          <h1 className="font-display text-[30px] leading-tight text-brand-brown">
             {order.orderNumber}
           </h1>
-          <p className="mt-1 text-[12.5px] text-forest-900/60">
+          <p className="mt-1 text-[12.5px] text-brand-brown/60">
             Placed {formatDateTime(order.createdAt)} · updated {formatDateTime(order.updatedAt)}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {totalMismatch && (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-red-500/30 bg-red-50 px-2.5 py-1 text-[10.5px] font-semibold text-red-800">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-brand-red/30 bg-soft-pink px-2.5 py-1 text-[10.5px] font-semibold text-brand-red">
               <AlertTriangle className="h-3.5 w-3.5" aria-hidden="true" />
               Total mismatch, check before delivery
             </span>
           )}
           <StatusBadge status={order.orderStatus} />
-          <span className="rounded-full border border-cream-300 bg-cream-50 px-2.5 py-1 text-[10.5px] font-semibold uppercase tracking-[0.1em] text-forest-900/60">
+          <span className="rounded-full border border-soft-pink bg-off-white px-2.5 py-1 text-[10.5px] font-semibold uppercase tracking-[0.1em] text-brand-brown/60">
             {order.paymentStatus === 'PAID' ? 'Paid' : 'COD unpaid'}
           </span>
         </div>
@@ -232,7 +232,7 @@ export function AdminOrderDetailPage() {
       {actionError && (
         <p
           role="alert"
-          className="mt-4 flex items-start gap-2 rounded-2xl border border-red-500/30 bg-red-50 px-4 py-3 text-[13px] text-red-800"
+          className="mt-4 flex items-start gap-2 rounded-xl border border-brand-red/30 bg-soft-pink/30 px-4 py-3 text-[13px] text-brand-red"
         >
           <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
           {actionError}
@@ -241,12 +241,12 @@ export function AdminOrderDetailPage() {
 
       <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
         <div className="space-y-5">
-          <div className="rounded-[24px] border border-cream-300/80 bg-cream-50 p-5 shadow-card">
-            <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-tea-500">
+          <div className="rounded-xl border border-soft-pink/80 bg-off-white p-5 shadow-card">
+            <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-brown">
               Items
             </h2>
             <table className="mt-3 w-full text-left">
-              <thead className="text-[10px] uppercase tracking-[0.12em] text-forest-900/50">
+              <thead className="text-[10px] uppercase tracking-[0.12em] text-brand-brown/50">
                 <tr>
                   <th scope="col" className="pb-2 font-semibold">
                     Tea
@@ -259,20 +259,20 @@ export function AdminOrderDetailPage() {
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-cream-300/60">
+              <tbody className="divide-y divide-soft-pink/60">
                 {order.items.map((item) => (
                   <tr key={`${item.productId}-${item.sugar}-${item.strength}`}>
                     <td className="py-2.5">
-                      <p className="text-[13.5px] font-medium text-forest-900">{item.name}</p>
-                      <p className="text-[11.5px] text-forest-900/60">
+                      <p className="text-[13.5px] font-medium text-brand-brown">{item.name}</p>
+                      <p className="text-[11.5px] text-brand-brown/60">
                         {sugarLabel(item.sugar)} · {strengthLabel(item.strength)} ·{' '}
                         {formatPKR(item.unitPrice)} each
                       </p>
                     </td>
-                    <td className="py-2.5 text-center text-[13px] tabular-nums text-forest-900/75">
+                    <td className="py-2.5 text-center text-[13px] tabular-nums text-brand-brown/75">
                       {item.quantity}
                     </td>
-                    <td className="py-2.5 text-right text-[13px] font-semibold tabular-nums text-forest-900">
+                    <td className="py-2.5 text-right text-[13px] font-semibold tabular-nums text-brand-brown">
                       {formatPKR(item.lineTotal)}
                     </td>
                   </tr>
@@ -280,28 +280,28 @@ export function AdminOrderDetailPage() {
               </tbody>
             </table>
 
-            <dl className="mt-3 space-y-2 border-t border-cream-300/70 pt-3 text-[13px]">
+            <dl className="mt-3 space-y-2 border-t border-soft-pink/70 pt-3 text-[13px]">
               <div className="flex justify-between">
-                <dt className="text-forest-900/70">Subtotal</dt>
-                <dd className="tabular-nums text-forest-900">{formatPKR(order.subtotal)}</dd>
+                <dt className="text-brand-brown/70">Subtotal</dt>
+                <dd className="tabular-nums text-brand-brown">{formatPKR(order.subtotal)}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-forest-900/70">Delivery</dt>
-                <dd className="tabular-nums text-forest-900">
+                <dt className="text-brand-brown/70">Delivery</dt>
+                <dd className="tabular-nums text-brand-brown">
                   {order.deliveryCharge === 0 ? 'Free' : formatPKR(order.deliveryCharge)}
                 </dd>
               </div>
-              <div className="flex items-baseline justify-between border-t border-cream-300/70 pt-2">
-                <dt className="font-semibold text-forest-900">Total</dt>
-                <dd className="font-display text-[24px] leading-none text-forest-900">
+              <div className="flex items-baseline justify-between border-t border-soft-pink/70 pt-2">
+                <dt className="font-semibold text-brand-brown">Total</dt>
+                <dd className="font-display text-[24px] leading-none text-brand-brown">
                   {formatPKR(order.total)}
                 </dd>
               </div>
             </dl>
           </div>
 
-          <div className="rounded-[24px] border border-cream-300/80 bg-cream-50 p-5 shadow-card">
-            <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-tea-500">
+          <div className="rounded-xl border border-soft-pink/80 bg-off-white p-5 shadow-card">
+            <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-brown">
               Progress
             </h2>
             <div className="mt-4">
@@ -315,21 +315,21 @@ export function AdminOrderDetailPage() {
         </div>
 
         <aside className="space-y-5">
-          <div className="rounded-[24px] border border-cream-300/80 bg-cream-50 p-5 shadow-card">
-            <h2 className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-tea-500">
+          <div className="rounded-xl border border-soft-pink/80 bg-off-white p-5 shadow-card">
+            <h2 className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-brown">
               <User className="h-3.5 w-3.5" aria-hidden="true" />
               Customer
             </h2>
-            <p className="mt-2 text-[14px] font-semibold text-forest-900">{order.customerName}</p>
+            <p className="mt-2 text-[14px] font-semibold text-brand-brown">{order.customerName}</p>
             <a
               href={`tel:${order.phone}`}
-              className="mt-1 inline-flex items-center gap-1.5 text-[13px] text-forest-800 hover:text-forest-600"
+              className="mt-1 inline-flex items-center gap-1.5 text-[13px] text-brand-red hover:text-brand-maroon"
             >
               <Phone className="h-3.5 w-3.5" aria-hidden="true" />
               {order.phone}
             </a>
-            <p className="mt-3 flex items-start gap-1.5 text-[13px] leading-relaxed text-forest-900/75">
-              <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-tea-500" aria-hidden="true" />
+            <p className="mt-3 flex items-start gap-1.5 text-[13px] leading-relaxed text-brand-brown/75">
+              <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-brown" aria-hidden="true" />
               <span>
                 {order.officeOrShop}, {order.floor}
                 <br />
@@ -337,23 +337,23 @@ export function AdminOrderDetailPage() {
               </span>
             </p>
             {order.deliveryInstructions && (
-              <p className="mt-2 rounded-xl bg-cream-100 px-3 py-2 text-[12.5px] leading-relaxed text-forest-900/70">
+              <p className="mt-2 rounded-xl bg-cream px-3 py-2 text-[12.5px] leading-relaxed text-brand-brown/70">
                 {order.deliveryInstructions}
               </p>
             )}
-            <p className="mt-3 flex items-center gap-1.5 border-t border-cream-300/70 pt-3 text-[12px] text-forest-900/60">
-              <Banknote className="h-3.5 w-3.5 text-tea-500" aria-hidden="true" />
+            <p className="mt-3 flex items-center gap-1.5 border-t border-soft-pink/70 pt-3 text-[12px] text-brand-brown/60">
+              <Banknote className="h-3.5 w-3.5 text-brand-brown" aria-hidden="true" />
               Cash on delivery
             </p>
           </div>
 
-          <div className="rounded-[24px] border border-cream-300/80 bg-cream-50 p-5 shadow-card">
-            <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-tea-500">
+          <div className="rounded-xl border border-soft-pink/80 bg-off-white p-5 shadow-card">
+            <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-brown">
               Actions
             </h2>
 
             {availableTransitions.length === 0 && (
-              <p className="mt-2 text-[12.5px] leading-relaxed text-forest-900/60">
+              <p className="mt-2 text-[12.5px] leading-relaxed text-brand-brown/60">
                 This order is {ORDER_STATUS_LABELS[order.orderStatus].toLowerCase()} and cannot
                 change further.
               </p>
@@ -391,10 +391,10 @@ export function AdminOrderDetailPage() {
             )}
 
             {isAdmin && (
-              <div className="mt-5 border-t border-cream-300/70 pt-4">
+              <div className="mt-5 border-t border-soft-pink/70 pt-4">
                 <label
                   htmlFor="assign-staff"
-                  className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-tea-500"
+                  className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-brown"
                 >
                   <Truck className="h-3.5 w-3.5" aria-hidden="true" />
                   Delivery staff
@@ -404,7 +404,7 @@ export function AdminOrderDetailPage() {
                   value={order.assignedTo ?? ''}
                   onChange={(event) => handleAssign(event.target.value)}
                   disabled={busy}
-                  className="mt-2 h-10 w-full rounded-xl border border-forest-900/15 bg-cream-50 px-3 text-[13px] text-forest-900 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
+                  className="mt-2 h-10 w-full rounded-xl border border-brand-brown/15 bg-off-white px-3 text-[13px] text-brand-brown focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red"
                 >
                   <option value="">Unassigned</option>
                   {staff.map((member) => (
@@ -414,12 +414,12 @@ export function AdminOrderDetailPage() {
                   ))}
                 </select>
                 {staff.length === 0 && (
-                  <p className="mt-2 text-[11.5px] leading-relaxed text-forest-900/55">
+                  <p className="mt-2 text-[11.5px] leading-relaxed text-brand-brown/55">
                     No delivery staff accounts yet. You can still update delivery status yourself.
                   </p>
                 )}
                 {order.assignedToName && (
-                  <p className="mt-2 text-[11.5px] text-forest-900/60">
+                  <p className="mt-2 text-[11.5px] text-brand-brown/60">
                     Assigned to {order.assignedToName}
                   </p>
                 )}

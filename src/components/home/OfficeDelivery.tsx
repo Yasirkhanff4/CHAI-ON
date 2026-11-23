@@ -24,7 +24,7 @@ const steps = [
 
 export function OfficeDelivery() {
   return (
-    <section className="border-y border-cream-300/70 bg-cream-50 py-12 sm:py-16">
+    <section className="border-y border-soft-pink/70 bg-off-white py-12 sm:py-16">
       <Container className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
         <div>
           <SectionHeading
@@ -36,12 +36,12 @@ export function OfficeDelivery() {
           <ol className="mt-6 space-y-4">
             {steps.map((step) => (
               <li key={step.number} className="flex gap-3">
-                <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-cream-200 text-[12px] font-semibold text-tea-700">
+                <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-soft-pink text-[12px] font-semibold text-brand-brown">
                   {step.number}
                 </span>
                 <div>
-                  <h3 className="text-[15px] font-semibold text-forest-900">{step.title}</h3>
-                  <p className="mt-0.5 max-w-md text-[13.5px] leading-relaxed text-forest-900/70">
+                  <h3 className="text-[15px] font-semibold text-brand-brown">{step.title}</h3>
+                  <p className="mt-0.5 max-w-md text-[13.5px] leading-relaxed text-brand-brown/70">
                     {step.text}
                   </p>
                 </div>
@@ -49,7 +49,7 @@ export function OfficeDelivery() {
             ))}
           </ol>
 
-          <p className="mt-5 text-[13px] text-forest-900/65">
+          <p className="mt-5 text-[13px] text-brand-brown/65">
             G-11 Markaz · Al Ghaffar Mall · nearby offices and shops
           </p>
 
@@ -65,7 +65,7 @@ export function OfficeDelivery() {
           loading="lazy"
           width={1200}
           height={1600}
-          className="aspect-[4/3] w-full rounded-xl border border-cream-300 object-cover object-center lg:aspect-[5/4]"
+          className="aspect-[4/3] w-full rounded-xl border border-soft-pink object-cover object-center lg:aspect-[5/4]"
         />
       </Container>
     </section>

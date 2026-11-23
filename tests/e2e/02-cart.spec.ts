@@ -70,7 +70,7 @@ test('cart: add two teas, change quantity and sugar, remove one, totals add up',
   // Two lines, three cups, sugar choice kept.
   await expect(cartLines(page)).toHaveCount(2)
   await expect(page.locator('body')).toContainText(/2 items/)
-  await expect(summary(page)).toContainText(/\(3 cups\)/)
+  await expect(summary(page)).toContainText(/\(3 items\)/)
   await expect(page.locator('body')).toContainText('No Sugar · Normal')
 
   const before = await lineAmounts(page)
@@ -79,7 +79,7 @@ test('cart: add two teas, change quantity and sugar, remove one, totals add up',
 
   // Quantity +1 on the first line.
   await page.getByRole('button', { name: `Increase ${firstName} quantity` }).click()
-  await expect(summary(page)).toContainText(/\(4 cups\)/)
+  await expect(summary(page)).toContainText(/\(4 items\)/)
 
   const after = await lineAmounts(page)
   expect(after[0]).toBeGreaterThan(before[0])
@@ -89,7 +89,7 @@ test('cart: add two teas, change quantity and sugar, remove one, totals add up',
   await page.getByRole('button', { name: 'Remove' }).last().click()
   await expect(cartLines(page)).toHaveCount(1)
   await expect(page.locator('body')).toContainText(/1 item/)
-  await expect(summary(page)).toContainText(/\(2 cups\)/)
+  await expect(summary(page)).toContainText(/\(2 items\)/)
 
   const remaining = await lineAmounts(page)
   expect(remaining).toHaveLength(1)
@@ -110,10 +110,10 @@ test('cart: "Order on WhatsApp" opens wa.me with the items and total', async ({ 
   expect(href, 'WhatsApp link is missing').toBeTruthy()
 
   const url = new URL(href as string)
-  expect(url.origin + url.pathname).toBe('https://wa.me/923291018591')
+  expect(url.origin + url.pathname).toBe('https://wa.me/923091104343')
 
   const text = url.searchParams.get('text') ?? ''
-  expect(text).toContain('Assalam-o-Alaikum CHAI ON!')
+  expect(text).toContain('Assalam-o-Alaikum CHAYON!')
   expect(text).toContain('Mujhe ye order karna hai:')
   expect(text).toContain('• 1 x ')
   expect(text).toContain('Sugar:')

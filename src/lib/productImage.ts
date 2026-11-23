@@ -20,7 +20,7 @@ export const MAX_STORED_IMAGE_BYTES = 150 * 1024
 /** Longest side of a compressed upload, in pixels. */
 export const PRODUCT_IMAGE_MAX_SIDE = 640
 /** Used when a product has no usable image. */
-export const FALLBACK_IMAGE = '/images/doodh-patti.jpg'
+export const FALLBACK_IMAGE = '/images/chayon-placeholder.webp'
 
 export const ALLOWED_UPLOAD_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const
 

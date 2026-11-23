@@ -1,8 +1,8 @@
-# CHAI ON
+# CHAYON
 
-**Your Office. Your Chai.**
+**Fresh to your office desk.**
 
-Tea ordering and management for CHAI ON, 3rd Floor, Al Ghaffar Mall, G-11 Markaz, Islamabad.
+Tea ordering and management for CHAYON, 3rd Floor, Al Ghaffar Mall, G-11 Markaz, Islamabad.
 
 The product has exactly **two panels**: the customer website and a **secure admin panel**. Delivery management lives inside the admin panel; there is no third application.
 
@@ -49,7 +49,7 @@ values the app runs in **local mode** for design work only. See
 - Order confirmation with human-readable order number (`CO-YYMMDD-XXXX`), full summary,
   delivery details, COD and a Track Order button; the cart clears only after success
 - **Order on WhatsApp** button (header, mobile menu and cart) pre-filled with the cart
-  items, customizations and total, opening `wa.me/923291018591`
+  items, customizations and total, opening `wa.me/923091104343`
 - Order tracking by order number on the device/browser that placed the order, with a
   real timeline and a WhatsApp fallback for other devices
 
@@ -162,15 +162,15 @@ custom claims set by the provisioning script. See
 `src/data/site.ts` holds the number and base link:
 
 ```ts
-whatsappNumber: '923291018591'
-whatsappUrl: 'https://wa.me/923291018591'
+whatsappNumber: '923091104343'
+whatsappUrl: 'https://wa.me/923091104343'
 ```
 
 `buildWhatsAppOrderUrl` (`src/lib/whatsapp.ts`) turns the current cart into a message
 such as:
 
 ```
-Assalam-o-Alaikum CHAI ON!
+Assalam-o-Alaikum CHAYON!
 Mujhe ye order karna hai:
 
 • 2 x Doodh Patti
@@ -268,7 +268,7 @@ only assigned orders and only set delivery statuses.
 - **First super admin** via `functions/scripts/provision-admin.mjs` (§5)
 - **Vercel deployment** and adding the domain to Firebase Auth's authorized domains (§6)
 - **Real business data**: the phone number in `src/data/site.ts` is now
-  `+92 329 1018591`. Make sure Settings → contact phone matches it. Prices, delivery
+  `0309-1104343`. Make sure Settings → contact phone matches it. Prices, delivery
   charge, minimum order and hours are launch defaults until changed in the admin panel
 - A pass through the launch checklist on the live domain
 

@@ -22,8 +22,8 @@ export type StoreSettings = {
 }
 
 export const DEFAULT_SETTINGS: StoreSettings = {
-  businessName: 'CHAI ON',
-  contactPhone: '+92 300 000 0000',
+  businessName: 'CHAYON',
+  contactPhone: '0309-1104343',
   deliveryCharge: 0,
   minimumOrder: 0,
   openingTime: '09:00',

@@ -1,5 +1,5 @@
 /**
- * Firestore security-rule tests for CHAI ON.
+ * Firestore security-rule tests for CHAYON.
  *
  * Run with the emulator:
  *   npm run test:rules
@@ -78,7 +78,7 @@ await testEnv.withSecurityRulesDisabled(async (context) => {
     isActive: false,
   })
   await setDoc(doc(db, 'settings', 'store'), {
-    businessName: 'CHAI ON',
+    businessName: 'CHAYON',
     contactPhone: '03291018591',
     deliveryCharge: 0,
     minimumOrder: 0,
@@ -253,7 +253,7 @@ await check('customer cannot change settings', () =>
 await check('admin can change settings', () =>
   assertSucceeds(
     updateDoc(doc(admin, 'settings', 'store'), {
-      businessName: 'CHAI ON',
+      businessName: 'CHAYON',
       deliveryCharge: 50,
       minimumOrder: 0,
     }),

@@ -26,7 +26,7 @@ function isToday(iso: string, today: string): boolean {
 }
 
 export function AdminDashboardPage() {
-  useDocumentTitle('Dashboard | CHAI ON Admin')
+  useDocumentTitle('Dashboard | CHAYON Admin')
   const { profile } = useAuth()
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
@@ -86,8 +86,8 @@ export function AdminDashboardPage() {
     <Container>
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="font-display text-[30px] leading-tight text-forest-900">Dashboard</h1>
-          <p className="mt-1 text-[13px] text-forest-900/65">
+          <h1 className="font-display text-[30px] leading-tight text-brand-brown">Dashboard</h1>
+          <p className="mt-1 text-[13px] text-brand-brown/65">
             Live figures from Firestore.
           </p>
         </div>
@@ -99,7 +99,7 @@ export function AdminDashboardPage() {
       {error && (
         <p
           role="alert"
-          className="mt-5 flex items-start gap-2 rounded-2xl border border-red-500/30 bg-red-50 px-4 py-3 text-[13px] text-red-800"
+          className="mt-5 flex items-start gap-2 rounded-xl border border-brand-red/30 bg-soft-pink/30 px-4 py-3 text-[13px] text-brand-red"
         >
           <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
           {error}
@@ -110,30 +110,30 @@ export function AdminDashboardPage() {
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="rounded-[24px] border border-cream-300/80 bg-cream-50 p-5 shadow-card"
+            className="rounded-xl border border-soft-pink/80 bg-off-white p-5 shadow-card"
           >
             <div className="flex items-center justify-between">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-tea-500">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-brown">
                 {stat.label}
               </p>
-              <stat.icon className="h-4 w-4 text-forest-900/35" aria-hidden="true" />
+              <stat.icon className="h-4 w-4 text-brand-brown/35" aria-hidden="true" />
             </div>
-            <p className="mt-2 font-display text-[32px] leading-none text-forest-900">
+            <p className="mt-2 font-display text-[32px] leading-none text-brand-brown">
               {loading ? '…' : stat.value}
             </p>
-            <p className="mt-1.5 text-[11px] text-forest-900/55">{stat.hint}</p>
+            <p className="mt-1.5 text-[11px] text-brand-brown/55">{stat.hint}</p>
           </div>
         ))}
       </div>
 
-      <div className="mt-6 rounded-[24px] border border-cream-300/80 bg-cream-50 shadow-card">
-        <div className="flex items-center justify-between gap-3 border-b border-cream-300/80 px-5 py-4">
-          <h2 className="font-display text-[22px] leading-tight text-forest-900">
+      <div className="mt-6 rounded-xl border border-soft-pink/80 bg-off-white shadow-card">
+        <div className="flex items-center justify-between gap-3 border-b border-soft-pink/80 px-5 py-4">
+          <h2 className="font-display text-[22px] leading-tight text-brand-brown">
             Latest activity
           </h2>
           <Link
             to="/admin/orders"
-            className="text-[12.5px] font-medium text-forest-800 hover:text-forest-600"
+            className="text-[12.5px] font-medium text-brand-red hover:text-brand-maroon"
           >
             View all
           </Link>
@@ -143,36 +143,36 @@ export function AdminDashboardPage() {
           <div className="px-5 py-10 text-center">
             <span
               aria-hidden="true"
-              className="mx-auto h-7 w-7 animate-spin rounded-full border-2 border-forest-900/15 border-t-forest-800"
+              className="mx-auto h-7 w-7 animate-spin rounded-full border-2 border-brand-brown/15 border-t-brand-red"
             />
-            <p className="mt-3 text-[13px] text-forest-900/60">Loading orders…</p>
+            <p className="mt-3 text-[13px] text-brand-brown/60">Loading orders…</p>
           </div>
         )}
 
         {!loading && orders.length === 0 && (
-          <p className="px-5 py-10 text-center text-[13px] text-forest-900/60">
+          <p className="px-5 py-10 text-center text-[13px] text-brand-brown/60">
             No orders yet. New orders appear here the moment they are placed.
           </p>
         )}
 
         {!loading && orders.length > 0 && (
-          <ul className="divide-y divide-cream-300/70">
+          <ul className="divide-y divide-soft-pink/70">
             {orders.slice(0, 6).map((order) => (
               <li key={order.orderNumber}>
                 <Link
                   to={`/admin/orders/${order.orderNumber}`}
-                  className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5 transition hover:bg-cream-100/70"
+                  className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5 transition hover:bg-cream/70"
                 >
                   <div className="min-w-0">
-                    <p className="text-[13px] font-semibold text-forest-900">
+                    <p className="text-[13px] font-semibold text-brand-brown">
                       {order.orderNumber}
                     </p>
-                    <p className="mt-0.5 text-[11.5px] text-forest-900/60">
+                    <p className="mt-0.5 text-[11.5px] text-brand-brown/60">
                       {order.customerName} · {formatDateTime(order.createdAt)}
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-[13px] font-semibold tabular-nums text-forest-900">
+                    <span className="text-[13px] font-semibold tabular-nums text-brand-brown">
                       {formatPKR(order.total)}
                     </span>
                     <StatusBadge status={order.orderStatus} />

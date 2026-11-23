@@ -1,4 +1,9 @@
-import { strengthLabel, sugarLabel } from '@/data/menu'
+import {
+  categoryForProduct,
+  strengthLabel,
+  sugarLabel,
+  supportsTeaOptions,
+} from '@/data/menu'
 import { business } from '@/data/site'
 import { readSavedCustomerDetails } from '@/lib/customerDetails'
 import { formatPKR } from '@/lib/format'
@@ -8,7 +13,7 @@ export type WhatsAppOrderItem = {
   name: string
   quantity: number
   unitPrice: number
-  /** Missing or empty when the tea has no sugar/strength choice. */
+  /** Missing or empty when the item has no sugar/strength choice. */
   sugar?: SugarLevel | null
   strength?: TeaStrength | null
   /** Optional per-item instruction from the customer. */
@@ -19,9 +24,12 @@ function itemBlock(item: WhatsAppOrderItem): string {
   const quantity = Math.max(1, Math.trunc(item.quantity) || 1)
   const lineTotal = item.unitPrice * quantity
   const details: string[] = []
+  const category = categoryForProduct({ name: item.name })
 
-  if (item.sugar) details.push(`Sugar: ${sugarLabel(item.sugar)}`)
-  if (item.strength) details.push(`Strength: ${strengthLabel(item.strength)}`)
+  if (supportsTeaOptions(category)) {
+    if (item.sugar) details.push(`Sugar: ${sugarLabel(item.sugar)}`)
+    if (item.strength) details.push(`Strength: ${strengthLabel(item.strength)}`)
+  }
   details.push(formatPKR(lineTotal))
 
   const lines = [`• ${quantity} x ${item.name}`, `  ${details.join(' | ')}`]
@@ -37,6 +45,17 @@ function detailLine(label: string, value?: string): string {
   return clean ? `${label} ${clean}` : label
 }
 
+/** A WhatsApp chat with an optional pre-filled message. */
+export function buildWhatsAppChatUrl(message?: string): string {
+  const base = business.whatsappUrl
+  return message ? `${base}?text=${encodeURIComponent(message)}` : base
+}
+
+/** The first cup offer button. The message lives in src/data/site.ts. */
+export function buildFirstCupOfferUrl(): string {
+  return buildWhatsAppChatUrl(business.firstCupMessage)
+}
+
 /**
  * WhatsApp order link. The cart is written into the message so the shop sees
  * exactly what the customer chose before replying; nothing is submitted
@@ -46,17 +65,15 @@ export function buildWhatsAppOrderUrl(
   items: WhatsAppOrderItem[],
   totals: CartTotals,
 ): string {
-  const base = business.whatsappUrl
-
   if (items.length === 0) {
-    const greeting = 'Assalam-o-Alaikum CHAI ON!\nMujhe chai order karni hai.'
-    return `${base}?text=${encodeURIComponent(greeting)}`
+    const greeting = `Assalam-o-Alaikum ${business.name}!\nMujhe chai order karni hai.`
+    return buildWhatsAppChatUrl(greeting)
   }
 
   const saved = readSavedCustomerDetails()
 
   const lines = [
-    'Assalam-o-Alaikum CHAI ON!',
+    `Assalam-o-Alaikum ${business.name}!`,
     'Mujhe ye order karna hai:',
     '',
     ...items.map(itemBlock),
@@ -73,5 +90,5 @@ export function buildWhatsAppOrderUrl(
     detailLine('Office / Shop:', saved?.officeOrShop),
   ]
 
-  return `${base}?text=${encodeURIComponent(lines.join('\n'))}`
+  return buildWhatsAppChatUrl(lines.join('\n'))
 }

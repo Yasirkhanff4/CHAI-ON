@@ -7,69 +7,40 @@ type LogoProps = {
 }
 
 export function Logo({ size = 'md', onDark = false, className = '' }: LogoProps) {
-  const markSize = size === 'sm' ? 'h-9 w-9' : 'h-10 w-10'
-  const wordSize = size === 'sm' ? 'text-[16px]' : 'text-[19px]'
+  const markSize = size === 'sm' ? 'h-9 w-9' : 'h-10 w-10 sm:h-11 sm:w-11'
+  const wordSize = size === 'sm' ? 'text-[14px]' : 'text-[16px] sm:text-[19px]'
 
   return (
-    <Link to="/" className={`group inline-flex shrink-0 items-center gap-2.5 ${className}`}>
+    <Link
+      to="/"
+      aria-label="CHAYON home"
+      className={`group inline-flex shrink-0 items-center gap-2.5 ${className}`}
+    >
       <span
         className={[
-          'grid place-items-center rounded-xl',
+          'grid shrink-0 place-items-center overflow-hidden rounded-full',
           markSize,
-          onDark ? 'bg-cream-50 text-forest-900' : 'bg-forest-900 text-cream-50',
+          onDark ? 'bg-off-white' : 'bg-cream',
         ].join(' ')}
       >
-        <svg
-          viewBox="0 0 40 40"
-          className={size === 'sm' ? 'h-5 w-5' : 'h-6 w-6'}
-          fill="none"
-          aria-hidden="true"
-        >
-          <path
-            d="M16.4 11.4c0-1.6 1.4-1.8 1.4-3.3 0-1.4-1.3-1.6-1.3-3"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinecap="round"
-            opacity="0.6"
-          />
-          <path
-            d="M22 11.4c0-1.6 1.4-1.8 1.4-3.3 0-1.4-1.3-1.6-1.3-3"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinecap="round"
-            opacity="0.35"
-          />
-          <path
-            d="M10.8 17.6h18.4v5.7a6.6 6.6 0 0 1-6.6 6.6h-5.2a6.6 6.6 0 0 1-6.6-6.6v-5.7Z"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M29.2 19.6h1.8a3.5 3.5 0 0 1 0 7h-1.8"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-          />
-          <path
-            d="M11 33.2h17.6"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            opacity="0.6"
-          />
-        </svg>
+        <img
+          src="/brand/logo.webp"
+          alt=""
+          width={720}
+          height={690}
+          className="h-full w-full object-contain"
+        />
       </span>
 
       <span
         className={[
-          'font-bold leading-none tracking-tight',
+          'font-sans font-bold leading-none tracking-[0.06em]',
           wordSize,
-          onDark ? 'text-cream-50' : 'text-forest-900',
+          onDark ? 'text-off-white' : 'text-brand-brown',
         ].join(' ')}
       >
-        CHAI
-        <span className={onDark ? 'text-gold-300' : 'text-gold-700'}> ON</span>
+        CHAY
+        <span className={onDark ? 'text-soft-pink' : 'text-brand-red'}>ON</span>
       </span>
     </Link>
   )

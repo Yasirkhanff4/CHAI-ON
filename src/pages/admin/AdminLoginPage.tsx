@@ -11,7 +11,7 @@ import { describeFirebaseError } from '@/lib/firebase/errors'
 import { useDocumentTitle } from '@/lib/useDocumentTitle'
 
 export function AdminLoginPage() {
-  useDocumentTitle('Admin login | CHAI ON')
+  useDocumentTitle('Admin login | CHAYON')
   const { login, logout, status, profile, isAdmin, isDeliveryStaff } = useAuth()
   const navigate = useNavigate()
 
@@ -42,7 +42,7 @@ export function AdminLoginPage() {
       if (!isStaffRole(signedIn.role)) {
         await logout()
         setError(
-          'This is a customer account. Admin access is granted by CHAI ON with Firebase custom claims. There is no public admin registration.',
+          'This is a customer account. Admin access is granted by CHAYON with Firebase custom claims. There is no public admin registration.',
         )
         setSubmitting(false)
         return
@@ -56,29 +56,29 @@ export function AdminLoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col justify-center bg-forest-950 py-12">
+    <div className="flex min-h-screen flex-col justify-center bg-brand-maroon py-12">
       <Container>
         <div className="mx-auto w-full max-w-md">
           <div className="flex justify-center">
             <Logo onDark />
           </div>
 
-          <div className="mt-8 rounded-[28px] border border-cream-50/15 bg-cream-50 px-6 py-8 shadow-lift sm:px-8">
-            <span className="inline-flex items-center gap-2 rounded-full bg-forest-900 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-cream-50">
+          <div className="mt-8 rounded-xl border border-off-white/15 bg-off-white px-6 py-8 shadow-lift sm:px-8">
+            <span className="inline-flex items-center gap-2 rounded-full bg-brand-brown px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-off-white">
               <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
               Staff access
             </span>
-            <h1 className="mt-4 font-display text-[30px] leading-tight text-forest-900">
+            <h1 className="mt-4 font-display text-[30px] leading-tight text-brand-brown">
               Admin sign in
             </h1>
-            <p className="mt-2 text-[13px] leading-relaxed text-forest-900/70">
+            <p className="mt-2 text-[13px] leading-relaxed text-brand-brown/70">
               Accounts are provisioned by the owner. Roles are verified by the server, so nothing
               here can grant admin access on its own.
             </p>
 
             {status === 'unconfigured' && (
-              <p className="mt-4 flex items-start gap-2 rounded-xl bg-gold-100 px-3.5 py-3 text-[12px] leading-relaxed text-forest-900/80">
-                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-gold-700" aria-hidden="true" />
+              <p className="mt-4 flex items-start gap-2 rounded-xl bg-cream px-3.5 py-3 text-[12px] leading-relaxed text-brand-brown/80">
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-brand-maroon" aria-hidden="true" />
                 Firebase is not configured for this build. Add the VITE_FIREBASE_* variables to
                 enable the admin panel.
               </p>
@@ -86,8 +86,8 @@ export function AdminLoginPage() {
 
             <form onSubmit={handleSubmit} noValidate className="mt-5 space-y-4">
               {error && (
-                <div role="alert" className="rounded-2xl border border-red-500/30 bg-red-50 px-4 py-3">
-                  <p className="flex items-start gap-2 text-[12.5px] font-medium leading-relaxed text-red-800">
+                <div role="alert" className="rounded-xl border border-brand-red/30 bg-soft-pink/30 px-4 py-3">
+                  <p className="flex items-start gap-2 text-[12.5px] font-medium leading-relaxed text-brand-red">
                     <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
                     {error}
                   </p>
@@ -118,7 +118,7 @@ export function AdminLoginPage() {
               <div className="flex justify-end">
                 <Link
                   to="/forgot-password"
-                  className="text-[12.5px] font-medium text-forest-800 hover:text-forest-600"
+                  className="text-[12.5px] font-medium text-brand-red hover:text-brand-maroon"
                 >
                   Forgot password?
                 </Link>
@@ -134,9 +134,9 @@ export function AdminLoginPage() {
               </button>
             </form>
 
-            <p className="mt-5 border-t border-cream-300/70 pt-4 text-center text-[11.5px] text-forest-900/60">
-              <Link to="/" className="font-medium text-forest-800 hover:text-forest-600">
-                Back to CHAI ON
+            <p className="mt-5 border-t border-soft-pink/70 pt-4 text-center text-[11.5px] text-brand-brown/60">
+              <Link to="/" className="font-medium text-brand-red hover:text-brand-maroon">
+                Back to CHAYON
               </Link>
             </p>
           </div>

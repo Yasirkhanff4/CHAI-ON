@@ -180,7 +180,7 @@ export const createOrder = onCall(CALL_OPTIONS, async (request) => {
       if (!isOrderingOpen(settings)) {
         throw new HttpsError(
           'failed-precondition',
-          'CHAI ON is not taking online orders right now. Please call us to order.',
+          'CHAYON is not taking online orders right now. Please call us to order.',
         )
       }
 

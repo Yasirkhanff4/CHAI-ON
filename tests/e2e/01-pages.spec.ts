@@ -2,9 +2,9 @@ import { expect, test } from '@playwright/test'
 import { expectNoBrokenImages, expectNoConsoleErrors, watchConsole } from './helpers'
 
 const PAGES = [
-  { path: '/', heading: /Your Office/i },
-  { path: '/menu', heading: /Doodh patti and karak chai/i },
-  { path: '/contact', heading: /Contact|Reach us|Find us/i },
+  { path: '/', heading: /chai break/i },
+  { path: '/menu', heading: /Chai, coffee, nuggets/i },
+  { path: '/contact', heading: /one floor away/i },
   { path: '/track', heading: /Where is your chai/i },
 ]
 

@@ -130,7 +130,7 @@ export function CartProvider({ children }: CartProviderProps) {
 
       showNotice(
         capped
-          ? `Maximum ${orderSettings.maxQuantityPerLine} cups per tea in one order.`
+          ? `Maximum ${orderSettings.maxQuantityPerLine} per item in one order.`
           : `${line.quantity} × ${product.name} added to your cart.`,
       )
     },

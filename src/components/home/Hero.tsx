@@ -1,71 +1,81 @@
-import { ArrowRight, Check, MapPin } from 'lucide-react'
+import { ArrowRight, MapPin } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { buttonClasses } from '@/lib/buttonStyles'
+import { Logo } from '@/components/brand/Logo'
 import { Container } from '@/components/ui/Container'
-import { useCatalog } from '@/context/catalogContext'
-import { formatPKR } from '@/lib/format'
+import { WhatsAppActionBar } from '@/components/whatsapp/WhatsAppActionBar'
+import { useCart } from '@/context/cartContext'
+import { business } from '@/data/site'
+import { buttonClasses } from '@/lib/buttonStyles'
+import { buildWhatsAppOrderUrl } from '@/lib/whatsapp'
 
 export function Hero() {
-  const { products } = useCatalog()
-  const houseFavourite = products.find((product) => product.id === 'karak-chai') ?? products[0]
+  const { items, totals } = useCart()
 
   return (
-    <section className="border-b border-cream-300/70">
-      <Container className="grid items-center gap-8 py-8 sm:py-12 lg:grid-cols-12 lg:gap-12 lg:py-14">
-        <div className="lg:col-span-6">
-          <p className="inline-flex items-center gap-1.5 text-[13px] font-medium text-forest-900/70">
-            <MapPin className="h-4 w-4 text-tea-500" aria-hidden="true" />
-            G-11 Markaz, Islamabad
-          </p>
-
-          <h1 className="animate-rise mt-3 text-[34px] leading-[1.08] text-forest-900 sm:text-[44px] lg:text-[50px]">
-            Your office. Your chai.
-          </h1>
-
-          <p className="animate-rise mt-3 max-w-md text-[15px] leading-relaxed text-forest-900/70 sm:text-base">
-            Doodh patti and karak chai, brewed when you order and delivered to your desk.
-          </p>
-
-          <div className="animate-rise mt-6 flex flex-col gap-2.5 sm:flex-row sm:items-center">
-            <Link to="/menu" className={buttonClasses('primary', 'lg', 'w-full sm:w-auto')}>
-              Order now
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </Link>
-            <Link to="/menu" className={buttonClasses('secondary', 'lg', 'w-full sm:w-auto')}>
-              See the menu
-            </Link>
-          </div>
-
-          <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-forest-900/70">
-            <span className="inline-flex items-center gap-1.5">
-              <Check className="h-4 w-4 text-forest-600" aria-hidden="true" />
-              Cash on delivery
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <Check className="h-4 w-4 text-forest-600" aria-hidden="true" />
-              Freshly brewed
-            </span>
-          </div>
-        </div>
-
-        <div className="lg:col-span-6">
-          <div className="relative overflow-hidden rounded-xl border border-cream-300 bg-cream-200">
-            <img
-              src="/images/hero-chai.jpg"
-              alt="A freshly brewed cup of CHAI ON chai on a ceramic saucer"
-              className="h-[280px] w-full object-cover object-center sm:h-[360px] lg:h-[420px]"
-              width={1200}
-              height={1500}
-              fetchPriority="high"
-            />
-            {houseFavourite && (
-              <p className="absolute bottom-3 left-3 rounded-lg bg-cream-50/95 px-3 py-1.5 text-[13px] font-semibold text-forest-900">
-                {houseFavourite.name} · {formatPKR(houseFavourite.price)}
-              </p>
-            )}
+    <section className="border-b border-soft-pink bg-cream">
+      <Container className="pt-6 sm:pt-8">
+        <div className="mx-auto max-w-2xl rounded-b-[36px] border border-soft-pink bg-off-white px-5 pb-6 pt-4 shadow-card sm:rounded-b-[48px] sm:px-8 sm:pb-7">
+          <div className="flex flex-col items-center gap-3 text-center">
+            <Logo />
+            <p className="text-[12px] font-medium uppercase tracking-[0.18em] text-brand-red">
+              Chai, coffee, nuggets, cake rusk
+            </p>
+            <p className="text-[13px] text-brand-brown/70">{business.tagline}</p>
           </div>
         </div>
       </Container>
+
+      <div className="relative mt-5 sm:mt-6">
+        <img
+          src="/brand/hero-banner.webp"
+          alt="A cup of chai and cake rusk on a desk next to a laptop"
+          width={1277}
+          height={473}
+          fetchPriority="high"
+          className="absolute inset-0 h-full w-full object-cover object-center sm:[mask-image:linear-gradient(to_right,#000_0%,#000_64%,transparent_70%,#000_84%,#000_100%)]"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-[linear-gradient(90deg,rgba(244,242,239,0.98)_0%,rgba(244,242,239,0.95)_52%,rgba(244,242,239,0.35)_74%,rgba(244,242,239,0)_100%)]"
+        />
+
+        <Container className="relative flex min-h-[520px] items-center py-10 sm:min-h-[470px] lg:min-h-[500px]">
+          <div className="max-w-xl">
+            <p className="inline-flex items-center gap-1.5 text-[13px] font-medium text-brand-brown/75">
+              <MapPin className="h-4 w-4 text-brand-red" aria-hidden="true" />
+              G-11 Markaz, Islamabad
+            </p>
+
+            <h1 className="poster-title animate-rise mt-3 text-[40px] text-brand-brown sm:text-[54px] lg:text-[64px]">
+              Your chai break just got better
+            </h1>
+
+            <p className="animate-rise mt-4 max-w-md text-[15px] leading-relaxed text-brand-brown/80 sm:text-base">
+              Chai, coffee, nuggets and cake rusk. Fresh to your office desk.
+            </p>
+
+            <div className="animate-rise mt-6 flex flex-col gap-2.5 sm:flex-row sm:items-center">
+              <Link to="/menu" className={buttonClasses('primary', 'lg', 'w-full sm:w-auto')}>
+                View menu
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+              <a
+                href={buildWhatsAppOrderUrl(items, totals)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={buttonClasses('secondary', 'lg', 'w-full sm:w-auto')}
+              >
+                Order on WhatsApp
+              </a>
+            </div>
+
+            <WhatsAppActionBar
+              href={buildWhatsAppOrderUrl(items, totals)}
+              className="mt-3 max-w-md"
+            />
+          </div>
+        </Container>
+      </div>
     </section>
   )
 }

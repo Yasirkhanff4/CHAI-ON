@@ -1,4 +1,4 @@
-# CHAI ON deployment guide
+# CHAYON deployment guide
 
 Everything needed to take the app from this repository to a live site, in order.
 
@@ -101,7 +101,7 @@ otherwise every order write is denied.
 
 ```json
 {
-  "businessName": "CHAI ON",
+  "businessName": "CHAYON",
   "contactPhone": "+92 3XX XXXXXXX",
   "deliveryCharge": 0,
   "minimumOrder": 0,
@@ -168,7 +168,7 @@ Customer side:
 - [ ] Menu shows live Firestore products and prices.
 - [ ] Add to cart, change quantity, change sugar/strength.
 - [ ] Guest checkout succeeds with no account; order number appears.
-- [ ] "Order on WhatsApp" opens `wa.me/923291018591` with the cart items and
+- [ ] "Order on WhatsApp" opens `wa.me/923091104343` with the cart items and
       total pre-filled.
 - [ ] Confirmation page shows items, address, COD and Track order.
 - [ ] Cart is empty afterwards.
@@ -263,7 +263,7 @@ It runs entirely on the emulator (Java required) and does not touch production.
 
 ## 10. Launch checklist
 
-- [x] Real phone number set in `src/data/site.ts` (`+92 329 1018591`). Confirm
+- [x] Real phone number set in `src/data/site.ts` (`0309-1104343`). Confirm
       Settings → contact phone matches it.
 - [ ] Real prices confirmed with the owner and set in Products.
 - [ ] Delivery charge and minimum order configured in Settings.

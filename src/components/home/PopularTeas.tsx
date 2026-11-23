@@ -8,15 +8,16 @@ import { useCatalog } from '@/context/catalogContext'
 
 export function PopularTeas() {
   const { products } = useCatalog()
+  const featured = products.slice(0, 4)
 
   return (
     <section id="menu-preview" className="py-12 sm:py-16">
       <Container>
         <div className="flex flex-wrap items-end justify-between gap-4">
           <SectionHeading
-            eyebrow="Our tea"
-            title="Two teas, made your way."
-            description="Pick a cup, choose your sugar and strength, and we will brew it fresh."
+            eyebrow="From the menu"
+            title="Something for every break"
+            description="Chai, coffee, nuggets and cake rusk. Pick what your desk needs."
           />
           <Link
             to="/menu"
@@ -28,7 +29,7 @@ export function PopularTeas() {
         </div>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2 sm:gap-5">
-          {products.map((product) => (
+          {featured.map((product) => (
             <TeaCard key={product.id} product={product} />
           ))}
         </div>

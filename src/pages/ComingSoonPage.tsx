@@ -34,20 +34,20 @@ export function ComingSoonPage({
     <section className="relative overflow-hidden py-16 sm:py-24">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-24 top-0 h-80 w-80 rounded-full bg-gold-200/40 blur-3xl"
+        className="pointer-events-none absolute -right-24 top-0 h-72 w-72 rounded-full bg-soft-pink/25"
       />
       <Container className="relative">
-        <div className="mx-auto max-w-xl rounded-xl border border-cream-300/80 bg-cream-50 px-6 py-12 text-center sm:px-10 sm:py-14">
-          <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-forest-900 text-cream-50">
+        <div className="mx-auto max-w-xl rounded-xl border border-soft-pink/80 bg-off-white px-6 py-12 text-center sm:px-10 sm:py-14">
+          <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-brand-brown text-off-white">
             <Icon className="h-6 w-6" />
           </span>
-          <p className="mt-6 text-[12.5px] font-medium text-tea-500">
+          <p className="mt-6 text-[12.5px] font-medium text-brand-brown">
             Coming soon
           </p>
-          <h1 className="mt-3 font-bold text-[34px] leading-[1.08] tracking-[-0.015em] text-forest-900 sm:text-[40px]">
+          <h1 className="mt-3 font-bold text-[34px] leading-[1.08] tracking-[-0.015em] text-brand-brown sm:text-[40px]">
             {title}
           </h1>
-          <p className="mt-4 text-[14.5px] leading-relaxed text-forest-900/70">{description}</p>
+          <p className="mt-4 text-[14.5px] leading-relaxed text-brand-brown/70">{description}</p>
 
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
             <Link to="/" className={buttonClasses('primary', 'md')}>
@@ -59,9 +59,9 @@ export function ComingSoonPage({
             </Link>
           </div>
 
-          <p className="mt-8 border-t border-cream-300/70 pt-5 text-xs leading-relaxed text-forest-900/55">
+          <p className="mt-8 border-t border-soft-pink/70 pt-5 text-xs leading-relaxed text-brand-brown/55">
             In the meantime, call{' '}
-            <a href={business.phoneHref} className="font-semibold text-forest-800 hover:text-forest-600">
+            <a href={business.phoneHref} className="font-semibold text-brand-red hover:text-brand-maroon">
               {business.phoneDisplay}
             </a>{' '}
             to place an order.

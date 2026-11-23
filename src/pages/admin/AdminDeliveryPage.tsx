@@ -22,7 +22,7 @@ const ACTION_LABELS: Partial<Record<OrderStatus, string>> = {
 }
 
 export function AdminDeliveryPage() {
-  useDocumentTitle('Delivery | CHAI ON Admin')
+  useDocumentTitle('Delivery | CHAYON Admin')
   const { profile, isAdmin, isDeliveryStaff } = useAuth()
 
   const [orders, setOrders] = useState<Order[]>([])
@@ -111,43 +111,43 @@ export function AdminDeliveryPage() {
   const renderOrder = (order: Order) => (
     <li
       key={order.orderNumber}
-      className="rounded-[20px] border border-cream-300/80 bg-cream-50 p-4 shadow-card"
+      className="rounded-xl border border-soft-pink/80 bg-off-white p-4 shadow-card"
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <Link
             to={`/admin/orders/${order.orderNumber}`}
-            className="text-[13.5px] font-semibold text-forest-900 hover:text-forest-600"
+            className="text-[13.5px] font-semibold text-brand-brown hover:text-brand-maroon"
           >
             {order.orderNumber}
           </Link>
-          <p className="text-[11.5px] text-forest-900/60">
+          <p className="text-[11.5px] text-brand-brown/60">
             {order.customerName} · {formatDateTime(order.createdAt)}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <StatusBadge status={order.orderStatus} />
-          <span className="text-[13px] font-semibold tabular-nums text-forest-900">
+          <span className="text-[13px] font-semibold tabular-nums text-brand-brown">
             {formatPKR(order.total)}
           </span>
         </div>
       </div>
 
-      <div className="mt-3 grid gap-2 text-[12.5px] text-forest-900/75 sm:grid-cols-2">
+      <div className="mt-3 grid gap-2 text-[12.5px] text-brand-brown/75 sm:grid-cols-2">
         <p className="flex items-start gap-1.5">
-          <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-tea-500" aria-hidden="true" />
+          <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-brown" aria-hidden="true" />
           <span>
             {order.building} · {order.floor} · {order.officeOrShop}
           </span>
         </p>
-        <a href={`tel:${order.phone}`} className="flex items-center gap-1.5 hover:text-forest-900">
-          <Phone className="h-3.5 w-3.5 text-tea-500" aria-hidden="true" />
+        <a href={`tel:${order.phone}`} className="flex items-center gap-1.5 hover:text-brand-brown">
+          <Phone className="h-3.5 w-3.5 text-brand-brown" aria-hidden="true" />
           {order.phone}
         </a>
       </div>
 
       {order.deliveryInstructions && (
-        <p className="mt-2 rounded-xl bg-cream-100 px-3 py-2 text-[12px] leading-relaxed text-forest-900/70">
+        <p className="mt-2 rounded-xl bg-cream px-3 py-2 text-[12px] leading-relaxed text-brand-brown/70">
           {order.deliveryInstructions}
         </p>
       )}
@@ -176,7 +176,7 @@ export function AdminDeliveryPage() {
             onChange={(event) => void assign(order, event.target.value)}
             disabled={busy === order.orderNumber}
             aria-label={`Assign delivery for ${order.orderNumber}`}
-            className="h-9 rounded-full border border-forest-900/15 bg-cream-50 px-3 text-[11.5px] text-forest-900 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
+            className="h-9 rounded-full border border-brand-brown/15 bg-off-white px-3 text-[11.5px] text-brand-brown focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red"
           >
             <option value="">Unassigned</option>
             {staff.map((member) => (
@@ -188,7 +188,7 @@ export function AdminDeliveryPage() {
         )}
 
         {order.assignedToName && (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-forest-100 px-2.5 py-1 text-[11px] font-medium text-forest-800">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-cream px-2.5 py-1 text-[11px] font-medium text-brand-red">
             <Truck className="h-3 w-3" aria-hidden="true" />
             {order.assignedToName}
           </span>
@@ -200,8 +200,8 @@ export function AdminDeliveryPage() {
   return (
     <Container>
       <div>
-        <h1 className="font-display text-[30px] leading-tight text-forest-900">Delivery</h1>
-        <p className="mt-1 text-[13px] text-forest-900/65">
+        <h1 className="font-display text-[30px] leading-tight text-brand-brown">Delivery</h1>
+        <p className="mt-1 text-[13px] text-brand-brown/65">
           {isAdmin
             ? 'Assign ready orders to delivery staff and track progress.'
             : 'These are the deliveries assigned to you.'}
@@ -211,7 +211,7 @@ export function AdminDeliveryPage() {
       {error && (
         <p
           role="alert"
-          className="mt-4 flex items-start gap-2 rounded-2xl border border-red-500/30 bg-red-50 px-4 py-3 text-[13px] text-red-800"
+          className="mt-4 flex items-start gap-2 rounded-xl border border-brand-red/30 bg-soft-pink/30 px-4 py-3 text-[13px] text-brand-red"
         >
           <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
           {error}
@@ -219,21 +219,21 @@ export function AdminDeliveryPage() {
       )}
 
       {loading ? (
-        <div className="mt-6 rounded-[24px] border border-cream-300/80 bg-cream-50 px-5 py-12 text-center shadow-card">
+        <div className="mt-6 rounded-xl border border-soft-pink/80 bg-off-white px-5 py-12 text-center shadow-card">
           <span
             aria-hidden="true"
-            className="mx-auto h-7 w-7 animate-spin rounded-full border-2 border-forest-900/15 border-t-forest-800"
+            className="mx-auto h-7 w-7 animate-spin rounded-full border-2 border-brand-brown/15 border-t-brand-red"
           />
-          <p className="mt-3 text-[13px] text-forest-900/60">Loading deliveries…</p>
+          <p className="mt-3 text-[13px] text-brand-brown/60">Loading deliveries…</p>
         </div>
       ) : (
         <div className="mt-5 space-y-6">
           <section>
-            <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-tea-500">
+            <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-brown">
               Ready for delivery ({readyOrders.length})
             </h2>
             {readyOrders.length === 0 ? (
-              <p className="mt-2 rounded-[20px] border border-dashed border-cream-300 bg-cream-50/60 px-4 py-6 text-[12.5px] text-forest-900/55">
+              <p className="mt-2 rounded-xl border border-dashed border-soft-pink bg-off-white/60 px-4 py-6 text-[12.5px] text-brand-brown/55">
                 No orders are marked ready yet. Accept and prepare orders from the Orders screen.
               </p>
             ) : (
@@ -242,11 +242,11 @@ export function AdminDeliveryPage() {
           </section>
 
           <section>
-            <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-tea-500">
+            <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-brown">
               Out for delivery ({onTheWay.length})
             </h2>
             {onTheWay.length === 0 ? (
-              <p className="mt-2 rounded-[20px] border border-dashed border-cream-300 bg-cream-50/60 px-4 py-6 text-[12.5px] text-forest-900/55">
+              <p className="mt-2 rounded-xl border border-dashed border-soft-pink bg-off-white/60 px-4 py-6 text-[12.5px] text-brand-brown/55">
                 Nothing is on the way right now.
               </p>
             ) : (
@@ -256,7 +256,7 @@ export function AdminDeliveryPage() {
 
           {failed.length > 0 && (
             <section>
-              <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-tea-500">
+              <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-brown">
                 Delivery failed ({failed.length})
               </h2>
               <ul className="mt-3 grid gap-3 xl:grid-cols-2">{failed.map(renderOrder)}</ul>

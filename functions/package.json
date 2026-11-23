@@ -2,7 +2,7 @@
   "name": "chai-on-functions",
   "private": true,
   "version": "1.0.0",
-  "description": "Trusted order creation, guest tracking and role provisioning for CHAI ON.",
+  "description": "Trusted order creation, guest tracking and role provisioning for CHAYON.",
   "main": "lib/index.js",
   "engines": {
     "node": "20"
