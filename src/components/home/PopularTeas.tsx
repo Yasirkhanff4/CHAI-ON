@@ -16,8 +16,8 @@ export function PopularTeas() {
         <div className="flex flex-wrap items-end justify-between gap-4">
           <SectionHeading
             eyebrow="From the menu"
-            title="A short menu, done properly."
-            description="Four items from the list. Nuggets, cake rusk and combos are a tap away."
+            title="Something for every break"
+            description="Chai, coffee, nuggets and cake rusk. Pick what your desk needs."
           />
           <Link
             to="/menu"

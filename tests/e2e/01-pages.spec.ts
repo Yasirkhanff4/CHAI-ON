@@ -4,7 +4,7 @@ import { expectNoBrokenImages, expectNoConsoleErrors, watchConsole } from './hel
 const PAGES = [
   { path: '/', heading: /chai break/i },
   { path: '/menu', heading: /Chai, coffee, nuggets/i },
-  { path: '/contact', heading: /call the counter/i },
+  { path: '/contact', heading: /one floor away/i },
   { path: '/track', heading: /Where is your chai/i },
 ]
 

@@ -124,7 +124,7 @@ export function CheckoutSummary({ formId, submitting, disabled = false }: Checko
           </p>
           <p className="flex items-start gap-2">
             <Clock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-red" aria-hidden="true" />
-            Brewed after you order.
+            Brewed after you order. Usually 15 to 25 minutes.
           </p>
           <p className="flex items-start gap-2">
             <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-red" aria-hidden="true" />
