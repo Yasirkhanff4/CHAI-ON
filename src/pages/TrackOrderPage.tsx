@@ -59,7 +59,7 @@ export function TrackOrderPage() {
       <PageIntro
         eyebrow="Track order"
         title="Where is your chai?"
-        description="Enter your order number. Tracking works on the device you ordered from. If you ordered elsewhere, message us on WhatsApp."
+        description="Enter the order number we gave you. Tracking works on the device you ordered from. On another device, send the number to us on WhatsApp."
       />
 
       <section className="py-8 sm:py-10">

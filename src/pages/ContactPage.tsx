@@ -21,8 +21,8 @@ export function ContactPage() {
     <>
       <PageIntro
         eyebrow="Contact"
-        title="We are one floor away."
-        description="Questions about an order or a tray for the whole office? Give us a call."
+        title="Call the counter."
+        description="Order updates, a tray for the team, or directions to the shop. Call or message us."
       />
 
       <section className="py-8 sm:py-10">
@@ -73,8 +73,7 @@ export function ContactPage() {
               {business.deliveryArea}.
             </p>
             <p className="mt-2 text-[14px] leading-relaxed text-brand-brown/70">
-              We are inside Al Ghaffar Mall, so orders reach nearby offices and shops quickly and
-              still hot.
+              We are inside Al Ghaffar Mall, so the chai is still hot when it reaches you.
             </p>
             <div className="mt-4 space-y-2 border-t border-soft-pink pt-4 text-[13.5px] text-brand-brown/70">
               <p>

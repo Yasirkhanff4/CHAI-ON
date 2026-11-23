@@ -14,12 +14,12 @@ const perks = [
   {
     icon: Clock,
     title: 'Brewed to order',
-    description: 'Made after you order.',
+    description: 'The kettle goes on after your order comes in.',
   },
   {
     icon: Truck,
     title: 'Office delivery',
-    description: `Delivered across ${business.deliveryArea}.`,
+    description: `We bring it to your desk in ${business.deliveryArea}.`,
   },
   {
     icon: Banknote,
@@ -48,7 +48,7 @@ export function MenuPage() {
       <PageIntro
         eyebrow="Menu"
         title="Chai, coffee, nuggets and cake rusk."
-        description="Pick a category, choose your item and add it to your cart."
+        description="Pick a category. Set sugar and strength on chai and coffee, then add what you want."
       />
 
       <section aria-label="Menu" className="py-6 sm:py-10">

@@ -14,7 +14,7 @@ export function OrderCta() {
                 Ready for a break?
               </h2>
               <p className="mt-2 max-w-lg text-[14px] leading-relaxed text-cream/70">
-                Order online, pay cash when it reaches you. No account needed.
+                Order online. Pay cash at your desk. No account, no card.
               </p>
             </div>
 

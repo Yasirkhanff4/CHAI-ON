@@ -38,7 +38,7 @@ export function CustomizeTea() {
             tone="light"
             eyebrow="Your order"
             title="Sugar and strength, your way."
-            description="Two quick choices for chai and coffee. No account and no long forms."
+            description="Both apply to chai and coffee. Nuggets and combos skip the questions."
           />
 
           <Link to="/menu" className={buttonClasses('gold', 'lg', 'mt-6')}>
@@ -54,7 +54,7 @@ export function CustomizeTea() {
           </div>
 
           <p className="mt-5 border-t border-off-white/10 pt-4 text-[12.5px] leading-relaxed text-cream/60">
-            Pick your options on the menu and add it to your cart.
+            Pick your options on the menu and they travel with the order.
           </p>
         </div>
       </Container>

@@ -27,14 +27,14 @@ export const CHAYON_MENU: ChayonMenuItem[] = [
     name: 'Karak Chai',
     category: 'Chai',
     price: 100,
-    description: 'Strong tea with cardamom.',
+    description: 'Strong tea, boiled with cardamom.',
     sortOrder: 20,
   },
   {
     name: 'Elaichi Chai',
     category: 'Chai',
     price: 100,
-    description: 'Tea with cardamom.',
+    description: 'Milk tea with green cardamom.',
     sortOrder: 30,
   },
   {
@@ -76,7 +76,7 @@ export const CHAYON_MENU: ChayonMenuItem[] = [
     name: 'Cake Rusk 4 pcs',
     category: 'Bites',
     price: 80,
-    description: 'Four pieces.',
+    description: 'Four pieces of cake rusk.',
     sortOrder: 230,
   },
   {

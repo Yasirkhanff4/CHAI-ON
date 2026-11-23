@@ -136,8 +136,8 @@ export function OrderConfirmationPage() {
                 Thank you, {order.customerName.split(' ')[0]}.
               </h1>
               <p className="mx-auto mt-3 max-w-md text-[14px] leading-relaxed text-brand-brown/70">
-                Your chai is queued with the kitchen. We will call the number you gave us if we
-                need to reach you.
+                We have your order. We brew it fresh and bring it up to your desk. If we cannot
+                find the office, we will call the number you gave us.
               </p>
 
               <div className="mx-auto mt-6 inline-flex flex-col items-center rounded-xl border border-soft-pink bg-cream/70 px-6 py-4">

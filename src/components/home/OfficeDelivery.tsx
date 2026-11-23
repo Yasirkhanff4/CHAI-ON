@@ -8,7 +8,7 @@ const steps = [
   {
     number: '1',
     title: 'Pick your chai',
-    text: 'Choose Doodh Patti or Karak Chai, then set your sugar and strength.',
+    text: 'Choose from the menu, then set sugar and strength on chai or coffee.',
   },
   {
     number: '2',
@@ -18,7 +18,7 @@ const steps = [
   {
     number: '3',
     title: 'We bring it up',
-    text: 'Tell us the plaza, floor and office number. We deliver to the door.',
+    text: 'Tell us the plaza, floor and office number. We hand it over at your desk.',
   },
 ]
 

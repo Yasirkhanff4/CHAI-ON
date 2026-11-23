@@ -16,8 +16,7 @@ export function NotFoundPage() {
           This page is not on the menu.
         </h1>
         <p className="mt-4 max-w-md text-[14.5px] leading-relaxed text-brand-brown/60">
-          The page you were looking for has moved, or it never existed. Let us get you
-          back to the kettle.
+          That link is old or wrong. Let us get you back to the kettle.
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           <Link to="/" className={buttonClasses('primary', 'md')}>
