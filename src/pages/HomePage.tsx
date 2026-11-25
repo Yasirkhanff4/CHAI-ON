@@ -6,8 +6,6 @@ import { OrderCta } from '@/components/home/OrderCta'
 import { PopularTeas } from '@/components/home/PopularTeas'
 import { TrustStrip } from '@/components/home/TrustStrip'
 import { VisitUs } from '@/components/home/VisitUs'
-import { Container } from '@/components/ui/Container'
-import { SectionDivider } from '@/components/ui/SectionDivider'
 import { useDocumentTitle } from '@/lib/useDocumentTitle'
 
 export function HomePage() {
@@ -18,14 +16,8 @@ export function HomePage() {
       <Hero />
       <TrustStrip />
       <OfferBanner />
-      <Container className="py-2">
-        <SectionDivider />
-      </Container>
       <PopularTeas />
       <OfficeDelivery />
-      <Container className="py-2">
-        <SectionDivider />
-      </Container>
       <CustomizeTea />
       <VisitUs />
       <OrderCta />

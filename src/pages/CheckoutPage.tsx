@@ -45,26 +45,26 @@ function EmptyCheckout() {
         title="Your cart is empty."
         description="Add something from the menu and your checkout will be waiting here."
       />
-      <section className="py-8 sm:py-10">
+      <section className="py-10 sm:py-14">
         <Container>
-          <div className="mx-auto max-w-lg rounded-xl border border-soft-pink bg-off-white px-5 py-8 text-center sm:px-8">
+          <div className="mx-auto max-w-lg rounded-card bg-off-white px-5 py-10 text-center shadow-card sm:px-8">
             <span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-cream text-brand-red">
               <Coffee className="h-5 w-5" aria-hidden="true" />
             </span>
             <h2 className="mt-4 text-[22px] font-semibold leading-tight text-brand-brown">
               Nothing to check out yet
             </h2>
-            <p className="mx-auto mt-2 max-w-xs text-[14px] leading-relaxed text-brand-brown/70">
+            <p className="mx-auto mt-2 max-w-xs text-[14px] leading-relaxed text-brand-brown/60">
               Pick something from the menu. Guest checkout means no account is needed.
             </p>
-            <Link to="/menu" className={buttonClasses('primary', 'lg', 'mt-5 w-full sm:w-auto')}>
+            <Link to="/menu" className={buttonClasses('primary', 'lg', 'mt-6 w-full sm:w-auto')}>
               Browse the menu
             </Link>
-            <p className="mt-5 border-t border-soft-pink pt-4 text-[12.5px] leading-relaxed text-brand-brown/70">
+            <p className="mt-6 border-t border-brand-brown/10 pt-5 text-[12.5px] leading-relaxed text-brand-brown/60">
               Prefer to order by phone? Call{' '}
               <a
                 href={business.phoneHref}
-                className="inline-flex items-center gap-1 font-semibold text-brand-red hover:text-brand-maroon"
+                className="inline-flex items-center gap-1 font-semibold text-brand-red transition-colors hover:text-brand-maroon"
               >
                 <Phone className="h-3 w-3" aria-hidden="true" />
                 {business.phoneDisplay}
@@ -202,20 +202,20 @@ function CheckoutFlow() {
         description="Pay in cash when it arrives. No account and no card needed."
       />
 
-      <section aria-label="Checkout" className="py-8 sm:py-10">
+      <section aria-label="Checkout" className="py-10 sm:py-14">
         <Container>
           <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start lg:gap-6">
             <form
               id={FORM_ID}
               onSubmit={handleSubmit}
               noValidate
-              className="order-1 rounded-xl border border-soft-pink bg-off-white px-4 py-5 sm:px-5 sm:py-6"
+              className="order-1 rounded-card bg-off-white px-5 py-6 shadow-card sm:px-6"
             >
-              <div className="border-b border-soft-pink pb-3">
+              <div className="border-b border-brand-brown/10 pb-3">
                 <h2 className="text-[20px] leading-tight text-brand-brown">Delivery details</h2>
               </div>
 
-              <p className="mt-3 text-[12.5px] leading-relaxed text-brand-brown/65">
+              <p className="mt-3 text-[12.5px] leading-relaxed text-brand-brown/55">
                 Checking out as a guest. No account needed.{' '}
                 Fields marked{' '}
                 <span className="text-brand-red" aria-hidden="true">
@@ -225,8 +225,8 @@ function CheckoutFlow() {
               </p>
 
               {!orderingOpen && (
-                <div className="mt-4 rounded-xl border border-brand-red/50 bg-cream px-3.5 py-3">
-                  <p className="flex items-start gap-2 text-[13px] leading-relaxed text-brand-brown/85">
+                <div className="mt-4 rounded-xl bg-brand-red/[0.05] px-4 py-3">
+                  <p className="flex items-start gap-2 text-[13px] leading-relaxed text-brand-brown/80">
                     <Clock className="mt-0.5 h-4 w-4 shrink-0 text-brand-maroon" aria-hidden="true" />
                     <span>
                       Online ordering is paused. Our hours are {formatClock(settings.openingTime)} to{' '}
@@ -240,7 +240,7 @@ function CheckoutFlow() {
                 <div
                   role="alert"
                   aria-live="assertive"
-                  className="mt-4 rounded-xl border border-brand-red/30 bg-soft-pink/30 px-3.5 py-3"
+                  className="mt-4 rounded-xl bg-soft-pink/25 px-4 py-3"
                 >
                   <p className="flex items-start gap-2 text-[13px] leading-relaxed text-brand-red">
                     <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
@@ -348,22 +348,26 @@ function CheckoutFlow() {
                 />
               </div>
 
-              <div className="mt-4 rounded-xl border border-soft-pink bg-cream/70 px-3.5 py-3">
-                <p className="text-[13px] font-medium text-brand-brown/70">Payment</p>
-                <p className="mt-1 text-[14px] font-semibold text-brand-brown">Cash on delivery</p>
-                <p className="mt-0.5 text-[12.5px] leading-relaxed text-brand-brown/65">
+              <div className="mt-4 rounded-xl bg-cream px-4 py-3.5">
+                <p className="text-[12px] font-medium uppercase tracking-[0.12em] text-brand-brown/45">
+                  Payment
+                </p>
+                <p className="mt-1.5 text-[14px] font-semibold text-brand-brown">
+                  Cash on delivery
+                </p>
+                <p className="mt-0.5 text-[12.5px] leading-relaxed text-brand-brown/55">
                   Pay {formatPKR(totals.total)} in cash when your order arrives.
                 </p>
               </div>
 
               {belowMinimum && (
-                <p className="mt-4 rounded-xl bg-cream px-3.5 py-2.5 text-[12.5px] leading-relaxed text-brand-brown/80">
+                <p className="mt-4 rounded-xl bg-cream px-3.5 py-2.5 text-[12.5px] leading-relaxed text-brand-brown/70">
                   Add {formatPKR(shortfall)} more to reach the minimum order of{' '}
                   {formatPKR(settings.minimumOrder)}.
                 </p>
               )}
 
-              <div className="mt-5 flex items-center justify-between gap-3 border-t border-soft-pink pt-4 lg:hidden">
+              <div className="mt-5 flex items-center justify-between gap-3 border-t border-brand-brown/10 pt-4 lg:hidden">
                 <Link
                   to="/cart"
                   className="inline-flex min-h-10 items-center gap-1.5 text-[13px] font-medium text-brand-brown/70 hover:text-brand-brown"

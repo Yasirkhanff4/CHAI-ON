@@ -22,31 +22,31 @@ export function CheckoutSummary({ formId, submitting, disabled = false }: Checko
   const { items, totals } = useCart()
 
   return (
-    <div className="rounded-xl border border-soft-pink bg-off-white shadow-card">
-      <div className="border-b border-soft-pink px-4 py-3 sm:px-5">
+    <div className="overflow-hidden rounded-card bg-off-white shadow-card">
+      <div className="border-b border-brand-brown/10 px-5 py-4">
         <h2 className="text-[20px] font-semibold leading-tight text-brand-brown">Order summary</h2>
-        <p className="mt-0.5 text-[12px] text-brand-brown/60">
+        <p className="mt-0.5 text-[12px] text-brand-brown/45">
           {totals.itemCount} {totals.itemCount === 1 ? 'item' : 'items'} · {items.length}{' '}
           {items.length === 1 ? 'line' : 'lines'}
         </p>
       </div>
 
-      <ul className="divide-y divide-soft-pink px-4 sm:px-5">
+      <ul className="divide-y divide-brand-brown/10 px-5">
         {items.map((item) => {
           const customizable = supportsTeaOptions(categoryForProduct({ name: item.name }))
           return (
-            <li key={item.id} className="flex items-start justify-between gap-3 py-3">
+            <li key={item.id} className="flex items-start justify-between gap-3 py-3.5">
               <div className="min-w-0">
                 <p className="text-[14px] font-semibold text-brand-brown">
                   {item.name}
-                  <span className="ml-1.5 font-normal text-brand-brown/60">× {item.quantity}</span>
+                  <span className="ml-1.5 font-normal text-brand-brown/45">× {item.quantity}</span>
                 </p>
                 {customizable && (
-                  <p className="mt-0.5 text-[12px] text-brand-brown/65">
+                  <p className="mt-0.5 text-[12px] text-brand-brown/55">
                     {sugarLabel(item.sugar)} · {strengthLabel(item.strength)}
                   </p>
                 )}
-                <p className="mt-0.5 text-[11.5px] text-brand-brown/55">
+                <p className="mt-0.5 text-[11.5px] text-brand-brown/40">
                   {formatPKR(item.unitPrice)} each
                 </p>
               </div>
@@ -58,30 +58,30 @@ export function CheckoutSummary({ formId, submitting, disabled = false }: Checko
         })}
       </ul>
 
-      <div className="px-4 pt-3 sm:px-5">
-        <dl className="space-y-2 text-[13.5px]">
+      <div className="px-5 pt-3">
+        <dl className="space-y-2.5 text-[13.5px]">
           <div className="flex items-center justify-between gap-4">
-            <dt className="text-brand-brown/70">Subtotal</dt>
+            <dt className="text-brand-brown/60">Subtotal</dt>
             <dd className="font-semibold tabular-nums text-brand-brown">
               {formatPKR(totals.subtotal)}
             </dd>
           </div>
           <div className="flex items-center justify-between gap-4">
-            <dt className="text-brand-brown/70">Delivery</dt>
+            <dt className="text-brand-brown/60">Delivery</dt>
             <dd className="font-semibold tabular-nums text-brand-brown">
               {totals.deliveryCharge === 0 ? 'Free' : formatPKR(totals.deliveryCharge)}
             </dd>
           </div>
           <div className="flex items-center justify-between gap-4">
-            <dt className="text-brand-brown/70">Payment</dt>
+            <dt className="text-brand-brown/60">Payment</dt>
             <dd className="flex items-center gap-1.5 font-medium text-brand-brown">
-              <Banknote className="h-3.5 w-3.5 text-brand-red" aria-hidden="true" />
+              <Banknote className="h-3.5 w-3.5 text-brand-red/80" aria-hidden="true" />
               Cash on delivery
             </dd>
           </div>
         </dl>
 
-        <div className="mt-3 flex items-baseline justify-between gap-4 border-t border-soft-pink pt-3">
+        <div className="mt-4 flex items-baseline justify-between gap-4 border-t border-brand-brown/10 pt-4">
           <p className="text-sm font-semibold text-brand-brown">Pay on delivery</p>
           <p className="text-[24px] font-bold leading-none tabular-nums text-brand-brown">
             {formatPKR(totals.total)}
@@ -89,7 +89,7 @@ export function CheckoutSummary({ formId, submitting, disabled = false }: Checko
         </div>
       </div>
 
-      <div className="px-4 pb-4 pt-4 sm:px-5">
+      <div className="px-5 pb-5 pt-4">
         <button
           type="submit"
           form={formId}
@@ -113,28 +113,28 @@ export function CheckoutSummary({ formId, submitting, disabled = false }: Checko
           )}
         </button>
 
-        <p className="mt-2 text-center text-[11.5px] leading-relaxed text-brand-brown/60">
+        <p className="mt-2.5 text-center text-[11.5px] leading-relaxed text-brand-brown/45">
           Pay {formatPKR(totals.total)} in cash when your order arrives.
         </p>
 
-        <div className="mt-3 space-y-2 border-t border-soft-pink pt-3 text-[11.5px] leading-relaxed text-brand-brown/65">
+        <div className="mt-4 space-y-2 border-t border-brand-brown/10 pt-4 text-[11.5px] leading-relaxed text-brand-brown/55">
           <p className="flex items-start gap-2">
-            <Truck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-red" aria-hidden="true" />
+            <Truck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-red/80" aria-hidden="true" />
             Delivered across {business.deliveryArea}.
           </p>
           <p className="flex items-start gap-2">
-            <Clock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-red" aria-hidden="true" />
+            <Clock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-red/80" aria-hidden="true" />
             Brewed after you order. Usually 15 to 25 minutes.
           </p>
           <p className="flex items-start gap-2">
-            <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-red" aria-hidden="true" />
+            <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-red/80" aria-hidden="true" />
             No account needed.
           </p>
         </div>
 
         <Link
           to="/cart"
-          className="mt-2 inline-flex min-h-10 w-full items-center justify-center rounded-xl px-3 text-[12.5px] font-medium text-brand-brown/65 transition hover:bg-soft-pink/40 hover:text-brand-brown"
+          className="mt-2 inline-flex min-h-10 w-full items-center justify-center rounded-xl px-3 text-[12.5px] font-medium text-brand-brown/50 transition-colors hover:bg-cream hover:text-brand-brown"
         >
           Back to cart
         </Link>

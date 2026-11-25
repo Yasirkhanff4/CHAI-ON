@@ -108,24 +108,64 @@ async function buildPlaceholder() {
   const mark = path.join(BRAND_DIR, 'logo.webp')
   if (!(await exists(mark))) return null
 
-  const canvas = sharp({
-    create: {
-      width: 640,
-      height: 480,
-      channels: 3,
-      background: CREAM,
-    },
-  })
+  // Lift the cup off its flat cream card so it can sit inside a soft disc
+  // instead of floating alone in the middle of a nearly empty image.
+  const { data, info } = await sharp(mark)
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true })
+  const [br, bg, bb] = [data[0], data[1], data[2]]
 
-  const cup = await sharp(mark)
-    .resize({ width: 210, height: 200, fit: 'contain', background: CREAM })
+  for (let index = 0; index < data.length; index += info.channels) {
+    const distance = Math.max(
+      Math.abs(data[index] - br),
+      Math.abs(data[index + 1] - bg),
+      Math.abs(data[index + 2] - bb),
+    )
+    if (distance <= 12) data[index + 3] = 0
+  }
+
+  const cup = await sharp(data, {
+    raw: { width: info.width, height: info.height, channels: info.channels },
+  })
+    .resize({ width: 280, fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
     .png()
     .toBuffer()
 
+  const backdrop = Buffer.from(`
+    <svg width="640" height="480" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="glow" cx="50%" cy="42%" r="55%">
+          <stop offset="0" stop-color="#FCFAF6"/>
+          <stop offset="1" stop-color="#F4F2EF" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <rect width="640" height="480" fill="#F4F2EF"/>
+      <rect width="640" height="480" fill="url(#glow)"/>
+      <circle cx="320" cy="196" r="150" fill="#FBF8F2"/>
+      <circle cx="320" cy="196" r="150" fill="none" stroke="#E8C9C4" stroke-opacity="0.55" stroke-width="1.5"/>
+      <circle cx="320" cy="196" r="168" fill="none" stroke="#5B3A2E" stroke-opacity="0.06" stroke-width="1" stroke-dasharray="2 6"/>
+    </svg>
+  `)
+
+  const caption = Buffer.from(`
+    <svg width="640" height="480" xmlns="http://www.w3.org/2000/svg">
+      <line x1="306" y1="372" x2="334" y2="372" stroke="#B00000" stroke-width="2" stroke-linecap="round"/>
+      <text x="320" y="409" text-anchor="middle" font-family="Arial Narrow, Arial, Helvetica, sans-serif" font-size="30" font-weight="700" letter-spacing="5" fill="#7A0F0F">CHAYON</text>
+      <text x="320" y="433" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="8.5" font-weight="600" letter-spacing="2.5" fill="#5B3A2E" fill-opacity="0.55">FRESH TO YOUR OFFICE DESK</text>
+    </svg>
+  `)
+
   const output = path.join(IMAGES_DIR, 'chayon-placeholder.webp')
-  const buffer = await canvas
-    .composite([{ input: cup, gravity: 'center' }])
-    .webp({ quality: 86, effort: 6 })
+  const buffer = await sharp({
+    create: { width: 640, height: 480, channels: 4, background: CREAM },
+  })
+    .composite([
+      { input: backdrop, top: 0, left: 0 },
+      { input: cup, top: 58, left: 180 },
+      { input: caption, top: 0, left: 0 },
+    ])
+    .webp({ quality: 88, effort: 6 })
     .toBuffer()
 
   await sharp(buffer).toFile(output)

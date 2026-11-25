@@ -1,35 +1,46 @@
 import { Building2, Clock, Coffee } from 'lucide-react'
+import { Container } from '@/components/ui/Container'
 import { business } from '@/data/site'
 
 const items = [
   {
     icon: Coffee,
-    text: 'Chai, coffee, nuggets, cake rusk',
+    title: 'Brewed after you order',
+    text: 'Chai and coffee, made fresh to order.',
   },
   {
     icon: Building2,
-    text: 'Delivered to your office desk',
+    title: 'Delivered to your desk',
+    text: 'Across G-11 Markaz and nearby offices.',
   },
   {
     icon: Clock,
-    text: `Open ${business.hours}`,
+    title: 'Open every day',
+    text: business.hours,
   },
 ]
 
 export function TrustStrip() {
   return (
-    <section className="border-b border-soft-pink bg-off-white">
-      <div className="mx-auto grid w-full max-w-7xl gap-3 px-5 py-5 sm:grid-cols-3 sm:gap-4 sm:px-8 lg:px-10">
-        {items.map(({ icon: Icon, text }) => (
-          <div
-            key={text}
-            className="flex items-center gap-2.5 rounded-xl border border-soft-pink/70 bg-cream px-4 py-3"
-          >
-            <Icon className="h-4 w-4 shrink-0 text-brand-red" aria-hidden="true" />
-            <p className="text-[13px] font-medium text-brand-brown">{text}</p>
-          </div>
-        ))}
-      </div>
+    <section className="border-y border-brand-brown/10 bg-off-white/55">
+      <Container>
+        <ul className="grid divide-y divide-brand-brown/10 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+          {items.map(({ icon: Icon, title, text }) => (
+            <li
+              key={title}
+              className="flex items-center gap-3 py-4 sm:justify-center sm:px-6 sm:py-5"
+            >
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-brand-red/[0.06] text-brand-red">
+                <Icon className="h-4 w-4" aria-hidden="true" />
+              </span>
+              <div>
+                <p className="text-[13px] font-semibold leading-tight text-brand-brown">{title}</p>
+                <p className="mt-0.5 text-[12px] leading-relaxed text-brand-brown/55">{text}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </Container>
     </section>
   )
 }

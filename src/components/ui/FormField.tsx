@@ -25,9 +25,9 @@ type FormFieldProps = {
 }
 
 const controlClasses = [
-  'w-full rounded-xl border bg-off-white px-3.5 text-base text-brand-brown',
-  'placeholder:text-brand-brown/40 transition',
-  'focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red',
+  'w-full rounded-control border bg-off-white px-4 text-base text-brand-brown',
+  'placeholder:text-brand-brown/35 transition duration-200 ease-smooth',
+  'hover:border-brand-brown/25 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red',
 ].join(' ')
 
 export function FormField({

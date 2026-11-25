@@ -26,16 +26,16 @@ export function QuantityStepper({
     <div
       role="group"
       aria-label={label}
-      className="inline-flex items-center rounded-xl border border-brand-brown/15 bg-off-white"
+      className="inline-flex items-center rounded-full border border-brand-brown/10 bg-off-white p-0.5"
     >
       <button
         type="button"
         onClick={() => onChange(value - 1)}
         disabled={value <= min}
         aria-label={`Decrease ${label}`}
-        className={`inline-flex ${buttonSize} items-center justify-center rounded-l-[9px] text-brand-brown transition hover:bg-soft-pink disabled:pointer-events-none disabled:opacity-35`}
+        className={`inline-flex ${buttonSize} items-center justify-center rounded-full text-brand-brown transition duration-150 hover:bg-cream disabled:pointer-events-none disabled:opacity-30`}
       >
-        <Minus className={isSmall ? 'h-4 w-4' : 'h-5 w-5'} aria-hidden="true" />
+        <Minus className={isSmall ? 'h-3.5 w-3.5' : 'h-4 w-4'} aria-hidden="true" />
       </button>
       <span
         aria-live="polite"
@@ -48,9 +48,9 @@ export function QuantityStepper({
         onClick={() => onChange(value + 1)}
         disabled={value >= max}
         aria-label={`Increase ${label}`}
-        className={`inline-flex ${buttonSize} items-center justify-center rounded-r-[9px] text-brand-brown transition hover:bg-soft-pink disabled:pointer-events-none disabled:opacity-35`}
+        className={`inline-flex ${buttonSize} items-center justify-center rounded-full text-brand-brown transition duration-150 hover:bg-cream disabled:pointer-events-none disabled:opacity-30`}
       >
-        <Plus className={isSmall ? 'h-4 w-4' : 'h-5 w-5'} aria-hidden="true" />
+        <Plus className={isSmall ? 'h-3.5 w-3.5' : 'h-4 w-4'} aria-hidden="true" />
       </button>
     </div>
   )

@@ -68,12 +68,12 @@ export function OrderConfirmationPage() {
     return (
       <section className="py-20">
         <Container>
-          <div className="mx-auto max-w-lg rounded-xl border border-soft-pink/80 bg-off-white px-6 py-14 text-center">
+          <div className="mx-auto max-w-lg rounded-card bg-off-white px-6 py-14 text-center shadow-card">
             <span
               aria-hidden="true"
               className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-brand-brown/15 border-t-brand-red"
             />
-            <p className="mt-5 text-[13.5px] text-brand-brown/70">Finding your order…</p>
+            <p className="mt-5 text-[13.5px] text-brand-brown/60">Finding your order…</p>
             <p aria-live="polite" className="sr-only">
               Loading your order
             </p>
@@ -87,7 +87,7 @@ export function OrderConfirmationPage() {
     return (
       <section className="py-16 sm:py-24">
         <Container>
-          <div className="mx-auto max-w-lg rounded-xl border border-soft-pink/80 bg-off-white px-6 py-12 text-center sm:px-10">
+          <div className="mx-auto max-w-lg rounded-card bg-off-white px-6 py-12 text-center shadow-card sm:px-10">
             <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-soft-pink text-brand-red">
               <AlertCircle className="h-6 w-6" aria-hidden="true" />
             </span>
@@ -108,7 +108,7 @@ export function OrderConfirmationPage() {
                 Back to menu
               </Link>
             </div>
-            <p className="mt-6 border-t border-soft-pink/70 pt-5 text-[12px] text-brand-brown/70">
+            <p className="mt-6 border-t border-brand-brown/10 pt-5 text-[12px] text-brand-brown/60">
               Need help now? Call{' '}
               <a href={business.phoneHref} className="font-semibold text-brand-red">
                 {business.phoneDisplay}
@@ -124,7 +124,7 @@ export function OrderConfirmationPage() {
     <section className="py-10 sm:py-14">
       <Container>
         <div className="mx-auto max-w-3xl">
-          <div className="rounded-xl border border-soft-pink/80 bg-off-white px-5 py-8 sm:px-9 sm:py-10">
+          <div className="rounded-card bg-off-white px-5 py-8 shadow-card sm:px-9 sm:py-10">
             <div className="text-center">
               <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-brand-brown text-off-white">
                 <CheckCircle2 className="h-6 w-6" aria-hidden="true" />
@@ -140,7 +140,7 @@ export function OrderConfirmationPage() {
                 need to reach you.
               </p>
 
-              <div className="mx-auto mt-6 inline-flex flex-col items-center rounded-xl border border-soft-pink bg-cream/70 px-6 py-4">
+              <div className="mx-auto mt-6 inline-flex flex-col items-center rounded-xl bg-cream px-6 py-4">
                 <span className="text-[12.5px] font-medium text-brand-brown/55">
                   Order number
                 </span>
@@ -154,7 +154,7 @@ export function OrderConfirmationPage() {
             </div>
 
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
-              <div className="rounded-xl border border-soft-pink/80 px-4 py-4">
+              <div className="rounded-xl bg-cream/60 px-4 py-4">
                 <p className="flex items-center gap-2 text-[12.5px] font-medium text-brand-brown">
                   <Clock className="h-3.5 w-3.5" aria-hidden="true" />
                   Status
@@ -167,7 +167,7 @@ export function OrderConfirmationPage() {
                 </p>
               </div>
 
-              <div className="rounded-xl border border-soft-pink/80 px-4 py-4">
+              <div className="rounded-xl bg-cream/60 px-4 py-4">
                 <p className="flex items-center gap-2 text-[12.5px] font-medium text-brand-brown">
                   <Banknote className="h-3.5 w-3.5" aria-hidden="true" />
                   Payment
@@ -180,7 +180,7 @@ export function OrderConfirmationPage() {
               </div>
             </div>
 
-            <div className="mt-6 rounded-xl border border-soft-pink/80 px-4 py-4 sm:px-5">
+            <div className="mt-6 rounded-xl bg-cream/60 px-4 py-4 sm:px-5">
               <p className="flex items-center gap-2 text-[12.5px] font-medium text-brand-brown">
                 <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
                 Delivering to
@@ -202,10 +202,10 @@ export function OrderConfirmationPage() {
               )}
             </div>
 
-            <div className="mt-6 overflow-hidden rounded-xl border border-soft-pink/80">
+            <div className="mt-6 overflow-hidden rounded-xl border border-brand-brown/10">
               <table className="w-full text-left">
                 <caption className="sr-only">Order items</caption>
-                <thead className="bg-cream/70 text-[12px] font-medium text-brand-brown/55">
+                <thead className="bg-cream/60 text-[11px] font-medium uppercase tracking-[0.1em] text-brand-brown/45">
                   <tr>
                     <th scope="col" className="px-4 py-2.5 font-semibold">
                       Item
@@ -218,7 +218,7 @@ export function OrderConfirmationPage() {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-soft-pink/70">
+                <tbody className="divide-y divide-brand-brown/10">
                   {order.items.map((item) => {
                     const showOptions = supportsTeaOptions(
                       categoryForProduct({ name: item.name }),
@@ -245,7 +245,7 @@ export function OrderConfirmationPage() {
                 </tbody>
               </table>
 
-              <dl className="space-y-2 border-t border-soft-pink/80 px-4 py-4 text-[13px]">
+              <dl className="space-y-2 border-t border-brand-brown/10 px-4 py-4 text-[13px]">
                 <div className="flex justify-between gap-4">
                   <dt className="text-brand-brown/70">Subtotal</dt>
                   <dd className="tabular-nums text-brand-brown">{formatPKR(order.subtotal)}</dd>
@@ -256,7 +256,7 @@ export function OrderConfirmationPage() {
                     {order.deliveryCharge === 0 ? 'Free' : formatPKR(order.deliveryCharge)}
                   </dd>
                 </div>
-                <div className="flex items-baseline justify-between gap-4 border-t border-soft-pink/80 pt-2.5">
+                <div className="flex items-baseline justify-between gap-4 border-t border-brand-brown/10 pt-2.5">
                   <dt className="font-semibold text-brand-brown">Total</dt>
                   <dd className="font-bold text-[24px] leading-none text-brand-brown">
                     {formatPKR(order.total)}

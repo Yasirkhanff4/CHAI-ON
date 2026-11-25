@@ -29,7 +29,7 @@ export function CartLineItem({ item }: CartLineItemProps) {
         width={200}
         height={250}
         loading="lazy"
-        className="h-20 w-16 shrink-0 rounded-xl border border-soft-pink object-cover sm:h-24 sm:w-20"
+        className="h-20 w-16 shrink-0 rounded-xl bg-cream object-cover sm:h-24 sm:w-20"
       />
 
       <div className="flex min-w-0 flex-1 flex-col">

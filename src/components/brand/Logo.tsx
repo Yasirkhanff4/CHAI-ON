@@ -18,9 +18,11 @@ export function Logo({ size = 'md', onDark = false, className = '' }: LogoProps)
     >
       <span
         className={[
-          'grid shrink-0 place-items-center overflow-hidden rounded-full',
+          'grid shrink-0 place-items-center overflow-hidden rounded-full ring-1 transition duration-300 ease-smooth',
           markSize,
-          onDark ? 'bg-off-white' : 'bg-cream',
+          onDark
+            ? 'bg-off-white ring-white/20 group-hover:ring-white/40'
+            : 'bg-off-white ring-brand-brown/10 group-hover:ring-brand-red/25',
         ].join(' ')}
       >
         <img
@@ -34,7 +36,7 @@ export function Logo({ size = 'md', onDark = false, className = '' }: LogoProps)
 
       <span
         className={[
-          'font-sans font-bold leading-none tracking-[0.06em]',
+          'font-sans font-bold leading-none tracking-[0.08em]',
           wordSize,
           onDark ? 'text-off-white' : 'text-brand-brown',
         ].join(' ')}

@@ -25,28 +25,28 @@ export function CartPage() {
         }
       />
 
-      <section aria-label="Cart contents" className="py-8 sm:py-10">
+      <section aria-label="Cart contents" className="py-10 sm:py-14">
         <Container>
           {items.length === 0 ? (
-            <div className="mx-auto max-w-lg rounded-xl border border-soft-pink bg-off-white px-5 py-8 text-center shadow-card sm:px-8">
+            <div className="mx-auto max-w-lg rounded-card bg-off-white px-5 py-10 text-center shadow-card sm:px-8">
               <span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-cream text-brand-red">
                 <Coffee className="h-5 w-5" aria-hidden="true" />
               </span>
               <h2 className="mt-4 text-[24px] font-semibold leading-tight text-brand-brown">
                 Your cart is empty
               </h2>
-              <p className="mx-auto mt-2 max-w-xs text-[14px] leading-relaxed text-brand-brown/70">
+              <p className="mx-auto mt-2 max-w-xs text-[14px] leading-relaxed text-brand-brown/60">
                 Pick something from the menu. We will bring it to your office desk.
               </p>
-              <Link to="/menu" className={buttonClasses('primary', 'lg', 'mt-5 w-full sm:w-auto')}>
+              <Link to="/menu" className={buttonClasses('primary', 'lg', 'mt-6 w-full sm:w-auto')}>
                 View menu
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
-              <p className="mt-5 border-t border-soft-pink pt-4 text-[12.5px] leading-relaxed text-brand-brown/70">
+              <p className="mt-6 border-t border-brand-brown/10 pt-5 text-[12.5px] leading-relaxed text-brand-brown/60">
                 Prefer to order by phone? Call{' '}
                 <a
                   href={business.phoneHref}
-                  className="inline-flex items-center gap-1 font-semibold text-brand-red hover:text-brand-maroon"
+                  className="inline-flex items-center gap-1 font-semibold text-brand-red transition-colors hover:text-brand-maroon"
                 >
                   <Phone className="h-3 w-3" aria-hidden="true" />
                   {business.phoneDisplay}
@@ -55,20 +55,20 @@ export function CartPage() {
             </div>
           ) : (
             <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start lg:gap-6">
-              <div className="rounded-xl border border-soft-pink bg-off-white px-4 shadow-card sm:px-5">
-                <div className="flex items-center justify-between gap-4 border-b border-soft-pink py-3">
-                  <h2 className="text-[13px] font-semibold text-brand-brown/70">
+              <div className="rounded-card bg-off-white px-4 shadow-card sm:px-5">
+                <div className="flex items-center justify-between gap-4 border-b border-brand-brown/10 py-3.5">
+                  <h2 className="text-[13px] font-medium text-brand-brown/55">
                     {items.length} {items.length === 1 ? 'item' : 'items'}
                   </h2>
                   <button
                     type="button"
                     onClick={() => clearCart()}
-                    className="min-h-9 px-2 text-[12.5px] font-medium text-brand-brown/70 transition hover:text-brand-brown"
+                    className="inline-flex min-h-9 items-center rounded-full px-2.5 text-[12.5px] font-medium text-brand-brown/55 transition-colors hover:bg-cream hover:text-brand-brown"
                   >
                     Clear cart
                   </button>
                 </div>
-                <ul className="divide-y divide-soft-pink">
+                <ul className="divide-y divide-brand-brown/10">
                   {items.map((item) => (
                     <CartLineItem key={item.id} item={item} />
                   ))}

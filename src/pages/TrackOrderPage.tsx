@@ -62,18 +62,18 @@ export function TrackOrderPage() {
         description="Enter your order number. Tracking works on the device you ordered from. If you ordered elsewhere, message us on WhatsApp."
       />
 
-      <section className="py-8 sm:py-10">
+      <section className="py-10 sm:py-14">
         <Container>
           <div className="mx-auto max-w-xl">
             <form
               onSubmit={handleSubmit}
               noValidate
-              className="rounded-xl border border-soft-pink bg-off-white p-4 sm:p-5"
+              className="rounded-card bg-off-white p-5 shadow-card sm:p-6"
             >
               {error && (
                 <div
                   role="alert"
-                  className="mb-4 rounded-xl border border-brand-red/30 bg-soft-pink/30 px-3.5 py-3"
+                  className="mb-4 rounded-xl bg-brand-red/[0.06] px-4 py-3"
                 >
                   <p className="flex items-start gap-2 text-[13px] leading-relaxed text-brand-red">
                     <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
@@ -120,21 +120,23 @@ export function TrackOrderPage() {
             </form>
 
             {result && (
-              <div className="mt-5 rounded-xl border border-soft-pink bg-off-white p-4 sm:p-5">
-                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-soft-pink pb-3">
+              <div className="mt-5 rounded-card bg-off-white p-5 shadow-card sm:p-6">
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-brand-brown/10 pb-4">
                   <div>
-                    <p className="text-[12.5px] text-brand-brown/60">Order</p>
-                    <p className="text-[19px] font-semibold leading-tight text-brand-brown">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-brown/40">
+                      Order
+                    </p>
+                    <p className="mt-1 text-[19px] font-semibold leading-tight text-brand-brown">
                       {result.orderNumber}
                     </p>
-                    <p className="mt-0.5 text-[11.5px] text-brand-brown/60">
+                    <p className="mt-0.5 text-[11.5px] text-brand-brown/45">
                       Placed {formatDateTime(result.createdAt)}
                     </p>
                   </div>
                   <StatusBadge status={result.orderStatus} />
                 </div>
 
-                <div className="mt-4">
+                <div className="mt-5">
                   <OrderTimeline
                     status={result.orderStatus}
                     history={result.statusHistory}
@@ -142,7 +144,7 @@ export function TrackOrderPage() {
                   />
                 </div>
 
-                <div className="mt-4 border-t border-soft-pink pt-3">
+                <div className="mt-5 border-t border-brand-brown/10 pt-4">
                   <ul className="space-y-2">
                     {result.items.map((item) => {
                       const showOptions = supportsTeaOptions(
@@ -168,7 +170,7 @@ export function TrackOrderPage() {
                       )
                     })}
                   </ul>
-                  <p className="mt-3 flex items-baseline justify-between border-t border-soft-pink pt-3">
+                  <p className="mt-3 flex items-baseline justify-between border-t border-brand-brown/10 pt-3">
                     <span className="text-[13px] font-semibold text-brand-brown">
                       {result.paymentStatus === 'PAID' ? 'Paid' : 'Cash on delivery'}
                     </span>

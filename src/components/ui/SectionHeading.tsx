@@ -27,7 +27,7 @@ export function SectionHeading({
       {eyebrow && (
         <p
           className={[
-            'text-[12px] font-semibold uppercase tracking-[0.18em]',
+            'eyebrow',
             isLight ? 'text-soft-pink' : 'text-brand-red',
           ].join(' ')}
         >
@@ -36,7 +36,7 @@ export function SectionHeading({
       )}
       <h2
         className={[
-          'poster-title mt-2 text-[32px] sm:text-[42px]',
+          'poster-title mt-3 text-[34px] sm:text-[44px]',
           isLight ? 'text-off-white' : 'text-brand-brown',
         ].join(' ')}
       >
@@ -45,8 +45,8 @@ export function SectionHeading({
       {description && (
         <p
           className={[
-            'mt-3 text-[14.5px] leading-relaxed',
-            isLight ? 'text-off-white/75' : 'text-brand-brown/75',
+            'mt-4 text-[15px] leading-relaxed',
+            isLight ? 'text-off-white/75' : 'text-brand-brown/70',
           ].join(' ')}
         >
           {description}
