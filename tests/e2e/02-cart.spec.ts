@@ -42,6 +42,40 @@ async function total(page: Page): Promise<number> {
   )
 }
 
+/** One tea in the cart, then the cart page. Stubs window.open to record links. */
+async function seedCart(page: Page) {
+  await page.addInitScript(() => {
+    const state = window as unknown as { __whatsappLinks: string[] }
+    state.__whatsappLinks = []
+    window.open = ((url?: string | URL) => {
+      state.__whatsappLinks.push(String(url))
+      return null
+    }) as unknown as typeof window.open
+  })
+
+  await page.goto('/menu')
+  await page
+    .getByRole('article')
+    .first()
+    .getByRole('button', { name: /^Add/ })
+    .click()
+  await page.getByRole('link', { name: /View cart/ }).click()
+  await expect(page).toHaveURL(/\/cart$/)
+}
+
+async function whatsappLinks(page: Page): Promise<string[]> {
+  return page.evaluate(
+    () => (window as unknown as { __whatsappLinks?: string[] }).__whatsappLinks ?? [],
+  )
+}
+
+async function openDeliveryDialog(page: Page): Promise<Locator> {
+  await summary(page).getByRole('button', { name: /Order on WhatsApp/i }).click()
+  const dialog = page.getByRole('dialog', { name: 'Delivery details' })
+  await expect(dialog).toBeVisible()
+  return dialog
+}
+
 test('cart: add two teas, change quantity and sugar, remove one, totals add up', async ({
   page,
 }) => {
@@ -96,37 +130,85 @@ test('cart: add two teas, change quantity and sugar, remove one, totals add up',
   expect(await total(page)).toBe(remaining[0])
 })
 
-test('cart: "Order on WhatsApp" opens wa.me with the items and total', async ({ page }) => {
-  await page.goto('/menu')
-  const card = page.getByRole('article').first()
-  await card.getByRole('button', { name: /^Add/ }).click()
-  await page.getByRole('link', { name: /View cart/ }).click()
-
+test('cart: WhatsApp asks for delivery details before opening a plain text order', async ({
+  page,
+}) => {
+  await seedCart(page)
   const cartTotal = await total(page)
-  const button = summary(page).getByRole('link', { name: /Order on WhatsApp/i })
-  await expect(button).toBeVisible()
 
-  const href = await button.getAttribute('href')
-  expect(href, 'WhatsApp link is missing').toBeTruthy()
+  const trigger = summary(page).getByRole('button', { name: /Order on WhatsApp/i })
+  await expect(trigger).toBeVisible()
+  await expect(trigger).toHaveAttribute('aria-haspopup', 'dialog')
+  await trigger.click()
 
-  const url = new URL(href as string)
+  const dialog = await openDeliveryDialog(page)
+  await expect(page).toHaveURL(/\/cart$/)
+  expect(await whatsappLinks(page), 'the cart button must not open WhatsApp on its own').toEqual(
+    [],
+  )
+
+  // Empty fields, all required.
+  for (const id of ['#wa-order-name', '#wa-order-building', '#wa-order-floor', '#wa-order-office']) {
+    await expect(page.locator(id)).toHaveValue('')
+  }
+
+  await dialog.getByRole('button', { name: 'Send on WhatsApp' }).click()
+  await expect(dialog).toContainText('Enter your name.')
+  await expect(dialog).toContainText('Enter the building or plaza name.')
+  await expect(dialog).toContainText('Enter your floor')
+  await expect(dialog).toContainText('Enter your office or shop number.')
+  expect(await whatsappLinks(page), 'nothing may open while fields are empty').toEqual([])
+
+  await page.locator('#wa-order-name').fill('ahmed raza')
+  await page.locator('#wa-order-building').fill('al ghaffar mall')
+  await page.locator('#wa-order-floor').fill('3')
+  await page.locator('#wa-order-office').fill('302')
+  await dialog.getByRole('button', { name: 'Send on WhatsApp' }).click()
+  await expect(dialog).toBeHidden()
+
+  const links = await whatsappLinks(page)
+  expect(links).toHaveLength(1)
+
+  const url = new URL(links[0])
   expect(url.origin + url.pathname).toBe('https://wa.me/923091104343')
-
   const text = url.searchParams.get('text') ?? ''
-  expect(text).toContain('Assalam-o-Alaikum CHAYON!')
-  expect(text).toContain('Mujhe ye order karna hai:')
-  expect(text).toContain('• 1 x ')
-  expect(text).toContain('Sugar:')
-  expect(text).toContain('Strength:')
-  expect(text).toContain('Subtotal: Rs')
-  expect(text).toContain(`Total: Rs ${new Intl.NumberFormat('en-PK').format(cartTotal)}`)
-  expect(text).toContain('Building / Plaza:')
+  const lines = text.split('\n')
+
+  expect(lines[0]).toBe('Order from CHAYON')
+  expect(lines[1]).toBe('')
+
+  // A tea on the default sugar and strength carries no options bracket.
+  expect(lines[2]).toMatch(/^1 x .+ - Rs [\d,]+$/)
+  expect(lines[2]).not.toContain('(')
+
+  expect(text).not.toContain('Subtotal')
+  expect(text).not.toContain('•')
+  expect(text).not.toContain('—')
+  expect(text).not.toContain('Delivery: Free')
+  expect(text).not.toContain('Delivery:')
+
+  expect(lines[3]).toBe(`Total: Rs ${new Intl.NumberFormat('en-PK').format(cartTotal)}`)
+
+  // Details are cleaned up: name and building title-cased, bare numbers labelled.
+  expect(lines.slice(-5)).toEqual([
+    '',
+    'Name: Ahmed Raza',
+    'Deliver to: Al Ghaffar Mall, Floor 3, Office 302',
+    '',
+    'Thank you!',
+  ])
+
+  // Details are saved for next time.
+  const saved = await page.evaluate(() =>
+    window.localStorage.getItem('chai-on:customer-details:v1'),
+  )
+  expect(saved).toContain('ahmed raza')
 
   // Newlines must survive as %0A in the wa.me link.
-  expect(href).toContain('%0A')
+  expect(links[0]).toContain('%0A')
 })
 
-test('cart: WhatsApp message prefills saved checkout details', async ({ page }) => {
+test('cart: delivery details prefill saved values and Clear empties them', async ({ page }) => {
   await page.addInitScript(() => {
     window.localStorage.setItem(
       'chai-on:customer-details:v1',
@@ -140,17 +222,21 @@ test('cart: WhatsApp message prefills saved checkout details', async ({ page }) 
   })
 
   await page.goto('/menu')
-  const card = page.getByRole('article').first()
-  await card.getByRole('button', { name: /^Add/ }).click()
+  await page
+    .getByRole('article')
+    .first()
+    .getByRole('button', { name: /^Add/ })
+    .click()
   await page.getByRole('link', { name: /View cart/ }).click()
 
-  const href = await summary(page)
-    .getByRole('link', { name: /Order on WhatsApp/i })
-    .getAttribute('href')
-  const text = new URL(href as string).searchParams.get('text') ?? ''
+  const dialog = await openDeliveryDialog(page)
+  await expect(page.locator('#wa-order-name')).toHaveValue('Ahmed Raza')
+  await expect(page.locator('#wa-order-building')).toHaveValue('Al Ghaffar Mall')
+  await expect(page.locator('#wa-order-floor')).toHaveValue('3rd Floor')
+  await expect(page.locator('#wa-order-office')).toHaveValue('Office 302')
 
-  expect(text).toContain('Naam: Ahmed Raza')
-  expect(text).toContain('Building / Plaza: Al Ghaffar Mall')
-  expect(text).toContain('Floor: 3rd Floor')
-  expect(text).toContain('Office / Shop: Office 302')
+  await dialog.getByRole('button', { name: 'Clear' }).click()
+  for (const id of ['#wa-order-name', '#wa-order-building', '#wa-order-floor', '#wa-order-office']) {
+    await expect(page.locator(id)).toHaveValue('')
+  }
 })

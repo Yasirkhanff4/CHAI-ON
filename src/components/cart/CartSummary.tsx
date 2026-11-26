@@ -1,15 +1,14 @@
 import { ArrowRight, ShieldCheck, ShoppingBag, Truck } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { WhatsAppActionBar } from '@/components/whatsapp/WhatsAppActionBar'
+import { WhatsAppOrderButton } from '@/components/whatsapp/WhatsAppOrderButton'
 import { useCart } from '@/context/cartContext'
 import { useStoreSettings } from '@/context/settingsContext'
 import { business } from '@/data/site'
 import { formatPKR } from '@/lib/format'
 import { buttonClasses } from '@/lib/buttonStyles'
-import { buildWhatsAppOrderUrl } from '@/lib/whatsapp'
 
 export function CartSummary() {
-  const { items, totals } = useCart()
+  const { totals } = useCart()
   const { settings } = useStoreSettings()
   const belowMinimum = totals.subtotal < settings.minimumOrder
   const shortfall = settings.minimumOrder - totals.subtotal
@@ -79,10 +78,7 @@ export function CartSummary() {
         </Link>
 
         <div className="mt-4 border-t border-brand-brown/10 pt-4">
-          <WhatsAppActionBar
-            href={buildWhatsAppOrderUrl(items, totals)}
-            label="Order on WhatsApp"
-          />
+          <WhatsAppOrderButton size="lg" className="w-full" />
           <p className="mt-2 text-center text-[11.5px] leading-relaxed text-brand-brown/45">
             Send this cart to us on WhatsApp · {business.whatsappDisplay}
           </p>

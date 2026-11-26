@@ -3,15 +3,12 @@ import { Link } from 'react-router-dom'
 import { Logo } from '@/components/brand/Logo'
 import { Container } from '@/components/ui/Container'
 import { WhatsAppActionBar } from '@/components/whatsapp/WhatsAppActionBar'
-import { useCart } from '@/context/cartContext'
 import { business, navLinks } from '@/data/site'
-import { buildWhatsAppOrderUrl } from '@/lib/whatsapp'
+import { buildWhatsAppGreetingUrl } from '@/lib/whatsapp'
 
 const currentYear = new Date().getFullYear()
 
 export function Footer() {
-  const { items, totals } = useCart()
-
   return (
     <footer className="bg-brand-maroon text-off-white">
       <Container className="grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-[1.5fr_0.8fr_1.2fr] lg:gap-12 lg:py-16">
@@ -21,7 +18,7 @@ export function Footer() {
             Chai, coffee, nuggets and cake rusk. Fresh to your office desk.
           </p>
           <WhatsAppActionBar
-            href={buildWhatsAppOrderUrl(items, totals)}
+            href={buildWhatsAppGreetingUrl()}
             tone="dark"
             className="mt-6 max-w-sm"
           />

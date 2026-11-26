@@ -1,8 +1,9 @@
+import { useState } from 'react'
+import { DeliveryDetailsDialog } from '@/components/whatsapp/DeliveryDetailsDialog'
 import WhatsAppIcon from '@/components/whatsapp/WhatsAppIcon'
 import { useCart } from '@/context/cartContext'
 import { buttonClasses } from '@/lib/buttonStyles'
 import type { ButtonSize, ButtonVariant } from '@/lib/buttonStyles'
-import { buildWhatsAppOrderUrl } from '@/lib/whatsapp'
 
 type WhatsAppOrderButtonProps = {
   variant?: ButtonVariant
@@ -10,13 +11,11 @@ type WhatsAppOrderButtonProps = {
   label?: string
   className?: string
   iconClassName?: string
-  /** Shows the icon alone on very small screens (label from `sm` up). */
-  compactOnMobile?: boolean
 }
 
 /**
- * Opens a WhatsApp chat with the shop, pre-filled with the current cart.
- * Cart contents stay on the device until the customer sends the message.
+ * Cart WhatsApp button. It opens the delivery details dialog first, and only
+ * the dialog's "Send on WhatsApp" button opens a chat with the cart.
  */
 export function WhatsAppOrderButton({
   variant = 'secondary',
@@ -24,20 +23,26 @@ export function WhatsAppOrderButton({
   label = 'Order on WhatsApp',
   className = '',
   iconClassName = 'h-4 w-4 shrink-0',
-  compactOnMobile = false,
 }: WhatsAppOrderButtonProps) {
-  const { items, totals } = useCart()
+  const { items } = useCart()
+  const [open, setOpen] = useState(false)
+  const empty = items.length === 0
 
   return (
-    <a
-      href={buildWhatsAppOrderUrl(items, totals)}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={`${label} (opens WhatsApp chat)`}
-      className={buttonClasses(variant, size, className)}
-    >
-      <WhatsAppIcon className={iconClassName} />
-      {compactOnMobile ? <span className="hidden sm:inline">{label}</span> : label}
-    </a>
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        disabled={empty}
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        className={buttonClasses(variant, size, className)}
+      >
+        <WhatsAppIcon className={iconClassName} />
+        {empty ? 'Add items to your cart first' : label}
+      </button>
+
+      {open && <DeliveryDetailsDialog onClose={() => setOpen(false)} />}
+    </>
   )
 }

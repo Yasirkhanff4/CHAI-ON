@@ -1,7 +1,6 @@
 import { useLocation } from 'react-router-dom'
 import WhatsAppIcon from '@/components/whatsapp/WhatsAppIcon'
-import { useCart } from '@/context/cartContext'
-import { buildWhatsAppOrderUrl } from '@/lib/whatsapp'
+import { buildWhatsAppGreetingUrl } from '@/lib/whatsapp'
 
 /**
  * Small chat widget for customer pages. Cart and checkout already carry their
@@ -9,14 +8,13 @@ import { buildWhatsAppOrderUrl } from '@/lib/whatsapp'
  * Phones get a 48px green circle; from `sm` up it is a white chip with a label.
  */
 export function FloatingWhatsAppButton() {
-  const { items, totals } = useCart()
   const { pathname } = useLocation()
 
   if (pathname === '/cart' || pathname === '/checkout') return null
 
   return (
     <a
-      href={buildWhatsAppOrderUrl(items, totals)}
+      href={buildWhatsAppGreetingUrl()}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Order on WhatsApp (opens WhatsApp chat)"

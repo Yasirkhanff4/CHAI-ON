@@ -48,8 +48,9 @@ values the app runs in **local mode** for design work only. See
   request key makes retries idempotent
 - Order confirmation with human-readable order number (`CO-YYMMDD-XXXX`), full summary,
   delivery details, COD and a Track Order button; the cart clears only after success
-- **Order on WhatsApp** button (header, mobile menu and cart) pre-filled with the cart
-  items, customizations and total, opening `wa.me/923091104343`
+- **Order on WhatsApp** button in the cart that asks for delivery details and opens
+  `wa.me/923091104343` with a short order message (items, customizations, total and
+  address)
 - Order tracking by order number on the device/browser that placed the order, with a
   real timeline and a WhatsApp fallback for other devices
 
@@ -166,30 +167,41 @@ whatsappNumber: '923091104343'
 whatsappUrl: 'https://wa.me/923091104343'
 ```
 
-`buildWhatsAppOrderUrl` (`src/lib/whatsapp.ts`) turns the current cart into a message
-such as:
+The cart button opens a **Delivery details** dialog (Name, Building / Plaza, Floor,
+Office / Shop). The four values are saved on the device and prefill the next order.
+Submitting the dialog calls `buildWhatsAppOrderUrl` (`src/lib/whatsapp.ts`), which
+turns the cart and those details into a short plain-text message such as:
 
 ```
-Assalam-o-Alaikum CHAYON!
-Mujhe ye order karna hai:
+Order from CHAYON
 
-• 2 x Doodh Patti
-  Sugar: Less Sugar | Strength: Strong | Rs 300
-• 1 x Karak Chai
-  Sugar: Normal Sugar | Strength: Normal | Rs 180
-
-Subtotal: Rs 480
-Delivery: Free
+2 x Doodh Patti (Less sugar, Strong) - Rs 300
+1 x Karak Chai - Rs 180
 Total: Rs 480
 
-Naam: Ahmed Raza
-Building / Plaza: Al Ghaffar Mall
-Floor: 3rd Floor
-Office / Shop: Office 302
+Name: Ahmed Raza
+Deliver to: Al Ghaffar Mall, 3rd Floor, Office 302
+
+Thank you!
 ```
 
-Nothing is sent until the customer presses send inside WhatsApp. The button appears in
-the desktop header (wide screens), the mobile menu and the cart summary.
+The format stays short on purpose:
+
+- One line per item: `{qty} x {name} ({options}) - Rs {line total}`.
+- Options are listed only when they are not the default: `Extra sugar`, `Less sugar`,
+  `No sugar`, `Strong`, `Light`. Default-only items, and items without choices, have
+  no brackets.
+- An item note is appended to its own line as ` - Note: {note}`.
+- `Delivery: Rs {amount}` appears above `Total` only when a delivery charge applies.
+  There is no subtotal line and never a "Delivery: Free" line.
+- Name and building are title-cased, and a digits-only floor or office becomes
+  `Floor 3` / `Office 302`; values that already have words (`3rd Floor`, `Shop 4`) are
+  used as typed.
+- The message ends with a blank line and `Thank you!`.
+
+Nothing is sent until the customer presses send inside WhatsApp. The cart summary has
+the ordering button; the floating chip, the hero and the footer open a greeting-only
+chat with no cart items or saved details.
 
 ---
 

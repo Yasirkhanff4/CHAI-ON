@@ -2,9 +2,8 @@ import { ArrowRight, Banknote, Clock, Truck } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Container } from '@/components/ui/Container'
 import WhatsAppIcon from '@/components/whatsapp/WhatsAppIcon'
-import { useCart } from '@/context/cartContext'
 import { buttonClasses } from '@/lib/buttonStyles'
-import { buildWhatsAppOrderUrl } from '@/lib/whatsapp'
+import { buildWhatsAppGreetingUrl } from '@/lib/whatsapp'
 
 const proof = [
   { icon: Clock, label: '15–25 min' },
@@ -13,8 +12,6 @@ const proof = [
 ]
 
 export function Hero() {
-  const { items, totals } = useCart()
-
   return (
     <section className="pb-14 pt-5 sm:pb-20 sm:pt-8">
       <Container>
@@ -45,7 +42,7 @@ export function Hero() {
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
                 <a
-                  href={buildWhatsAppOrderUrl(items, totals)}
+                  href={buildWhatsAppGreetingUrl()}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={buttonClasses('secondary', 'lg', 'w-full sm:w-auto')}
