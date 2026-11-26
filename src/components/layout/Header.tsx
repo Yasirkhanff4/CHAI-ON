@@ -75,7 +75,10 @@ export function Header() {
         <Container className="flex h-[68px] items-center justify-between gap-3">
           <Logo />
 
-          <nav aria-label="Main navigation" className="hidden items-center gap-1 lg:flex">
+          <nav
+            aria-label="Main navigation"
+            className="hidden items-center gap-0.5 rounded-full border border-brand-brown/10 bg-brand-brown/[0.045] p-1 lg:flex"
+          >
             {navLinks.map((link) => (
               <NavLink
                 key={link.to}
@@ -83,10 +86,10 @@ export function Header() {
                 end={link.to === '/'}
                 className={({ isActive }) =>
                   [
-                    'relative rounded-full px-3.5 py-2 text-[14px] transition-colors duration-200 ease-smooth',
+                    'inline-flex min-h-9 items-center rounded-full px-3.5 text-[13.5px] transition duration-200 ease-smooth focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-red xl:px-4',
                     isActive
-                      ? 'font-semibold text-brand-red after:absolute after:inset-x-3.5 after:bottom-0.5 after:h-0.5 after:rounded-full after:bg-brand-red'
-                      : 'font-medium text-brand-brown/65 hover:text-brand-brown',
+                      ? 'bg-off-white font-semibold text-brand-red shadow-card ring-1 ring-brand-brown/[0.04]'
+                      : 'font-medium text-brand-brown/60 hover:bg-off-white/60 hover:text-brand-brown',
                   ].join(' ')
                 }
               >
